@@ -192,12 +192,14 @@ Update a user. Accepts partial fields.
   "defenseDuration": "number",
   "breakDuration": "number",
   "submissionDeadline": "string",
-  "evaluationCoefficients": { "president": 0.4, "reporter": 0.3, "examiner": 0.3 },
+  "evaluationCoefficients": { "Président": 30, "Rapporteur": 35, "Examinateur": 35 },
   "juryRoleTemplateId": "string",
   "startDate": "string",
   "endDate": "string"
 }
 ```
+
+Coefficients are **percentage-based integers** (0–100), keyed by the role names defined in the linked `JuryRoleTemplate`. When creating/updating without explicit coefficients, the values are auto-populated from the template's roles.
 
 **Lifecycle transitions** (validated server-side):
 ```
@@ -380,7 +382,7 @@ Only forward transitions allowed. Invalid transition returns `400`.
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/coordinator/projects` | List all projects with student names, supervisor name |
-| `POST` | `/coordinator/projects` | Create — body: `{ title, description?, supervisorId, studentIds[] }` |
+| `POST` | `/coordinator/projects` | Create — body: `{ title, description?, supervisorId, studentIds?[] }` |
 | `PUT` | `/coordinator/projects/:id` | Update — partial |
 | `DELETE` | `/coordinator/projects/:id` | Delete — **409** if juries, groups, or defenses depend on it |
 
@@ -403,11 +405,13 @@ Only forward transitions allowed. Invalid transition returns `400`.
 
 ## Coordinator: Juries
 
+Juries use **dynamic role members** driven by a selected `JuryRoleTemplate`. Roles are not hardcoded — the template defines which roles exist and their evaluation coefficients.
+
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/coordinator/juries` | List all juries with teacher names |
-| `POST` | `/coordinator/juries` | Create — body: `{ projectId, presidentId, reporterId, examinerId }` |
-| `PUT` | `/coordinator/juries/:id` | Update — partial |
+| `POST` | `/coordinator/juries` | Create — body: `{ projectId, templateId, members: [{ teacherId, roleName }] }` |
+| `PUT` | `/coordinator/juries/:id` | Update — partial (same shape as POST) |
 | `DELETE` | `/coordinator/juries/:id` | Delete |
 
 **`Jury` schema:**
@@ -417,14 +421,32 @@ Only forward transitions allowed. Invalid transition returns `400`.
   "projectId": "string",
   "projectTitle": "string",
   "defenseType": "pfe|memoire|these",
-  "presidentId": "string",
-  "presidentName": "string",
-  "reporterId": "string",
-  "reporterName": "string",
-  "examinerId": "string",
-  "examinerName": "string"
+  "templateId": "string",
+  "templateName": "string",
+  "members": [
+    { "roleName": "Président", "teacherId": "string", "teacherName": "string" }
+  ]
 }
 ```
+
+**`JuryRoleTemplate` schema** (admin config):
+```json
+{
+  "id": "string",
+  "name": "string",
+  "defenseType": "pfe|memoire|these",
+  "roles": [
+    { "name": "Président", "count": 1, "coefficient": 30 },
+    { "name": "Rapporteur", "count": 1, "coefficient": 35 },
+    { "name": "Examinateur", "count": 1, "coefficient": 35 }
+  ]
+}
+```
+
+**Validation:**
+- Duplicate `teacherId` within same jury returns `400`
+- `templateId` must reference an existing template
+- All `roleName` values must exist in the template's `roles[].name`
 
 ---
 
@@ -435,6 +457,42 @@ Only forward transitions allowed. Invalid transition returns `400`.
 | `GET` | `/coordinator/groups` | List all groups with student IDs |
 | `POST` | `/coordinator/groups` | Create — body: `{ projectId, studentIds[], sessionId }` |
 | `DELETE` | `/coordinator/groups/:id` | Delete — cascades to `group_members` |
+
+---
+
+## Coordinator: Grades
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/coordinator/grades` | List all project-grade summaries |
+
+Returns one entry per jury, computing weighted averages from individual teacher evaluations × role coefficients.
+
+**`ProjectGrade` schema:**
+```json
+{
+  "projectId": "string",
+  "projectTitle": "string",
+  "defenseDate": "string|null",
+  "status": "completed|pending|no_evaluations",
+  "finalScore": "number|null",
+  "evaluationCoefficients": { "Président": 30, "Rapporteur": 35, "Examinateur": 35 },
+  "individualScores": [
+    { "roleName": "string", "teacherName": "string", "score": "number|null" }
+  ]
+}
+```
+
+**Statuses:**
+- `completed` — all evaluations submitted → `finalScore` is the weighted average
+- `pending` — some evaluations submitted, some missing
+- `no_evaluations` — no evaluations submitted at all
+
+**Grade calculation (server-side):**
+```
+finalScore = Σ(score × coefficient) / Σ(coefficient)
+```
+Scores are on a 0–20 scale. Coefficients are percentage integers (0–100). Decision: `≥ 10` → "Admis", `< 10` → "Ajourné".
 
 ---
 
@@ -538,10 +596,12 @@ Returns the current teacher's defense schedule.
     "startTime": "string",
     "endTime": "string",
     "roomName": "string",
-    "role": "president|reporter|examiner|supervisor",
+    "role": "string",
     "status": "scheduled|completed"
   }
 ]
+
+`role` is a free string matching a role name from the jury's template (e.g. `"Président"`).
 ```
 
 ---
@@ -560,13 +620,15 @@ Returns the current teacher's defense schedule.
   "defenseId": "string",
   "projectTitle": "string",
   "studentNames": "string[]",
-  "role": "president|reporter|examiner|supervisor",
+  "role": "string",
   "score?": "number",
   "comment?": "string",
   "status": "pending|submitted",
   "submittedAt?": "string"
 }
 ```
+
+`role` is a free string matching one of the role names defined in the jury's template (e.g. `"Président"`, `"Rapporteur"`, `"Examinateur"`).
 
 ---
 
@@ -745,7 +807,7 @@ Located at `src/lib/conflict-engine.ts`. Validates a slot assignment against 8 c
 **`ConflictIssue`:**
 ```json
 {
-  "type": "room_capacity|teacher_double_booked|student_double_booked|supervisor_conflict|break_violation|out_of_bounds|slot_occupied|project_already_scheduled|teacher_unavailable",
+  "type": "room_capacity|teacher_double_booked|supervisor_conflict|break_violation|out_of_bounds|slot_occupied|project_already_scheduled|teacher_unavailable",
   "severity": "error|warning",
   "message": "string",
   "slot": "string",
@@ -769,7 +831,7 @@ Session ──→ DefenseSession (globalSessionId)
 DefenseSession ──→ JuryRoleTemplate (juryRoleTemplateId)
 
 Project ──┬── ProjectStudent ──→ User (student)
-          ├── Jury (presidentId/reporterId/examinerId → User teacher)
+          ├── Jury (templateId → JuryRoleTemplate, members[].teacherId → User teacher)
           ├── Group ──→ GroupMember ──→ User (student)
           └── Defense ──┬── DefenseTeacher ──→ User (teacher)
                         └── Evaluation ──→ User (teacher)
