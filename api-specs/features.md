@@ -350,7 +350,25 @@ Admin uploads and manages document templates (convocations, PVs, certificates) w
 Coordinator generates convocations or PVs for multiple defenses in one action. Download as individual files or a ZIP archive.  
 **Actor:** Coordinator | **Priority:** P1
 
+## F10.6 Generate Evaluation Sheets
+System generates an evaluation sheet PDF for each defense, containing: evaluation criteria with weightings, per-juror scoring fields, remarks section. Uses a configurable template.  
+**Actor:** Coordinator, System | **Priority:** P0
+
+## F10.7 Generate Attendance Lists
+System generates an attendance/presence list PDF for each defense session, listing all scheduled defenses with student names, jury members, time slots, and a signature column.  
+**Actor:** Coordinator, System | **Priority:** P0
+
+## F10.8 Generate Jury Convocations
+System generates an individualized convocation PDF for each jury member, containing: student/project info, defense date/time/room, their assigned role. Separate from student convocation (F10.1).  
+**Actor:** Coordinator, System | **Priority:** P0
+
+## F10.9 Generate Printable Schedule
+System generates a formatted PDF of the full defense schedule (calendar/grid view), suitable for posting or printing. Includes day-by-day breakdown with rooms and assigned juries.  
+**Actor:** Coordinator, System | **Priority:** P0
+
 ---
+
+
 
 # F11 — Notifications
 

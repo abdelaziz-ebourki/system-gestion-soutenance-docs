@@ -486,6 +486,24 @@ Returns all teachers' unavailability entries.
 
 ---
 
+## Coordinator: Document Generation
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/coordinator/documents/evaluation-sheets` | Generate evaluation sheet PDFs for specified defenses — body: `{ defenseIds: string[] }` |
+| `POST` | `/coordinator/documents/attendance-lists` | Generate attendance list PDF for a defense session — body: `{ defenseSessionId: string }` |
+| `POST` | `/coordinator/documents/jury-convocations` | Generate jury convocation PDFs for specified defenses — body: `{ defenseIds: string[] }` |
+| `POST` | `/coordinator/documents/schedule` | Generate printable schedule PDF — body: `{ defenseSessionId: string }` |
+
+All endpoints return a PDF (content-type `application/pdf`) or a ZIP archive for multi-defense requests.
+
+**Errors:**
+| Status | Condition |
+|--------|-----------|
+| `404` | Referenced defense or session not found |
+
+---
+
 ## Teacher: Stats
 
 ### `GET /teacher/stats`
@@ -662,7 +680,7 @@ Returns the current teacher's defense schedule.
 
 ### `GET /student/convocation`
 
-Returns a plain-text blob with content-type `application/pdf`.
+Returns the student's individualized convocation PDF with content-type `application/pdf`. See also `POST /coordinator/documents/jury-convocations` for jury member convocations.
 
 **Errors:**
 | Status | Condition |
