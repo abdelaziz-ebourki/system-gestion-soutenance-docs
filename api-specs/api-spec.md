@@ -562,11 +562,27 @@ draft → active → scheduled → completed → archived
 |--------|------|-------------|
 | `GET` | `/coordinator/schedule` | Get current schedule — returns `Record<string, SlotAssignment>` |
 | `POST` | `/coordinator/schedule` | Save schedule — body: `{ schedule: Record<string, SlotAssignment> }` |
+| `POST` | `/coordinator/schedule/auto-generate` | Auto-generate schedule — body: `{ defenseSessionId }`. Greedy algorithm: iterates dates/rooms/times, assigns approved projects with juries. Returns `{ schedule }` for review. |
+| `POST` | `/coordinator/schedule/publish` | Publish schedule — body: `{ defenseSessionId }`. Converts working schedule → `DbDefense` records + `DbDefenseTeacher`, creates notifications, transitions session `active → scheduled`, clears working schedule. |
 
 **`SlotAssignment`:**
 ```json
 { "id": "string", "title": "string", "date": "string", "time": "string", "roomId": "string" }
 ```
+
+### `POST /api/coordinator/defenses/:id/cancel`
+
+Cancel a scheduled defense. Removes from working schedule if pending, marks `DbDefense.status = "cancelled"` if published, frees linked teachers, creates cancellation notification.
+
+**Success `200`:**
+```json
+{ "message": "Soutenance annulée." }
+```
+
+**Errors:**
+| Status | Condition |
+|--------|-----------|
+| `404` | Defense not found in schedule or DbDefense |
 
 ---
 
