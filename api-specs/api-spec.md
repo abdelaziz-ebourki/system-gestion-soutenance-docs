@@ -180,18 +180,35 @@ Update a user. Accepts partial fields.
 
 ---
 
+## Admin: Faculties
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/admin/faculties` | List all faculties |
+| `GET` | `/admin/faculties/:id` | Get faculty by ID |
+| `POST` | `/admin/faculties` | Create — body: `{ name, code, deanId?, logoUrl? }` |
+| `PUT` | `/admin/faculties/:id` | Update — full replace |
+| `DELETE` | `/admin/faculties/:id` | Delete — **409** if departments depend on it |
+
+**`Faculty` schema:**
+```json
+{ "id": "string", "name": "string", "code": "string", "deanId?": "string", "logoUrl?": "string" }
+```
+
+---
+
 ## Admin: Departments
 
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/admin/departments` | List all departments |
-| `POST` | `/admin/departments` | Create — body: `{ name, code, headId? }` |
+| `POST` | `/admin/departments` | Create — body: `{ name, code, headId?, facultyId }` |
 | `PUT` | `/admin/departments/:id` | Update — full replace |
 | `DELETE` | `/admin/departments/:id` | Delete — **409** if rooms or teachers depend on it |
 
 **`Department` schema:**
 ```json
-{ "id": "string", "name": "string", "code": "string", "headId?": "string" }
+{ "id": "string", "name": "string", "code": "string", "headId?": "string", "facultyId": "string" }
 ```
 
 ---
@@ -877,6 +894,8 @@ Located at `src/lib/conflict-engine.ts`. Validates a slot assignment against 8 c
 ## Entity Relationship Summary
 
 ```
+Faculty ──→ Department (facultyId)
+
 Department ──┬── Room
               └── Teacher (via departmentId)
 

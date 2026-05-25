@@ -49,7 +49,7 @@ System enforces minimum password strength (length ≥ 8, mixed case, digits, spe
 
 # F2 — Institution Structure Management
 
-## F2.2 Manage Faculties/Universities/Schools 
+## F2.2 Manage Faculties/Universities/Schools — ✅
 Admin manages University/Faculty/School (ie: name, logo, ...)  
 **Actor:** Admin | **Priority:** P0
 
