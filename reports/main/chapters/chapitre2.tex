@@ -1,0 +1,215 @@
+% ═══════════════════════════════════════════════════════════════════════════════
+%  CHAPITRE 2 : ÉTUDE DE L'EXISTANT ET TECHNOLOGIES UTILISÉES
+% ═══════════════════════════════════════════════════════════════════════════════
+\newpage
+\section{Étude de l'existant et technologies utilisées}
+\label{ch2}
+
+\subsection{Introduction}
+\label{ch2:intro}
+
+Ce chapitre présente une analyse approfondie du système actuel d'organisation des soutenances au sein de la faculté, identifie ses lacunes et compare les solutions existantes sur le marché. Il détaille ensuite les choix technologiques retenus pour le développement de notre application en justifiant chaque décision. Enfin, l'architecture générale du système est présentée.
+
+\subsection{Analyse de l'existant}
+\label{ch2:existant}
+
+\subsubsection{Description du système actuel}
+\label{ch2:systeme_actuel}
+
+L'organisation actuelle des soutenances repose sur une combinaison d'outils bureautiques génériques et de processus manuels :
+
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Outils :} utilisation intensive de tableurs \textbf{Excel} pour le suivi des étudiants et des plannings, et de \textbf{documents papier} pour les évaluations.
+    \item \textbf{Communication :} échanges fragmentés par \textbf{courrier électronique} pour la collecte des disponibilités et l'envoi des convocations.
+    \item \textbf{Logistique :} gestion indépendante des salles via des services tiers, souvent sans visibilité directe sur les occupations.
+    \item \textbf{Évaluation :} saisie manuelle des notes sur fiches imprimées, suivie d'une re-saisie numérique pour le calcul des moyennes.
+\end{itemize}
+
+\subsubsection{Processus actuel détaillé}
+\label{ch2:processus_actuel}
+
+L'organisation d'une session de soutenances suit un cheminement complexe divisé en deux grandes phases opérationnelles.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[0.6\textwidth]{process_planification}
+    \caption{Processus actuel -- Phase~1 : Planification}
+    \label{fig:processus_actuel_phase1}
+\end{figure}
+
+La Figure \ref{fig:processus_actuel_phase1} illustre la nature intrinsèquement itérative de la phase de planification. Elle repose sur une communication asynchrone par e-mail qui génère fréquemment des goulots d'étranglement : la centralisation manuelle des informations (étudiants, sujets, encadrants) et la négociation des créneaux imposent de multiples allers-retours avant d'aboutir à un planning acceptable.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[0.6\textwidth]{process_execution}
+    \caption{Processus actuel -- Phase~2 : Exécution}
+    \label{fig:processus_actuel_phase2}
+\end{figure}
+
+La Figure \ref{fig:processus_actuel_phase2} détaille la transition vers la phase d'exécution. Cette étape est critique car elle comporte une vérification manuelle des conflits (double affectation d'un enseignant ou d'une salle) avant la diffusion officielle. Le cycle se termine par une collecte physique des notes et un archivage souffrant d'un manque de centralisation numérique.
+
+\subsubsection{Analyse critique}
+\label{ch2:analyse_critique}
+
+\textbf{Avantages.} Le système actuel présente certains avantages dans des contextes de très petite taille : flexibilité d'adaptation à des cas particuliers, absence de dépendance technologique et charge de travail acceptable pour un volume très limité de soutenances.
+
+\textbf{Inconvénients.} Les inconvénients deviennent prépondérants dès que le volume augmente. Les erreurs de planification sont fréquentes et souvent détectées tardivement, provoquant des annulations de dernière minute. La traçabilité des décisions est faible, la charge du coordinateur est considérable en fin de semestre, et la ressaisie répétée des données multiplie les risques d'erreurs de transcription.
+
+\subsection{Étude des solutions similaires}
+\label{ch2:solutions_similaires}
+
+Plusieurs solutions logicielles existent sur le marché ou sous forme de projets open source. Les Tableaux \ref{tab:erp}, \ref{tab:planification_generique} et \ref{tab:opensource} présentent une analyse comparative qui a guidé le positionnement de notre projet.
+
+\subsubsection{Systèmes universitaires généraux (ERP)}
+\label{ch2:erp}
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lp{5.5cm}p{5.5cm}}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Solution}                                                        & \textbf{Description} & \textbf{Adéquation} \\
+        \midrule
+        \textbf{Apogée (Amue)}                                                   &
+        Système de gestion des étudiants utilisé dans les universités françaises &
+        Trop généraliste ; gestion des soutenances non native                                                                 \\
+        \addlinespace
+        \textbf{Aurion}                                                          &
+        ERP académique couvrant scolarité, stages et PFE                         &
+        Module soutenance limité, coût élevé, complexité d'intégration                                                        \\
+        \addlinespace
+        \textbf{Koha / Aleph}                                                    &
+        Systèmes bibliothèques universitaires                                    &
+        Hors sujet                                                                                                            \\
+        \bottomrule
+    \end{tabular}
+    \caption{Analyse des systèmes ERP académiques}
+    \label{tab:erp}
+\end{table}
+
+\subsubsection{Outils de planification générique}
+\label{ch2:planification_generique}
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lp{5.5cm}p{5.5cm}}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Solution}        & \textbf{Description}      & \textbf{Limites pour ce besoin}                       \\
+        \midrule
+        \textbf{Doodle}          & Sondages de disponibilité & Pas de gestion des jurys ni de génération PDF         \\
+        \addlinespace
+        \textbf{Google Calendar} & Calendrier partagé        & Pas de logique métier académique, pas de convocations \\
+        \addlinespace
+        \textbf{Microsoft Teams} & Gestion de réunions       & Non adapté à la logique jury/soutenance               \\
+        \bottomrule
+    \end{tabular}
+    \caption{Analyse des outils de planification génériques}
+    \label{tab:planification_generique}
+\end{table}
+
+\subsubsection{Solutions open source (GitHub)}
+\label{ch2:opensource}
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lp{5cm}p{6cm}}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Projet}          & \textbf{Lien GitHub}                                                                & \textbf{Limites identifiées}                                                            \\
+        \midrule
+        \textbf{appliSoutenance} & \href{https://github.com/cdegrel/appliSoutenance}{cdegrel/appliSoutenance}          & Focalisé sur la notation en séance ; ne gère pas la planification amont ni les salles   \\
+        \addlinespace
+        \textbf{PFE-Management}  & \href{https://github.com/khaireddine24/PFE-Management-System}{khaireddine24/PFE-MS} & Gestion administrative de base ; absence de détection de conflits et de génération PDF  \\
+        \addlinespace
+        \textbf{Jury (HackUTD)}  & \href{https://github.com/hackutd/jury}{hackutd/jury}                                & Adapté aux hackathons ; incompatible avec les rôles académiques (Président, Rapporteur) \\
+        \bottomrule
+    \end{tabular}
+    \caption{Analyse de projets open source similaires}
+    \label{tab:opensource}
+\end{table}
+
+\begin{projectbox}{Conclusion de l'analyse}
+    Comme le montrent les Tableaux \ref{tab:erp}, \ref{tab:planification_generique} et \ref{tab:opensource}, aucune solution existante ne réunit simultanément les quatre points suivants :
+    \begin{itemize}[label=\textcolor{primary}{\textbullet}, leftmargin=1cm]
+        \item Gestion complète du cycle de soutenance (planification \(\rightarrow\) évaluation).
+        \item Composition et affectation de jurys avec détection de conflits.
+        \item Génération automatique de convocations et fiches d'évaluation.
+        \item Adaptation au contexte marocain (filières, CNE, structure universitaire locale).
+    \end{itemize}
+\end{projectbox}
+
+\subsection{Choix technologiques}
+\label{ch2:choix_technologiques}
+
+Le choix des technologies est une étape cruciale qui conditionne la réussite du projet. Chaque décision a été prise en fonction des besoins spécifiques du système, des compétences de l'équipe et des contraintes du projet.
+
+\subsubsection{Frontend}
+\label{ch2:frontend}
+
+\textbf{React.js (v19)} a été retenu pour le développement de l'interface utilisateur. Ce choix se justifie par :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Réactivité :} son modèle de composants et le DOM virtuel offrent une expérience utilisateur fluide et sans rechargement de page.
+    \item \textbf{Écosystème riche :} une vaste communauté, des bibliothèques matures et des outils de développement performants.
+    \item \textbf{Compatibilité REST :} s'intègre parfaitement avec une API REST Spring Boot.
+\end{itemize}
+L'interface est conçue avec \textbf{Tailwind CSS} et \textbf{Shadcn UI} pour un design responsive, moderne et cohérent.
+
+\subsubsection{Backend}
+\label{ch2:backend}
+
+\textbf{Spring Boot 3.4.6} (Java 17) a été choisi pour la couche serveur pour les raisons suivantes :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Robustesse :} framework éprouvé pour les applications d'entreprise, offrant une sécurité et une stabilité élevées.
+    \item \textbf{Spring Security :} intégration native pour la gestion de l'authentification JWT et le contrôle d'accès par rôles.
+    \item \textbf{Spring Data JPA :} facilite l'accès aux données et la gestion des entités relationnelles.
+    \item \textbf{Architecture MVC :} séparation claire des préoccupations (Contrôleurs, Services, Repositories).
+    \item \textbf{Documentation et communauté :} large base de connaissances et support actif.
+\end{itemize}
+
+\subsubsection{Base de données}
+\label{ch2:base_donnees}
+
+\textbf{MySQL} a été sélectionné comme système de gestion de base de données :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Relationnel :} parfaitement adapté à la structure de données fortement interconnectée du système (étudiants, projets, jurys, soutenances, évaluations).
+    \item \textbf{Performance :} fiable et performant pour les charges de travail académiques.
+    \item \textbf{Intégration :} compatibilité native avec Spring Data JPA et Hibernate.
+    \item \textbf{Coût :} solution open source mature sans frais de licence.
+\end{itemize}
+
+\subsubsection{Outils de développement}
+\label{ch2:outils_dev}
+
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Git :} versionnement du code source et collaboration via GitHub.
+    \item \textbf{VS Code :} environnement de développement intégré pour le frontend.
+    \item \textbf{Postman :} test et documentation des API REST.
+    \item \textbf{Maven :} gestion des dépendances et construction du projet backend.
+\end{itemize}
+
+\subsection{Architecture générale retenue}
+\label{ch2:architecture}
+
+L'application adopte une architecture web en trois couches classique (Figure \ref{fig:architecture_generale}), favorisant la modularité et la séparation des préoccupations :
+
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Couche Frontend :} interface utilisateur React, affichage des données et capture des interactions.
+    \item \textbf{Couche Backend :} logique métier Spring Boot, règles de gestion, détection des conflits et génération des documents.
+    \item \textbf{Couche Base de données :} persistance MySQL, intégrité et sécurité des informations du système.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[0.9\textwidth]{arch_layers}
+    \caption{Architecture trois couches du système}
+    \label{fig:architecture_generale}
+\end{figure}
+
+\subsection{Conclusion}
+\label{ch2:conclusion}
+
+Ce chapitre a dressé un état des lieux complet du système actuel d'organisation des soutenances, mettant en évidence ses limites opérationnelles. L'analyse des solutions existantes a confirmé l'absence d'un outil répondant spécifiquement aux besoins de notre contexte. Les choix technologiques -- React, Spring Boot, MySQL -- ont été justifiés et l'architecture à trois couches a été présentée comme fondation du système. Le chapitre suivant détaillera l'analyse des besoins fonctionnels et la conception complète du système.

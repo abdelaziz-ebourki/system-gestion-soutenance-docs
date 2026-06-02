@@ -1,0 +1,36 @@
+% ═══════════════════════════════════════════════════════════════════════════════
+%  CHAPITRE 5 : STRATÉGIE DE TEST ET VALIDATION
+% ═══════════════════════════════════════════════════════════════════════════════
+\newpage
+\section{Stratégie de test et validation}
+\label{ch5}
+
+\subsection{Introduction}
+\label{ch5:intro}
+
+Ce chapitre présente la stratégie de test mise en œuvre pour garantir la qualité, la fiabilité et la conformité du système de gestion des soutenances. Il détaille les différents niveaux de tests effectués, des tests unitaires aux tests de bout en bout, ainsi que les résultats de validation.
+
+\subsection{Stratégie de test}
+\label{ch5:strategie}
+
+La stratégie repose sur une approche pyramidale, favorisant une couverture large et rapide grâce aux tests automatisés.
+
+\subsubsection{Tests unitaires (Backend)}
+\label{ch5:unit_tests}
+
+Les tests unitaires couvrent la logique métier critique du backend. Ils valident notamment la détection des conflits horaires par le \texttt{ConflictDetectionService}, la génération sécurisée des jetons JWT, ainsi que les calculs complexes de notes et de moyennes finales.
+
+\subsubsection{Tests d'intégration}
+\label{ch5:integration_tests}
+
+Les tests d'intégration valident la communication entre la couche service et la couche repository (Base de données), en utilisant une base H2 en mémoire pour garantir l'isolation et la répétabilité.
+
+\subsubsection{Tests E2E (End-to-End)}
+\label{ch5:e2e_tests}
+
+Les tests E2E, automatisés avec \textbf{Playwright}, simulent le comportement utilisateur réel sur l'application déployée. Ils couvrent les parcours critiques tels que l'authentification par rôle, la création et la planification complète d'une soutenance, la détection et le signalement des conflits via l'interface, ainsi que la saisie des évaluations et la génération des documents associés.
+
+\subsection{Conclusion}
+\label{ch5:conclusion}
+
+La stratégie de test rigoureuse, combinant tests unitaires, d'intégration et E2E, a permis de valider le fonctionnement conforme du système selon les exigences initiales et d'assurer une robustesse opérationnelle satisfaisante pour le déploiement en environnement de production académique.

@@ -1,0 +1,580 @@
+% ═══════════════════════════════════════════════════════════════════════════════
+%  CHAPITRE 4 : RÉALISATION ET DÉVELOPPEMENT
+% ═══════════════════════════════════════════════════════════════════════════════
+\newpage
+\section{Réalisation et développement}
+\label{ch4}
+
+\subsection{Introduction}
+\label{ch4:intro}
+
+Ce chapitre présente l'implémentation technique du système. Il décrit l'environnement de développement, l'architecture détaillée du code, l'implémentation des différents modules fonctionnels ainsi que les difficultés rencontrées et les solutions apportées.
+
+\subsection{Environnement de développement}
+\label{ch4:environnement}
+
+Le développement a été réalisé avec un ensemble d'outils et de configurations rigoureux. Le système d'exploitation utilisé a été Windows 11 ou Linux, couplé à VS Code pour le frontend, enrichi par les extensions nécessaires pour React, Tailwind CSS et ESLint. Le backend a été développé sur IntelliJ IDEA Ultimate, tirant profit des plugins Spring Boot, JPA et Maven. Le versionnement du code source est assuré par Git et GitHub pour la collaboration, tandis que Postman a été utilisé pour tester et documenter les API REST.
+
+\subsection{Implémentation du backend (Spring Boot)}
+\label{ch4:backend}
+
+Le backend est structuré selon l'architecture Spring Boot en couches, séparant les contrôleurs exposant les endpoints REST, les services contenant la logique métier et les règles de gestion, ainsi que les repositories assurant l'accès aux données via Spring Data JPA. Les entités représentent les tables de la base de données, tandis que la sécurité est gérée par la configuration Spring Security et les filtres JWT.
+
+\subsection{Implémentation du frontend (React)}
+\label{ch4:frontend}
+
+Le frontend, développé avec React et Tailwind CSS, repose sur une architecture modulaire composée de composants réutilisables. La navigation est orchestrée par React Router, la gestion d'état par React Context et les hooks, et les appels HTTP vers le backend par Axios. Enfin, l'interface utilisateur est construite avec Shadcn UI pour assurer une cohérence visuelle et une expérience moderne.
+
+\subsubsection{Architecture détaillée du backend}
+\label{ch4:backend_arch}
+
+Le backend Spring Boot adopte une architecture en paquets métier strictement séparée par rôle fonctionnel, garantissant une faible couplage et une haute cohésion.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[0.8\textwidth]{pkg_backend_structure}
+    \caption{Architecture en paquets du backend Spring Boot}
+    \label{fig:backend_packages}
+\end{figure}
+
+Le paquetage racine `com.system_gestion_soutenance.api` est organisé comme suit :
+
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \texttt{auth/} : Gestion de l'authentification (Login, JWT, mot de passe oublié)
+    \item \texttt{user/} : Hiérarchie des utilisateurs avec héritage JOINED (\textbf{User} $\rightarrow$ Student/Teacher/Coordinator)
+    \item \texttt{admin/} : Fonctionnalités réservées à l'administrateur
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{session/} : Sessions globales académiques
+        \item \texttt{defensesession/} : Sessions de soutenance spécifiques
+        \item \texttt{room/} : Gestion des salles
+        \item \texttt{department/} : Départements pédagogiques
+        \item \texttt{config/} : Configuration système (niveaux, filières, grades, templates jury, emails, documents)
+        \item \texttt{audit/} : Journalisation des actions
+        \item \texttt{stats/} : Statistiques globales
+    \end{itemize}
+    \item \texttt{coordinator/} : Espace coordinateur
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{project/} : Gestion des projets et sujets
+        \item \texttt{group/} : Groupes d'étudiants
+        \item \texttt{jury/} : Composition des jurys
+        \item \texttt{schedule/} : Planification et créneaux
+        \item \texttt{conflict/} : \textbf{Détection de conflits} (8 vérifications)
+        \item \texttt{unavailability/} : Gestion des indisponibilités enseignants
+    \end{itemize}
+    \item \texttt{teacher/} : Espace enseignant/membre de jury
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{evaluation/} : Saisie des notes et commentaires
+        \item \texttt{schedule/} : Consultation du planning personnel
+    \end{itemize}
+    \item \texttt{student/} : Espace étudiant
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{defense/} : Informations de soutenance
+        \item \texttt{document/} : Dépôt des rapports
+        \item \texttt{convocation/} : Téléchargement convocation
+    \end{itemize}
+    \item \texttt{notification/} : Notifications internes et emails
+    \item \texttt{common/} : Configurations transverses
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{config/} : SecurityConfig, OpenApiConfig
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Architecture détaillée du frontend}
+\label{ch4:frontend_arch}
+
+Le frontend React (TypeScript) est structuré en couches logiques bien définies :
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{\linewidth}
+        \centering
+        \textit{[Placeholder : Diagramme d'architecture frontend]}
+        \vspace{3cm}
+    \end{minipage}
+    \caption{Architecture du frontend React}
+    \label{fig:frontend_arch}
+\end{figure}
+
+Structure des répertoires principaux :
+
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \texttt{pages/} : 25+ pages organisées par rôle (Admin, Coordinator, Teacher, Student, Print)
+    \item \texttt{components/} : Composants réutilisables
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{ui/} : 39 composants primitifs Shadcn/Radix (button, card, dialog, data-table, sidebar...)
+        \item \texttt{academic/} : 5 composants métier (ProjectDialog, CreateJuryDialog, ConvocationDialog...)
+        \item \texttt{print/} : 8 composants dédiés à l'impression (Convocation, EvaluationSheet, AttendanceList, ProcesVerbal...)
+    \end{itemize}
+    \item \texttt{hooks/} : Hooks React Query personnalisés par rôle
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{use-admin-queries.ts}, \texttt{use-coordinator-queries.ts}, etc.
+    \end{itemize}
+    \item \texttt{lib/} : Logique métier et couche API
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{api-core.ts} : Wrapper fetch centralisé avec Bearer token
+        \item \texttt{conflict-engine.ts} : 8 vérifications de conflits (côté client)
+        \item \texttt{validations.ts} : Schémas Zod pour tous les formulaires
+    \end{itemize}
+    \item \texttt{contexts/} : AuthContext (état d'authentification global)
+    \item \texttt{mocks/} : MSW (Mock Service Worker) pour le développement offline
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item Base de données in-memory complète
+        \item Handlers pour tous les endpoints
+    \end{itemize}
+\end{itemize}
+
+\subsection{Implémentation des modules fonctionnels}
+\label{ch4:modules_impl}
+
+Cette section détaille l'implémentation technique des sept modules fonctionnels définis dans le chapitre de conception.
+
+\subsubsection{Module 1 : Authentification et gestion des rôles}
+
+L'authentification repose sur le standard \textbf{JWT (JSON Web Token)} avec une architecture stateless.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[0.9\textwidth]{seq_auth}
+    \caption{Diagramme de séquence : Processus d'authentification JWT}
+    \label{fig:auth_seq_impl}
+\end{figure}
+
+Flux d'authentification :
+\begin{enumerate}[label=\textcolor{primary}{\arabic*}.]
+    \item L'utilisateur soumet \texttt{email + password}
+    \item Backend: \texttt{BCryptPasswordEncoder} valide le hash
+    \item \texttt{JwtTokenProvider} génère un token signé (HMAC-SHA256) valide 2 heures
+    \item Claims inclus : \texttt{sub=userId}, \texttt{role=ADMIN|COORDINATOR|TEACHER|STUDENT}
+    \item Le frontend stocke le token dans \texttt{localStorage}
+    \item Chaque requête ultérieure inclut l'en-tête \texttt{Authorization: Bearer <token>}
+\end{enumerate}
+
+Sécurité côté backend (\texttt{SecurityConfig.java}) :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Stateless} : Aucune session côté serveur
+    \item \textbf{Role-based access control} :
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{/api/admin/**} $\rightarrow$ \texttt{ROLE\_ADMIN}
+        \item \texttt{/api/coordinator/**} $\rightarrow$ \texttt{ROLE\_COORDINATOR}
+        \item \texttt{/api/teacher/**} $\rightarrow$ \texttt{ROLE\_TEACHER}
+        \item \texttt{/api/student/**} $\rightarrow$ \texttt{ROLE\_STUDENT}
+    \end{itemize}
+    \item \textbf{Endpoints publics} : \texttt{/api/login}, \texttt{/api/auth/**}, \texttt{/swagger-ui/**}, \texttt{/h2-console/**}
+    \item Custom handlers pour \texttt{401 Unauthorized} et \texttt{403 Access Denied}
+\end{itemize}
+
+\subsubsection{Module 2 : Gestion académique}
+
+Ce module centralise la gestion des étudiants, enseignants, projets, groupes et configurations académiques.
+
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Hiérarchie User} : Héritage \texttt{JOINED} avec discriminant par rôle
+    \item \textbf{Entités de configuration} : \texttt{Major} (filière), \texttt{Level} (niveau), \texttt{Grade}, \texttt{Department}
+    \item \textbf{Projets} : Association \texttt{ManyToMany} avec \texttt{Student} via \texttt{Group}
+    \item \textbf{Import CSV} : Prévu pour utilisateurs et salles (bulk create)
+\end{itemize}
+
+\subsubsection{Module 3 : Planification}
+
+Le cœur de l'application : création des créneaux, réservation des salles, génération automatique optionnelle.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[\textwidth]{seq_planning}
+    \caption{Diagramme de séquence : Processus de planification}
+    \label{fig:planning_seq_impl}
+\end{figure}
+
+Entité clé : \texttt{SlotAssignment}
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \texttt{date}, \texttt{time} : Créneau horaire
+    \item \texttt{projectId} : Projet associé
+    \item \texttt{room} : Salle réservée
+\end{itemize}
+
+Fonctionnalités implémentées :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \texttt{GET/POST /api/coordinator/schedule} : Consultation et modification
+    \item \texttt{POST /auto-generate} : Algorithme itératif qui peuple le planning
+    \item \texttt{POST /publish} : Verrouille le planning et crée des notifications
+\end{itemize}
+
+\subsubsection{Module 4 : Gestion des jurys}
+
+Composition des jurys avec respect strict des Règles de Gestion RG4-RG5.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[\textwidth]{seq_jury_assignment}
+    \caption{Diagramme de séquence : Affectation d'un jury}
+    \label{fig:jury_seq_impl}
+\end{figure}
+
+Modèle de données :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \texttt{Jury} : Entité container
+    \item \texttt{JuryMember} : Ligne d'association
+    \begin{itemize}[label=\scriptsize$\circ$]
+        \item \texttt{roleName} : \texttt{"PRESIDENT"}, \texttt{"RAPPORTEUR"}, \texttt{"EXAMINATEUR"}, \texttt{"SUPERVISOR"}
+        \item \texttt{teacher} : ManyToOne vers Teacher
+    \end{itemize}
+    \item \texttt{JuryRoleTemplate} : Templates configurables par type de soutenance
+\end{itemize}
+
+\paragraph{Moteur de détection de conflits (8 vérifications)}
+
+Le service \texttt{ConflictDetectionService} effectue systématiquement ces vérifications :
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lp{10cm}}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Conflit} & \textbf{Vérification} \\
+        \midrule
+        \texttt{project\_already\_scheduled} & Un projet ne peut avoir deux créneaux \\
+        \texttt{slot\_occupied} & Même date+heure+salle déjà prise \\
+        \texttt{room\_capacity} & Capacité de la salle respectée \\
+        \texttt{date\_out\_of\_bounds} & Date dans la session globale \\
+        \texttt{teacher\_double\_booked} & Enseignant pas deux soutenances simultanées \\
+        \texttt{supervisor\_conflict} & Encadrant disponible \\
+        \texttt{break\_violation} & Pause entre deux soutenances \\
+        \texttt{teacher\_unavailable} & Respect des indisponibilités déclarées \\
+        \bottomrule
+    \end{tabular}
+    \caption{Types de conflits détectés}
+    \label{tab:conflict_types}
+\end{table}
+
+Ce moteur est implémenté \textbf{à la fois} backend (\texttt{ConflictDetectionService.java}) et frontend (\texttt{conflict-engine.ts}) pour une validation en temps réel lors du drag-and-drop.
+
+\subsubsection{Module 5 : Évaluation}
+
+Saisie des notes par les membres du jury.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[\textwidth]{seq_evaluation}
+    \caption{Diagramme de séquence : Saisie d'une évaluation}
+    \label{fig:eval_seq_impl}
+\end{figure}
+
+Entité \texttt{Evaluation} :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \texttt{teacherId} : Auteur de l'évaluation
+    \item \texttt{projectId} : Projet concerné
+    \item \texttt{role} : Rôle dans le jury (Président, Rapporteur...)
+    \item \texttt{score} : Note numérique
+    \item \texttt{comment} : Observations textuelles
+    \item \texttt{status} : \texttt{DRAFT} / \texttt{SUBMITTED} (soumission unique)
+\end{itemize}
+
+Les coefficients de pondération par rôle sont configurables dans \texttt{DefenseSession.evaluationCoefficients}.
+
+\subsubsection{Module 6 : Génération documentaire}
+
+Deux approches complémentaires :
+
+\paragraph{Backend : Convocation endpoint}
+Endpoint \texttt{GET /api/student/convocation} :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item Actuellement retourne un placeholder texte
+    \item Prêt pour implémentation PDF (iText ou Apache PDFBox)
+\end{itemize}
+
+\paragraph{Frontend : Composants Print}
+
+7 pages React dédiées sous \texttt{/print/*} :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \texttt{/print/evaluation-sheet}
+    \item \texttt{/print/attendance-list}
+    \item \texttt{/print/jury-convocation}
+    \item \texttt{/print/schedule}
+    \item \texttt{/print/proces-verbal}
+    \item \texttt{/print/student-convocation}
+    \item \texttt{/print/certificate}
+\end{itemize}
+
+Ces composants utilisent des styles CSS \texttt{@media print} pour une sortie PDF de qualité via le navigateur (Ctrl+P).
+
+\subsubsection{Module 7 : Tableau de bord}
+
+Tableaux de bord différenciés par rôle :
+
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item \textbf{Admin Dashboard} : Statistiques globales, compteurs utilisateurs, graphiques Recharts
+    \item \textbf{Coordinator Dashboard} : Vue d'ensemble session, avancement planification
+    \item \textbf{Teacher Dashboard} : Prochaines soutenances, évaluations en attente
+    \item \textbf{Student Dashboard} : Informations de sa soutenance, composition jury
+\end{itemize}
+
+\subsection{Extraits de code représentatifs}
+\label{ch4:code_snippets}
+
+\subsubsection{1. Génération JWT (Backend)}
+
+\begin{minted}[frame=single, linenos, breaklines, fontsize=\small]{java}
+// JwtTokenProvider.java
+@Service
+public class JwtTokenProvider {
+
+    @Value("${app.jwt-secret:s3cr3t-k3y-f0r-d3f3ns3-m4n4g3m3nt-syst3m-2026}")
+    private String jwtSecret;
+
+    @Value("${app.jwt-expiration-ms:7200000}") // 2 hours
+    private int jwtExpirationMs;
+
+    public String generateToken(Integer userId, Role role) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+
+        return Jwts.builder()
+                .subject(userId.toString())
+                .claim("role", role.name())
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSignInKey())
+                .compact();
+    }
+
+    private SecretKey getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(
+            java.util.Base64.getEncoder().encodeToString(jwtSecret.getBytes())
+        );
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+}
+\end{minted}
+
+\subsubsection{2. Vérification de conflit : Double réservation enseignant}
+
+\begin{minted}[frame=single, linenos, breaklines, fontsize=\small]{java}
+// ConflictDetectionService.java - extrait
+@Service
+public class ConflictDetectionService {
+
+    public List<ConflictResult> validateSlotAssignment(SlotAssignment slot) {
+        List<ConflictResult> conflicts = new ArrayList<>();
+
+        // Récupère le projet et son jury
+        Optional<Project> project = projectRepository.findById(slot.getProjectId());
+        if (project.isEmpty()) return conflicts;
+
+        // Vérifie chaque membre du jury
+        List<JuryMember> members = juryMemberRepository.findByJury_ProjectId(slot.getProjectId());
+        
+        for (JuryMember member : members) {
+            LocalTime slotStart = slot.getTime();
+            LocalTime slotEnd = slotStart.plusMinutes(DEFAULT_DURATION);
+            
+            // Cherche d'autres créneaux pour ce même enseignant à la même date
+            List<SlotAssignment> teacherSlots = slotAssignmentRepository
+                .findByDateAndJuryMembersContaining(slot.getDate(), member.getTeacher());
+            
+            for (SlotAssignment existing : teacherSlots) {
+                if (existing.getId().equals(slot.getId())) continue;
+                
+                LocalTime existingStart = existing.getTime();
+                LocalTime existingEnd = existingStart.plusMinutes(DEFAULT_DURATION);
+                
+                // Vérifie chevauchement
+                if (timesOverlap(slotStart, slotEnd, existingStart, existingEnd)) {
+                    conflicts.add(ConflictResult.builder()
+                        .type("teacher_double_booked")
+                        .severity(Severity.ERROR)
+                        .teacher(member.getTeacher())
+                        .conflictingSlot(existing)
+                        .message("Enseignant " + member.getTeacher().getUser().getFullName() + 
+                                 " déjà affecté à " + existing.getTitle() + 
+                                 " (" + existing.getTime() + ")")
+                        .build());
+                }
+            }
+        }
+        return conflicts;
+    }
+}
+\end{minted}
+
+\subsubsection{3. React Query : Hook personnalisé (Frontend)}
+
+\begin{minted}[frame=single, linenos, breaklines, fontsize=\small]{typescript}
+// use-coordinator-queries.ts - extrait
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { 
+  getProjects, createProject, updateProject, deleteProject,
+  getSchedule, saveSchedule, validateSchedule, generateSchedule,
+  type CreateProjectRequest, type SlotAssignment 
+} from '@/lib/api-coordinator';
+
+export function useProjects() {
+  return useQuery({
+    queryKey: ['coordinator', 'projects'],
+    queryFn: getProjects,
+    staleTime: 30_000 // 30s
+  });
+}
+
+export function useCreateProject() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data: CreateProjectRequest) => createProject(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coordinator', 'projects'] });
+      queryClient.invalidateQueries({ queryKey: ['coordinator', 'stats'] });
+    }
+  });
+}
+
+export function useSchedule() {
+  return useQuery({
+    queryKey: ['coordinator', 'schedule'],
+    queryFn: getSchedule
+  });
+}
+
+export function useGenerateSchedule() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: () => generateSchedule(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coordinator', 'schedule'] });
+    }
+  });
+}
+\end{minted}
+
+\subsection{Interfaces utilisateur}
+\label{ch4:interfaces}
+
+Cette section présente les principales vues de l'application.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lp{6cm}p{5cm}}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Rôle} & \textbf{Pages principales} & \textbf{URL} \\
+        \midrule
+        \multirow{6}{*}{\textbf{Admin}}
+            & Tableau de bord & \texttt{/admin} \\
+            & Gestion utilisateurs & \texttt{/admin/users/*} \\
+            & Salles & \texttt{/admin/rooms} \\
+            & Sessions académiques & \texttt{/admin/sessions} \\
+            & Configuration & \texttt{/admin/config} \\
+            & Journal d'audit & \texttt{/admin/audit-logs} \\
+        \midrule
+        \multirow{6}{*}{\textbf{Coordinator}}
+            & Tableau de bord & \texttt{/coordinator} \\
+            & Projets \& Groupes & \texttt{/coordinator/projects} \\
+            & \textbf{Defense Designer} & \texttt{/coordinator/schedule} \\
+            & Jurys & \texttt{/coordinator/juries} \\
+            & Conflits & \texttt{/coordinator/conflicts} \\
+            & Notes & \texttt{/coordinator/grades} \\
+        \midrule
+        \multirow{4}{*}{\textbf{Teacher}}
+            & Tableau de bord & \texttt{/teacher} \\
+            & Planning & \texttt{/teacher/schedule} \\
+            & Évaluations & \texttt{/teacher/evaluations} \\
+            & Indisponibilités & \texttt{/teacher/unavailability} \\
+        \midrule
+        \multirow{3}{*}{\textbf{Student}}
+            & Tableau de bord & \texttt{/student} \\
+            & Groupe & \texttt{/student/group} \\
+            & Documents & \texttt{/student/documents} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Architecture des pages par rôle}
+    \label{tab:pages_par_role}
+\end{table}
+
+\subsubsection{Écran de connexion}
+
+Point d'entrée unique pour tous les utilisateurs avec validation des identifiants et redirection selon le rôle.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../assets/prototype/login.png}
+    \caption{Interface : Page de connexion}
+    \label{fig:ui_login}
+\end{figure}
+
+\subsubsection{Defense Designer (Coordinateur)}
+
+Vue centrale de planification avec système de glisser-déposer (DnD Kit) et validation de conflits en temps réel.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../../assets/prototype/coordinator-dashboard.png}
+    \caption{Interface : Defense Designer (Planification)}
+    \label{fig:ui_designer}
+\end{figure}
+
+Fonctionnalités clés de cette vue, l'interface permet l'affichage d'un calendrier par jour ou par salle, une barre latérale regroupant les projets non planifiés, ainsi qu'un mécanisme de glisser-déposer pour l'assignation des projets à un créneau. Des indicateurs visuels signalent les conflits—en rouge pour les blocages et en orange pour les avertissements—tandis que des boutons dédiés permettent l'auto-génération, la validation et la publication du planning.
+
+\subsubsection{Tableau de bord Administrateur}
+
+Vue globale avec compteurs et graphiques Recharts.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../assets/prototype/admin-dashboard.png}
+    \caption{Interface : Tableau de bord Admin}
+    \label{fig:ui_admin}
+\end{figure}
+
+\subsubsection{Formulaire d'évaluation (Enseignant)}
+
+Interface de notation par membre de jury avec champ commentaire et coefficients.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../assets/prototype/teacher-dashboard.png}
+    \caption{Interface : Formulaire d'évaluation}
+    \label{fig:ui_evaluation}
+\end{figure}
+
+\subsubsection{Espace Étudiant}
+
+Vue simplifiée affichant les informations de soutenance : date, heure, salle, composition du jury.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../assets/prototype/student-dashboard.png}
+    \caption{Interface : Espace étudiant}
+    \label{fig:ui_student}
+\end{figure}
+
+\subsubsection{Impression : Convocation}
+
+Composant \texttt{/print/student-convocation} optimisé pour export PDF (Ctrl+P).
+
+\begin{figure}[H]
+    \centering
+    \includesvg[width=0.7\textwidth]{../../assets/prototype/convocation.svg}
+    \caption{Interface : Modèle de convocation (impression)}
+    \label{fig:ui_convocation}
+\end{figure}
+
+Autres vues d'impression disponibles :
+\begin{itemize}[label=\textcolor{primary}{\textbullet}]
+    \item Feuille d'évaluation
+    \item Liste de présence
+    \item Planning global
+    \item Procès-verbal
+    \item Convocation jury
+\end{itemize}
+
+\subsection{Difficultés rencontrées et solutions}
+\label{ch4:difficultes}
+
+Les principales difficultés rencontrées lors du développement incluent la gestion optimisée des conflits horaires et l'équilibrage automatique de la charge des jurys, résolues par des algorithmes de vérification systématique et des heuristiques de répartition.
+
+\subsection{Conclusion}
+\label{ch4:conclusion}
+
+Ce chapitre a présenté l'implémentation du système selon l'architecture définie au chapitre précédent. Le backend Spring Boot et le frontend React ont été structurés pour assurer la maintenabilité et l'évolutivité de l'application.
