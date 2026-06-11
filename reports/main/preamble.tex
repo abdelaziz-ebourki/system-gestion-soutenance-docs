@@ -1,6 +1,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
+\shorthandoff{:}
 \usepackage{newtxtext,newtxmath}
 \usepackage{geometry}
 \usepackage{amsmath}
@@ -11,6 +12,7 @@
 \usepackage{xstring}
 \usepackage{calc}
 \usepackage{pgfopts}
+\usepackage{pdfpages}
 \usepackage{tikz}
 \usepackage{titlesec}
 \usepackage{enumitem}
@@ -24,20 +26,23 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
 \usepackage{float}
-\usepackage{underscore}
 \usepackage{multirow}
 \usepackage{minted}
+\usepackage[acronym,toc]{glossaries}
+\makeglossaries
+\input{glossary_defs}
 
 \usetikzlibrary{shapes,arrows,positioning,fit,backgrounds}
 
 % --- Layout ---
 \geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
 \setlength{\headheight}{15pt}
+\emergencystretch=1em
 
 % --- Colors ---
-\definecolor{primary}{RGB}{0,51,102}
-\definecolor{secondary}{RGB}{200,220,240}
-\definecolor{accent}{RGB}{0,102,204}
+\definecolor{primary}{RGB}{0,128,128} % Teal
+\definecolor{accent}{RGB}{230,126,34}  % Orange
+\definecolor{secondary}{RGB}{248,249,250} % Light Grey
 
 % --- Typography ---
 \titleformat{\section}{\Large\bfseries\color{primary}}{\thesection}{1em}{}
@@ -58,22 +63,21 @@
     \includesvg[width=#1, inkscapelatex=false]{../../diagrams/svg/#2.svg}
 }
 
-% --- Project Boxes (Modern Flat Style) ---
+% --- Project Boxes (Modern Rounded Style) ---
 \newtcolorbox{projectbox}[1]{
     enhanced,
     breakable,
-    colback=primary!5,
+    colback=white,
     colframe=primary,
-    boxrule=0pt,
-    leftrule=4pt,
-    sharp corners,
+    arc=3mm,
+    boxrule=1pt,
     fonttitle=\bfseries,
-    coltitle=primary,
+    coltitle=accent,
     attach title to upper,
     after title={ :\enskip},
     title=#1,
-    top=10pt,
-    bottom=10pt,
+    top=8pt,
+    bottom=8pt,
     left=10pt,
     right=10pt
 }
@@ -84,15 +88,17 @@
     linkcolor  = primary,
     urlcolor   = accent,
     citecolor  = primary,
-    bookmarks  = true
+    bookmarks  = true,
+    unicode    = true
 ]{hyperref}
 
 % --- Cross-referencing (MUST BE LOADED AFTER HYPERREF) ---
-\usepackage[capitalise, french, noabbrev]{cleveref}
-
+\usepackage{cleveref}
 \crefname{figure}{figure}{figures}
-\Crefname{figure}{Figure}{Figures}
 \crefname{table}{tableau}{tableaux}
-\Crefname{table}{Tableau}{Tableaux}
 \crefname{section}{section}{sections}
+\Crefname{figure}{Figure}{Figures}
+\Crefname{table}{Tableau}{Tableaux}
 \Crefname{section}{Section}{Sections}
+
+% \glsaddall is called in main.tex after the titlepage

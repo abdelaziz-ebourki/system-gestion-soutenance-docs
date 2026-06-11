@@ -1,5 +1,5 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
 actor "Membre Jury" as Jury
 boundary "Interface Évaluation" as Front

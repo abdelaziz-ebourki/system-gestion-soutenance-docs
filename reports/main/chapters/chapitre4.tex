@@ -8,573 +8,451 @@
 \subsection{Introduction}
 \label{ch4:intro}
 
-Ce chapitre présente l'implémentation technique du système. Il décrit l'environnement de développement, l'architecture détaillée du code, l'implémentation des différents modules fonctionnels ainsi que les difficultés rencontrées et les solutions apportées.
+Ce chapitre détaille la mise en œuvre technique du système de gestion des soutenances. Nous présentons l'environnement de développement, l'architecture logicielle détaillée, ainsi que l'implémentation des modules fonctionnels avec des extraits de code représentatifs. Un accent particulier est mis sur le moteur de détection de conflits et l'interface interactive de planification, qui constituent le cœur technique du projet. Ce chapitre représente la partie la plus dense du rapport, car il traduit la conception présentée au chapitre précédent en implémentation concrète, en justifiant chaque choix technique par les contraintes métier identifiées lors de l'analyse des besoins.
 
 \subsection{Environnement de développement}
 \label{ch4:environnement}
 
-Le développement a été réalisé avec un ensemble d'outils et de configurations rigoureux. Le système d'exploitation utilisé a été Windows 11 ou Linux, couplé à VS Code pour le frontend, enrichi par les extensions nécessaires pour React, Tailwind CSS et ESLint. Le backend a été développé sur IntelliJ IDEA Ultimate, tirant profit des plugins Spring Boot, JPA et Maven. Le versionnement du code source est assuré par Git et GitHub pour la collaboration, tandis que Postman a été utilisé pour tester et documenter les API REST.
+\subsubsection{Matériel et Logiciels}
+Le développement a été conduit dans un environnement hybride Windows et Linux, utilisant des outils favorisant la collaboration et la qualité du code. Le tableau~\ref{tab:outils_dev} résume l'ensemble des outils et versions utilisés tout au long du projet.
 
-\subsection{Implémentation du backend (Spring Boot)}
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lll}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Catégorie} & \textbf{Outil} & \textbf{Version} \\
+        \midrule
+        Langage backend & Java & 17 (LTS) \\
+        Framework backend & Spring Boot & 3.4.6 \\
+        Build backend & Maven & 3.9+ \\
+        Langage frontend & TypeScript & 6 (strict) \\
+        Framework frontend & React & 19 \\
+        Bundler frontend & Vite & 8 \\
+        CSS framework & Tailwind CSS & 4 \\
+        Composants UI & shadcn/ui & — \\
+        State management & TanStack Query & v5 \\
+        Routing & React Router & v7 \\
+        Drag \& drop & @dnd-kit/core & — \\
+        Tests backend & JUnit 5 + Mockito & — \\
+        Couverture backend & JaCoCo & — \\
+        Tests frontend & Vitest + React Testing Library & — \\
+        Tests E2E & Playwright & 1.52 \\
+        Mocking frontend & MSW (Mock Service Worker) & v3 \\
+        Conteneurisation & Docker Compose & — \\
+        Email (dev) & Mailpit & — \\
+        API testing & Postman & — \\
+        CI/CD & GitHub Actions & — \\
+        \bottomrule
+    \end{tabular}
+    \caption{Outils et versions utilisés dans le projet}
+    \label{tab:outils_dev}
+\end{table}
+
+\subsubsection{Workflow de développement}
+\label{ch4:workflow}
+
+Le projet suit un workflow de développement organisé en cycles courts. Chaque fonctionnalité est développée sur une branche dédiée (\texttt{feature/*}), testée localement, puis mergée sur la branche \texttt{main} via une pull request. Les hooks de pré-commit (Husky + lint-staged) exécutent automatiquement le linting et le formatage avant chaque commit, garantissant que le code poussé est toujours conforme aux standards de l'équipe.
+
+La stratégie de branching est simplifiée mais efficace : la branche \texttt{main} est toujours dans un état stable et déployable, les branches \texttt{feature/*} vivent le temps du développement d'une fonctionnalité, et les branches \texttt{fix/*} sont utilisées pour les corrections de bugs. Les messages de commit suivent les conventions sémantiques : \texttt{feat:} pour les nouvelles fonctionnalités, \texttt{fix:} pour les corrections, \texttt{chore:} pour la maintenance, \texttt{docs:} pour la documentation, et \texttt{test:} pour les ajouts de tests.
+
+Le pipeline CI/CD (GitHub Actions) automatise la construction et les tests à chaque push. Trois workflows distincts couvrent les trois composants : l'API est construite avec Maven (\texttt{./mvnw package}), l'UI est bundlé avec Vite (\texttt{npm run build}), et les tests E2E s'exécutent avec Playwright contre les deux serveurs démarrés en parallèle. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt E2E lors de chaque fusion sur \texttt{main}.
+
+\subsection{Architecture technique du système}
+\label{ch4:architecture}
+
+L'application suit une architecture web moderne et découplée (API REST + SPA), assurant une séparation nette entre la logique métier et la présentation.
+
+\subsubsection{Le Backend : API REST Spring Boot}
 \label{ch4:backend}
 
-Le backend est structuré selon l'architecture Spring Boot en couches, séparant les contrôleurs exposant les endpoints REST, les services contenant la logique métier et les règles de gestion, ainsi que les repositories assurant l'accès aux données via Spring Data JPA. Les entités représentent les tables de la base de données, tandis que la sécurité est gérée par la configuration Spring Security et les filtres JWT.
+Le backend est structuré selon un pattern en couches strict pour garantir la maintenabilité. Chaque couche a une responsabilité clairement définie et communique avec les couches adjacentes via des interfaces bien définies.
 
-\subsection{Implémentation du frontend (React)}
+La \textbf{couche Contrôleur} expose les endpoints REST et gère la validation des entrées via les annotations \texttt{@Valid} et les DTOs de requête. Les contrôleurs utilisent l'injection de dépendances pour accéder aux services métier, et retournent des réponses enveloppées dans \verb|ApiResponse<T>| pour assurer une cohérence format. Le paramètre \verb|@AuthenticationPrincipal User user| permet d'extraire l'utilisateur courant directement depuis le contexte de sécurité Spring, sans passer par le \texttt{SecurityContextHolder}.
+
+La \textbf{couche Service} contient la logique métier et les règles de gestion. Le \texttt{ConflictDetection\-Service}
+ et le \texttt{ScheduleService} sont les services centraux du module de planification. Les services héritent de \texttt{BaseCrudService<T, ID, R>} qui fournit les opérations CRUD de base (findAll, findByIdOrThrow, save, deleteWithCheck), réduisant ainsi la duplication de code entre les modules.
+
+La \textbf{couche Repository} assure la persistance des données via Spring Data JPA avec des requêtes dérivées et des \texttt{@Query} personnalisées. Les interfaces de repository n'ont pas besoin d'implémentations concrètes : Spring Data génère automatiquement les requêtes à partir des noms de méthodes (par exemple, \texttt{findByEmail} génère une requête SELECT avec clause WHERE sur l'email).
+
+La \textbf{couche Entité} modélise les objets du domaine avec les annotations JPA (\texttt{@Entity}, \texttt{@OneToMany}, \texttt{@ManyToOne}) et les relations entre tables. L'héritage des utilisateurs est implémenté via la stratégie JOINED, et les données flexibles (membres de jury, coefficients) sont stockées via \texttt{@ElementCollection}.
+
+Le projet est organisé en modules fonctionnels : \texttt{auth/} (authentification JWT), \texttt{admin/} (configuration des entités académiques), \texttt{coordinator/} (cœur métier avec 11 sous-modules), \texttt{teacher/} (évaluations et indisponibilités), \texttt{student/} (consultation et documents), \texttt{notification/} (email et notifications internes), \texttt{common/} (configuration Spring Security, OpenAPI, audit, mappers, exceptions).
+
+\subsubsection{Le Frontend : SPA React}
 \label{ch4:frontend}
 
-Le frontend, développé avec React et Tailwind CSS, repose sur une architecture modulaire composée de composants réutilisables. La navigation est orchestrée par React Router, la gestion d'état par React Context et les hooks, et les appels HTTP vers le backend par Axios. Enfin, l'interface utilisateur est construite avec Shadcn UI pour assurer une cohérence visuelle et une expérience moderne.
+L'interface utilisateur est une application monopage avec les caractéristiques suivantes.
 
-\subsubsection{Architecture détaillée du backend}
-\label{ch4:backend_arch}
+La \textbf{gestion d'état asynchrone} est assurée par \textbf{TanStack Query v5} pour la synchronisation avec l'API, la mise en cache et le rechargement automatique des données. Chaque module dispose de ses propres hooks de requête (par ex.~\texttt{use-admin-queries}, \texttt{use-coordinator-queries}) qui encapsulent les appels API et gèrent automatiquement le cache, les rechargements et les invalidations. Le \texttt{QueryClient} est configuré avec un \texttt{staleTime} de 30~secondes et un nombre de retry limité à 1, pour éviter les rechargements excessifs tout en autorisant une récupération rapide après une erreur réseau.
 
-Le backend Spring Boot adopte une architecture en paquets métier strictement séparée par rôle fonctionnel, garantissant une faible couplage et une haute cohésion.
+Le \textbf{routage} utilise React Router v7 avec des routes imbriquées. Les routes publiques (/login, /forgot-password, /print/*) sont en dehors du layout authentifié. Les routes protégées sont regroupées par rôle sous \texttt{<DashboardLayout>} avec des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur. Les routes d'administration (hors configuration) sont en outre protégées par \texttt{SetupGuard}, qui vérifie que la configuration initiale du système a été effectuée (\texttt{setupCompleted} dans \texttt{GeneralSettings}).
 
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.8\textwidth]{pkg_backend_structure}
-    \caption{Architecture en paquets du backend Spring Boot}
-    \label{fig:backend_packages}
-\end{figure}
+Le \textbf{design system} repose sur Tailwind CSS~4 avec des variables CSS, shadcn/ui pour les composants de base (boutons, modales, tableaux), et des abstractions applicatives dans le répertoire \texttt{src/components/ui/}. Chaque composant UI est un wrapper personnalisé qui encapsule les composants Radix UI sous-jacents avec les styles Tailwind de l'application.
 
-Le paquetage racine `com.system_gestion_soutenance.api` est organisé comme suit :
+Les \textbf{composants spécifiques} sont organisés par module fonctionnel dans le répertoire \texttt{src/components/}. Par exemple, le sous-répertoire \texttt{coordinator/} contient les composants \texttt{DefenseCalendar}, \texttt{DraggableJurySlot}, \texttt{JurySidebar}, \texttt{SlotRow}, \texttt{RoomSearchSelect}, etc. Cette organisation permet de localiser rapidement les composants liés à une fonctionnalité donnée.
 
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{auth/} : Gestion de l'authentification (Login, JWT, mot de passe oublié)
-    \item \texttt{user/} : Hiérarchie des utilisateurs avec héritage JOINED (\textbf{User} $\rightarrow$ Student/Teacher/Coordinator)
-    \item \texttt{admin/} : Fonctionnalités réservées à l'administrateur
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{session/} : Sessions globales académiques
-        \item \texttt{defensesession/} : Sessions de soutenance spécifiques
-        \item \texttt{room/} : Gestion des salles
-        \item \texttt{department/} : Départements pédagogiques
-        \item \texttt{config/} : Configuration système (niveaux, filières, grades, templates jury, emails, documents)
-        \item \texttt{audit/} : Journalisation des actions
-        \item \texttt{stats/} : Statistiques globales
-    \end{itemize}
-    \item \texttt{coordinator/} : Espace coordinateur
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{project/} : Gestion des projets et sujets
-        \item \texttt{group/} : Groupes d'étudiants
-        \item \texttt{jury/} : Composition des jurys
-        \item \texttt{schedule/} : Planification et créneaux
-        \item \texttt{conflict/} : \textbf{Détection de conflits} (8 vérifications)
-        \item \texttt{unavailability/} : Gestion des indisponibilités enseignants
-    \end{itemize}
-    \item \texttt{teacher/} : Espace enseignant/membre de jury
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{evaluation/} : Saisie des notes et commentaires
-        \item \texttt{schedule/} : Consultation du planning personnel
-    \end{itemize}
-    \item \texttt{student/} : Espace étudiant
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{defense/} : Informations de soutenance
-        \item \texttt{document/} : Dépôt des rapports
-        \item \texttt{convocation/} : Téléchargement convocation
-    \end{itemize}
-    \item \texttt{notification/} : Notifications internes et emails
-    \item \texttt{common/} : Configurations transverses
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{config/} : SecurityConfig, OpenApiConfig
-    \end{itemize}
-\end{itemize}
-
-\subsubsection{Architecture détaillée du frontend}
-\label{ch4:frontend_arch}
-
-Le frontend React (TypeScript) est structuré en couches logiques bien définies :
-
-\begin{figure}[H]
-    \centering
-    \begin{minipage}{\linewidth}
-        \centering
-        \textit{[Placeholder : Diagramme d'architecture frontend]}
-        \vspace{3cm}
-    \end{minipage}
-    \caption{Architecture du frontend React}
-    \label{fig:frontend_arch}
-\end{figure}
-
-Structure des répertoires principaux :
-
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{pages/} : 25+ pages organisées par rôle (Admin, Coordinator, Teacher, Student, Print)
-    \item \texttt{components/} : Composants réutilisables
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{ui/} : 39 composants primitifs Shadcn/Radix (button, card, dialog, data-table, sidebar...)
-        \item \texttt{academic/} : 5 composants métier (ProjectDialog, CreateJuryDialog, ConvocationDialog...)
-        \item \texttt{print/} : 8 composants dédiés à l'impression (Convocation, EvaluationSheet, AttendanceList, ProcesVerbal...)
-    \end{itemize}
-    \item \texttt{hooks/} : Hooks React Query personnalisés par rôle
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{use-admin-queries.ts}, \texttt{use-coordinator-queries.ts}, etc.
-    \end{itemize}
-    \item \texttt{lib/} : Logique métier et couche API
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{api-core.ts} : Wrapper fetch centralisé avec Bearer token
-        \item \texttt{conflict-engine.ts} : 8 vérifications de conflits (côté client)
-        \item \texttt{validations.ts} : Schémas Zod pour tous les formulaires
-    \end{itemize}
-    \item \texttt{contexts/} : AuthContext (état d'authentification global)
-    \item \texttt{mocks/} : MSW (Mock Service Worker) pour le développement offline
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item Base de données in-memory complète
-        \item Handlers pour tous les endpoints
-    \end{itemize}
-\end{itemize}
+La \textbf{validation locale} est assurée par le moteur de conflits TypeScript (\texttt{conflict-engine.ts}), une réplique fonctionnelle du moteur Java, permettant une validation instantanée sans aller-retour serveur. Les schémas de validation Zod (\texttt{validations.ts}) garantissent la conformité des données saisies par l'utilisateur avant envoi au serveur.
 
 \subsection{Implémentation des modules fonctionnels}
 \label{ch4:modules_impl}
 
-Cette section détaille l'implémentation technique des sept modules fonctionnels définis dans le chapitre de conception.
+\subsubsection{Module Authentification et Sécurité}
+\label{ch4:module_auth}
 
-\subsubsection{Module 1 : Authentification et gestion des rôles}
+La sécurité repose sur un mécanisme \textit{stateless} utilisant les \textbf{JSON Web Tokens (JWT)}. Le flux d'authentification est géré par \texttt{AuthService} côté serveur :
 
-L'authentification repose sur le standard \textbf{JWT (JSON Web Token)} avec une architecture stateless.
+\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{java}
+public LoginResponse login(LoginRequest request) {
+    User user = userRepository.findByEmail(request.email())
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Identifiants invalides"));
 
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.9\textwidth]{seq_auth}
-    \caption{Diagramme de séquence : Processus d'authentification JWT}
-    \label{fig:auth_seq_impl}
-\end{figure}
-
-Flux d'authentification :
-\begin{enumerate}[label=\textcolor{primary}{\arabic*}.]
-    \item L'utilisateur soumet \texttt{email + password}
-    \item Backend: \texttt{BCryptPasswordEncoder} valide le hash
-    \item \texttt{JwtTokenProvider} génère un token signé (HMAC-SHA256) valide 2 heures
-    \item Claims inclus : \texttt{sub=userId}, \texttt{role=ADMIN|COORDINATOR|TEACHER|STUDENT}
-    \item Le frontend stocke le token dans \texttt{localStorage}
-    \item Chaque requête ultérieure inclut l'en-tête \texttt{Authorization: Bearer <token>}
-\end{enumerate}
-
-Sécurité côté backend (\texttt{SecurityConfig.java}) :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \textbf{Stateless} : Aucune session côté serveur
-    \item \textbf{Role-based access control} :
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{/api/admin/**} $\rightarrow$ \texttt{ROLE\_ADMIN}
-        \item \texttt{/api/coordinator/**} $\rightarrow$ \texttt{ROLE\_COORDINATOR}
-        \item \texttt{/api/teacher/**} $\rightarrow$ \texttt{ROLE\_TEACHER}
-        \item \texttt{/api/student/**} $\rightarrow$ \texttt{ROLE\_STUDENT}
-    \end{itemize}
-    \item \textbf{Endpoints publics} : \texttt{/api/login}, \texttt{/api/auth/**}, \texttt{/swagger-ui/**}, \texttt{/h2-console/**}
-    \item Custom handlers pour \texttt{401 Unauthorized} et \texttt{403 Access Denied}
-\end{itemize}
-
-\subsubsection{Module 2 : Gestion académique}
-
-Ce module centralise la gestion des étudiants, enseignants, projets, groupes et configurations académiques.
-
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \textbf{Hiérarchie User} : Héritage \texttt{JOINED} avec discriminant par rôle
-    \item \textbf{Entités de configuration} : \texttt{Major} (filière), \texttt{Level} (niveau), \texttt{Grade}, \texttt{Department}
-    \item \textbf{Projets} : Association \texttt{ManyToMany} avec \texttt{Student} via \texttt{Group}
-    \item \textbf{Import CSV} : Prévu pour utilisateurs et salles (bulk create)
-\end{itemize}
-
-\subsubsection{Module 3 : Planification}
-
-Le cœur de l'application : création des créneaux, réservation des salles, génération automatique optionnelle.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[\textwidth]{seq_planning}
-    \caption{Diagramme de séquence : Processus de planification}
-    \label{fig:planning_seq_impl}
-\end{figure}
-
-Entité clé : \texttt{SlotAssignment}
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{date}, \texttt{time} : Créneau horaire
-    \item \texttt{projectId} : Projet associé
-    \item \texttt{room} : Salle réservée
-\end{itemize}
-
-Fonctionnalités implémentées :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{GET/POST /api/coordinator/schedule} : Consultation et modification
-    \item \texttt{POST /auto-generate} : Algorithme itératif qui peuple le planning
-    \item \texttt{POST /publish} : Verrouille le planning et crée des notifications
-\end{itemize}
-
-\subsubsection{Module 4 : Gestion des jurys}
-
-Composition des jurys avec respect strict des Règles de Gestion RG4-RG5.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[\textwidth]{seq_jury_assignment}
-    \caption{Diagramme de séquence : Affectation d'un jury}
-    \label{fig:jury_seq_impl}
-\end{figure}
-
-Modèle de données :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{Jury} : Entité container
-    \item \texttt{JuryMember} : Ligne d'association
-    \begin{itemize}[label=\scriptsize$\circ$]
-        \item \texttt{roleName} : \texttt{"PRESIDENT"}, \texttt{"RAPPORTEUR"}, \texttt{"EXAMINATEUR"}, \texttt{"SUPERVISOR"}
-        \item \texttt{teacher} : ManyToOne vers Teacher
-    \end{itemize}
-    \item \texttt{JuryRoleTemplate} : Templates configurables par type de soutenance
-\end{itemize}
-
-\paragraph{Moteur de détection de conflits (8 vérifications)}
-
-Le service \texttt{ConflictDetectionService} effectue systématiquement ces vérifications :
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{10cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Conflit} & \textbf{Vérification} \\
-        \midrule
-        \texttt{project\_already\_scheduled} & Un projet ne peut avoir deux créneaux \\
-        \texttt{slot\_occupied} & Même date+heure+salle déjà prise \\
-        \texttt{room\_capacity} & Capacité de la salle respectée \\
-        \texttt{date\_out\_of\_bounds} & Date dans la session globale \\
-        \texttt{teacher\_double\_booked} & Enseignant pas deux soutenances simultanées \\
-        \texttt{supervisor\_conflict} & Encadrant disponible \\
-        \texttt{break\_violation} & Pause entre deux soutenances \\
-        \texttt{teacher\_unavailable} & Respect des indisponibilités déclarées \\
-        \bottomrule
-    \end{tabular}
-    \caption{Types de conflits détectés}
-    \label{tab:conflict_types}
-\end{table}
-
-Ce moteur est implémenté \textbf{à la fois} backend (\texttt{ConflictDetectionService.java}) et frontend (\texttt{conflict-engine.ts}) pour une validation en temps réel lors du drag-and-drop.
-
-\subsubsection{Module 5 : Évaluation}
-
-Saisie des notes par les membres du jury.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[\textwidth]{seq_evaluation}
-    \caption{Diagramme de séquence : Saisie d'une évaluation}
-    \label{fig:eval_seq_impl}
-\end{figure}
-
-Entité \texttt{Evaluation} :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{teacherId} : Auteur de l'évaluation
-    \item \texttt{projectId} : Projet concerné
-    \item \texttt{role} : Rôle dans le jury (Président, Rapporteur...)
-    \item \texttt{score} : Note numérique
-    \item \texttt{comment} : Observations textuelles
-    \item \texttt{status} : \texttt{DRAFT} / \texttt{SUBMITTED} (soumission unique)
-\end{itemize}
-
-Les coefficients de pondération par rôle sont configurables dans \texttt{DefenseSession.evaluationCoefficients}.
-
-\subsubsection{Module 6 : Génération documentaire}
-
-Deux approches complémentaires :
-
-\paragraph{Backend : Convocation endpoint}
-Endpoint \texttt{GET /api/student/convocation} :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item Actuellement retourne un placeholder texte
-    \item Prêt pour implémentation PDF (iText ou Apache PDFBox)
-\end{itemize}
-
-\paragraph{Frontend : Composants Print}
-
-7 pages React dédiées sous \texttt{/print/*} :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{/print/evaluation-sheet}
-    \item \texttt{/print/attendance-list}
-    \item \texttt{/print/jury-convocation}
-    \item \texttt{/print/schedule}
-    \item \texttt{/print/proces-verbal}
-    \item \texttt{/print/student-convocation}
-    \item \texttt{/print/certificate}
-\end{itemize}
-
-Ces composants utilisent des styles CSS \texttt{@media print} pour une sortie PDF de qualité via le navigateur (Ctrl+P).
-
-\subsubsection{Module 7 : Tableau de bord}
-
-Tableaux de bord différenciés par rôle :
-
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \textbf{Admin Dashboard} : Statistiques globales, compteurs utilisateurs, graphiques Recharts
-    \item \textbf{Coordinator Dashboard} : Vue d'ensemble session, avancement planification
-    \item \textbf{Teacher Dashboard} : Prochaines soutenances, évaluations en attente
-    \item \textbf{Student Dashboard} : Informations de sa soutenance, composition jury
-\end{itemize}
-
-\subsection{Extraits de code représentatifs}
-\label{ch4:code_snippets}
-
-\subsubsection{1. Génération JWT (Backend)}
-
-\begin{minted}[frame=single, linenos, breaklines, fontsize=\small]{java}
-// JwtTokenProvider.java
-@Service
-public class JwtTokenProvider {
-
-    @Value("${app.jwt-secret:s3cr3t-k3y-f0r-d3f3ns3-m4n4g3m3nt-syst3m-2026}")
-    private String jwtSecret;
-
-    @Value("${app.jwt-expiration-ms:7200000}") // 2 hours
-    private int jwtExpirationMs;
-
-    public String generateToken(Integer userId, Role role) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-
-        return Jwts.builder()
-                .subject(userId.toString())
-                .claim("role", role.name())
-                .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(getSignInKey())
-                .compact();
+    if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+        throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "Identifiants invalides");
     }
 
-    private SecretKey getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(
-            java.util.Base64.getEncoder().encodeToString(jwtSecret.getBytes())
-        );
-        return Keys.hmacShaKeyFor(keyBytes);
+    if (!user.isActive()) {
+        throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN, "Compte inactif");
     }
+
+    String token = jwtTokenProvider.generateToken(
+            String.valueOf(user.getId()), user.getRole().name());
+    return new LoginResponse(userMapper.toDto(user), token, expiresAt);
 }
 \end{minted}
 
-\subsubsection{2. Vérification de conflit : Double réservation enseignant}
+Le token JWT est stocké dans le \texttt{localStorage} du navigateur sous la clé \texttt{"token"} et transmis dans le header \texttt{Authorization: Bearer <token>} de chaque requête API via un intercepteur central (\texttt{src/lib/api-core.ts}). Un cookie HttpOnly (\texttt{jwt\_token}, SameSite=Lax, durée 2 heures) est également défini lors de la connexion, offrant une seconde voie d'authentification pour les navigateurs qui bloquent le \texttt{localStorage}. Le contrôle d'accès est renforcé côté serveur par Spring Security avec des annotations \texttt{@PreAuthorize} basées sur les rôles (\texttt{ROLE\_ADMIN}, \texttt{ROLE\_COORDINATOR}, \texttt{ROLE\_TEACHER}, \texttt{ROLE\_STUDENT}).
 
-\begin{minted}[frame=single, linenos, breaklines, fontsize=\small]{java}
-// ConflictDetectionService.java - extrait
-@Service
-public class ConflictDetectionService {
+Le module gère également la réinitialisation du mot de passe : l'utilisateur demande un lien de réinitialisation via \texttt{/api/auth/forgot-password}, le système génère un token UUID avec une durée de validité de 1 heure, envoie un email contenant le lien (via Mailpit en développement ou un serveur SMTP en production), et l'utilisateur définit un nouveau mot de passe via \texttt{/api/auth/reset-password}. La validation de la force du mot de passe utilise la bibliothèque zxcvbn, qui évalue la résistance aux attaques par force brute en temps réel.
 
-    public List<ConflictResult> validateSlotAssignment(SlotAssignment slot) {
-        List<ConflictResult> conflicts = new ArrayList<>();
+Le \texttt{JwtAuthFilter} (qui étend \texttt{OncePerRequestFilter}) intercepte chaque requête, extrait le token du header \texttt{Authorization} ou du cookie \texttt{jwt\_token}, le valide via \texttt{JwtTokenProvider}, charge l'utilisateur correspondant depuis un cache (\texttt{UserCacheService}), et configure le \texttt{SecurityContextHolder} Spring avec les autorisations appropriées. Les utilisateurs désactivés (\texttt{isActive = false}) sont bloqués avec un code 403.
 
-        // Récupère le projet et son jury
-        Optional<Project> project = projectRepository.findById(slot.getProjectId());
-        if (project.isEmpty()) return conflicts;
+\subsubsection{Le Defense Designer : Planification Interactive}
+\label{ch4:module_designer}
 
-        // Vérifie chaque membre du jury
-        List<JuryMember> members = juryMemberRepository.findByJury_ProjectId(slot.getProjectId());
-        
-        for (JuryMember member : members) {
-            LocalTime slotStart = slot.getTime();
-            LocalTime slotEnd = slotStart.plusMinutes(DEFAULT_DURATION);
-            
-            // Cherche d'autres créneaux pour ce même enseignant à la même date
-            List<SlotAssignment> teacherSlots = slotAssignmentRepository
-                .findByDateAndJuryMembersContaining(slot.getDate(), member.getTeacher());
-            
-            for (SlotAssignment existing : teacherSlots) {
-                if (existing.getId().equals(slot.getId())) continue;
-                
-                LocalTime existingStart = existing.getTime();
-                LocalTime existingEnd = existingStart.plusMinutes(DEFAULT_DURATION);
-                
-                // Vérifie chevauchement
-                if (timesOverlap(slotStart, slotEnd, existingStart, existingEnd)) {
-                    conflicts.add(ConflictResult.builder()
-                        .type("teacher_double_booked")
-                        .severity(Severity.ERROR)
-                        .teacher(member.getTeacher())
-                        .conflictingSlot(existing)
-                        .message("Enseignant " + member.getTeacher().getUser().getFullName() + 
-                                 " déjà affecté à " + existing.getTitle() + 
-                                 " (" + existing.getTime() + ")")
-                        .build());
-                }
+Le module de planification est l'élément le plus complexe du système. Il implémente une interface de type « canevas » permettant au coordinateur d'organiser les soutenances visuellement. L'architecture repose sur trois composants principaux : une barre latérale listant les jurys non planifiés, un calendrier interactif organisant les créneaux par salle et par date, et un panneau de détails affichant les informations du jury sélectionné.
+
+L'interaction repose sur \textbf{@dnd-kit/core}, qui permet le glisser-déposer des jurys depuis la barre latérale vers les cellules du calendrier. Chaque cellule représente un couple (date, créneau horaire) pour une salle sélectionnée. Le hook \texttt{useDefenseSchedule} orchestre l'ensemble du cycle de vie. Lors du dépôt d'un jury sur un créneau, le moteur de conflits local est invoqué pour valider l'opération. En cas d'erreur, le dépôt est annulé et un toast explicatif (avec suggestion de résolution) est affiché.
+
+Les modifications du planning sont stockées dans un état React local (\texttt{useState}) avec la clé \texttt{juryId} et ne sont synchronisées avec le serveur qu'au moment de la sauvegarde explicite. Cette approche d'\textbf{état local optimiste} réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
+
+L'algorithme d'\textbf{auto-génération} parcourt itérativement les salles, les jours et les créneaux pour proposer un planning initial. Pour chaque jury non planifié, l'algorithme cherche le premier créneau disponible en vérifiant les contraintes de capacité de salle et les conflits potentiels. Le \texttt{ScheduleService.autoGenerate} côté serveur implémente la même logique avec validation des contraintes de capacité, garantissant que le planning généré est valide avant persistance.
+
+Le listing~\ref{lst:use-defense-schedule} montre le cœur de la logique de validation lors du drag-and-drop :
+
+\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{typescript}
+const handleDragEnd = (event: DragEndEvent) => {
+  const { active, over } = event;
+  setActiveJuryId(null);
+
+  if (over && selectedRoomId) {
+    const juryId = active.id as string;
+    const [date, time] = (over.id as string).split("|");
+    const jury = juries.find((j) => j.id === juryId);
+    if (!jury) return;
+
+    const slotKey = `${date}|${selectedRoomId}|${time}`;
+    const context = buildConflictContext(
+      schedule, juries, rooms, projects,
+      teachers, unavailabilities, currentSession, timeSlots
+    );
+
+    const result = validateSlotAssignment(jury.projectId, slotKey, context);
+
+    if (!result.isValid) {
+      const error = result.issues.find(i => i.severity === "error")
+                   || result.issues[0];
+      if (error.suggestedResolution) {
+        toast.error(`${error.message} ${error.suggestedResolution}`,
+                    { duration: 5000 });
+      } else {
+        toast.error(error.message);
+      }
+      return; // Annulation du dépôt
+    }
+
+    setSchedule((prev) => ({
+      ...prev,
+      [juryId]: { roomId: selectedRoomId, date, time },
+    }));
+    toast.success("Positionné avec succès");
+  }
+};
+\end{minted}
+\label{lst:use-defense-schedule}
+
+\subsubsection{Le Moteur de Détection de Conflits}
+\label{ch4:module_conflicts}
+
+L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement 8 vérifications lors de chaque enregistrement. Le listing~\ref{lst:conflict-service} montre la méthode centrale \texttt{runAllChecks} et l'une des vérifications les plus critiques :
+
+\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2, label={Service de détection de conflits (extrait)}, labelposition=none]{java}
+private List<ConflictDetailResponse> runAllChecks(
+        Map<String, ConflictSlot> schedule, String defenseSessionId) {
+    List<ConflictDetailResponse> conflicts = new ArrayList<>();
+
+    conflicts.addAll(checkProjectAlreadyScheduled(schedule)); // RG6
+    conflicts.addAll(checkSlotOccupied(schedule));            // RG2
+    conflicts.addAll(checkRoomCapacity(schedule));            // RG3
+    conflicts.addAll(checkDateOutOfBounds(schedule, defenseSessionId)); // RG4
+    conflicts.addAll(checkTeacherDoubleBooked(schedule));     // RG1
+    conflicts.addAll(checkSupervisorConflict(schedule));      // RG5
+    conflicts.addAll(checkBreakInterval(schedule, defenseSessionId)); // RG7
+    conflicts.addAll(checkTeacherUnavailable(schedule));      // RG8
+
+    return conflicts;
+}
+
+private List<ConflictDetailResponse> checkTeacherDoubleBooked(
+        Map<String, ConflictSlot> schedule) {
+    List<ConflictDetailResponse> conflicts = new ArrayList<>();
+    Map<String, String> dateTeacherSlot = new HashMap<>();
+
+    for (Map.Entry<String, ConflictSlot> entry : schedule.entrySet()) {
+        String slotId = entry.getKey();
+        ConflictSlot data = entry.getValue();
+        String projectId = data.projectId();
+        String date = data.date();
+        if (projectId == null || date == null) continue;
+
+        Set<String> teacherIds = getJuryTeacherIds(projectId);
+        for (String tid : teacherIds) {
+            String key = date + "|" + tid;
+            if (dateTeacherSlot.containsKey(key)) {
+                conflicts.add(createConflict(
+                    "teacher_double_booked", "error",
+                    "Un enseignant est deja assigne a un autre projet le "
+                    + date, slotId,
+                    "Verifiez la disponibilite des enseignants"));
+            } else {
+                dateTeacherSlot.put(key, slotId);
             }
         }
-        return conflicts;
     }
+    return conflicts;
+}
+\end{minted}
+\label{lst:conflict-service}
+
+Le même moteur est dupliqué côté client en TypeScript (\texttt{conflict-engine.ts}). La fonction \texttt{validateSlotAssignment} implémente les mêmes 8 vérifications avec des messages d'erreur en français et des suggestions de résolution intelligentes. Le listing~\ref{lst:conflict-engine} montre la structure de la validation côté client :
+
+\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2, label={Moteur de conflits TypeScript (extrait)}, labelposition=none]{typescript}
+export function validateSlotAssignment(
+  projectId: string,
+  slot: string,
+  context: ConflictContext,
+): { isValid: boolean; issues: ConflictIssue[] } {
+  const issues: ConflictIssue[] = [];
+  const [date, roomId, time] = slot.split("|");
+
+  // RG2 — Créneau déjà occupé
+  if (context.schedule[slot]) {
+    issues.push({
+      type: "slot_occupied", severity: "error",
+      message: "Ce créneau est déjà occupé.", slot,
+      suggestedResolution: getSmartSuggestions(
+        projectId, date, roomId, time, context, "slot_occupied"
+      ) || "Choisissez un autre créneau horaire ou une autre salle.",
+    });
+  }
+
+  // RG3 — Capacité de salle
+  const room = context.rooms[roomId];
+  const project = context.projects[projectId];
+  if (room && project && project.studentIds.length > room.capacity) {
+    issues.push({
+      type: "room_capacity", severity: "error",
+      message: `La salle "${room.name}" a une capacité de ${room.capacity}
+                mais le projet a ${project.studentIds.length} étudiants.`,
+      slot,
+      suggestedResolution: getSmartSuggestions(
+        projectId, date, roomId, time, context, "room_capacity"
+      ) || `Utilisez une salle avec capacite >= ${project.studentIds.length}`,
+    });
+  }
+  // ... RG1, RG4, RG5, RG6, RG7, RG8
+}
+\end{minted}
+\label{lst:conflict-engine}
+
+Le moteur client inclut également une fonction \texttt{getSmartSuggestions} qui analyse le contexte pour proposer des alternatives pertinentes (salles libres, créneaux disponibles) lorsqu'un conflit est détecté, améliorant ainsi l'expérience utilisateur. Cette fonction parcourt les salles disponibles pour la date et le créneau conflictuel, filtre par capacité, et retourne la première alternative trouvée accompagnée d'un message d'explication.
+
+\subsubsection{Module d'Évaluation et Notation}
+\label{ch4:module_evaluation}
+
+Le module d'évaluation gère la saisie des notes par les membres du jury, le calcul des moyennes pondérées et le suivi de l'avancement des évaluations. La particularité du système réside dans la \textbf{pondération dynamique} : chaque session de soutenance définit des coefficients par rôle de jury (Président, Rapporteur, Examinateur -- chacun avec un coefficient configurable) stockés dans la table \texttt{defense\_session\_coefficients}.
+
+L'enseignant accède à la page d'évaluations (\texttt{/teacher/evaluations}) qui affiche la liste des soutenances auxquelles il est assigné en tant que membre de jury. Pour chaque soutenance, il peut saisir un score (sur 20) et un commentaire. Le statut de l'évaluation évolue de \texttt{PENDING} (en attente de saisie) à \texttt{SUBMITTED} (note soumise). Une fois la note soumise, elle ne peut plus être modifiée, garantissant l'intégrité du processus d'évaluation.
+
+Le calcul de la moyenne pondérée est effectué par le service \texttt{CoordinatorGradeService} via la méthode \texttt{getWeightedAverage}, qui agrège les scores individuels de chaque membre et les pondère selon les coefficients de la session. Le listing suivant illustre ce calcul :
+
+\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2, label={Calcul de la moyenne pondérée}, labelposition=none]{java}
+public Double getWeightedAverage(Long defenseId, Long sessionId) {
+    List<Evaluation> evals = evaluationRepository
+        .findByDefenseIdAndStatus(defenseId, EvaluationStatus.SUBMITTED);
+    Map<String, Integer> coefficients = defenseSessionRepository
+        .findById(sessionId).get().getEvaluationCoefficients();
+
+    double totalWeight = 0;
+    double weightedSum = 0;
+    for (Evaluation eval : evals) {
+        Integer coeff = coefficients.getOrDefault(eval.getRole(), 0);
+        weightedSum += eval.getScore() * coeff;
+        totalWeight += coeff;
+    }
+    return totalWeight > 0 ? weightedSum / totalWeight : 0.0;
 }
 \end{minted}
 
-\subsubsection{3. React Query : Hook personnalisé (Frontend)}
+Le coordinateur peut consulter l'avancement des évaluations via la page des notes, qui affiche pour chaque soutenance le nombre d'évaluations soumises sur le nombre total attendu, avec une barre de progression visuelle. Cette vue permet d'identifier rapidement les soutenances pour lesquelles toutes les notes n'ont pas encore été saisies.
 
-\begin{minted}[frame=single, linenos, breaklines, fontsize=\small]{typescript}
-// use-coordinator-queries.ts - extrait
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  getProjects, createProject, updateProject, deleteProject,
-  getSchedule, saveSchedule, validateSchedule, generateSchedule,
-  type CreateProjectRequest, type SlotAssignment 
-} from '@/lib/api-coordinator';
+\subsubsection{Génération Documentaire et Stratégie d'Impression}
+\label{ch4:module_print}
 
-export function useProjects() {
-  return useQuery({
-    queryKey: ['coordinator', 'projects'],
-    queryFn: getProjects,
-    staleTime: 30_000 // 30s
-  });
-}
+Plutôt que de générer des PDF lourds côté serveur (ce qui nécessiterait une bibliothèque comme Puppeteer ou iText), le système adopte une stratégie de \textbf{rendu client optimisé} exploitant les fonctionnalités natives du navigateur. Cinq types de documents sont supportés, chacun implémenté comme un composant React dédié optimisé pour l'impression A4.
 
-export function useCreateProject() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (data: CreateProjectRequest) => createProject(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['coordinator', 'projects'] });
-      queryClient.invalidateQueries({ queryKey: ['coordinator', 'stats'] });
-    }
-  });
-}
+La \textbf{fiche d'évaluation} (\texttt{PrintEvaluationSheet}) présente les informations du projet, du jury et de l'étudiant, avec des espaces dédiés à la saisie des notes et des observations par chaque membre du jury. La \textbf{liste de présence} (\texttt{PrintAttendanceList}) recense l'ensemble des soutenances d'une journée avec les noms des étudiants, des encadrants et des membres du jury, permettant au coordinateur de vérifier la présence physique de chaque acteur. La \textbf{convocation jury} (\texttt{PrintJuryConvocation}) est une lettre officielle adressée à chaque membre du jury, mentionnant la date, l'heure, la salle et le projet à évaluer. Le \textbf{planning imprimable} (\texttt{PrintDefenseSchedule}) présente le planning complet sous forme de tableau, organisé par salle et par créneau horaire. Enfin, le \textbf{procès-verbal} (\texttt{PrintProcesVerbal}) documente le déroulement de la soutenance avec les notes finales, la décision du jury (Admis ou Ajourné) et les signatures.
 
-export function useSchedule() {
-  return useQuery({
-    queryKey: ['coordinator', 'schedule'],
-    queryFn: getSchedule
-  });
-}
+La stratégie CSS \texttt{@media print} masque les éléments d'interface (menus, boutons, sidebar) et force le format A4 avec des marges précises lors de l'appel à \verb|window.print()|. Le dialogue d'impression du navigateur permet à l'utilisateur d'enregistrer le document en PDF, offrant ainsi une génération de PDF sans aucune infrastructure serveur dédiée. Le \texttt{DocumentController} côté serveur fournit les données structurées (JSON) pour chaque type de document via des endpoints REST dédiés, et le \texttt{DocumentDataService} assemble les informations à partir des entités JPA (projets, jurys, créneaux, évaluations).
 
-export function useGenerateSchedule() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: () => generateSchedule(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['coordinator', 'schedule'] });
-    }
-  });
-}
-\end{minted}
+\subsubsection{Système de Notifications}
+\label{ch4:module_notifications}
 
-\subsection{Interfaces utilisateur}
-\label{ch4:interfaces}
+Le système de notifications internes permet au système de communiquer des informations importantes aux utilisateurs sans dépendre d'un canal externe (email). Chaque notification est une entité \texttt{AppNotification} stockée en base de données avec un type (SUCCESS, WARNING, ERROR, INFO), un titre, un message, un horodatage, un statut de lecture et un lien d'action optionnel.
 
-Cette section présente les principales vues de l'application.
+Les notifications sont créées automatiquement par les services métier lors d'événements significatifs : création d'une soutenance, changement de statut d'une session, détection de conflit, soumission d'une évaluation, etc. Le frontend interroge le serveur toutes les 30 secondes via le hook \texttt{useNotifications} (configurable via \texttt{NOTIFICATION\_POLL\_INTERVAL}) pour récupérer les nouvelles notifications. Le composant \texttt{NotificationBadge} dans la sidebar affiche le nombre de notifications non lues sous forme de badge rouge.
+
+L'endpoint \texttt{POST /api/notifications/\{id\}/send-email} permet aux administrateurs et coordinateurs de déclencher l'envoi d'un email associé à une notification, utilisant la configuration SMTP définie dans \texttt{EmailConfig}. En mode développement, les emails sont dirigés vers Mailpit, qui offre une interface web (\texttt{http://localhost:8025}) permettant de visualiser les emails envoyés sans nécessiter de serveur SMTP réel.
+
+\subsubsection{Système d'Audit}
+\label{ch4:module_audit}
+
+La traçabilité des actions est assurée par un système d'audit basé sur la programmation orientée aspect (AOP). L'annotation \verb|@Audited(action="CREATE", entity="Department")| placée sur les méthodes de service déclenche automatiquement l'enregistrement d'une entrée dans la table \texttt{audit\_log} via l'aspect \texttt{AuditAspect}.
+
+L'aspect intercepte l'exécution de la méthode annotée, capture le résultat (succès ou échec), extrait l'identifiant de l'entité concernée (soit depuis les arguments de la méthode, soit depuis la valeur de retour via réflexion), et écrit un journal d'audit dans une transaction indépendante (\texttt{TransactionTemplate}) pour garantir l'enregistrement même en cas d'échec de la transaction métier.
+
+Chaque entrée d'audit contient l'action effectuée (CREATE, UPDATE, DELETE), le type d'entité concernée, l'identifiant de l'entité, l'email de l'utilisateur ayant effectué l'action, les détails de l'opération et l'horodatage. Le coordinateur d'administration peut consulter ces journaux via la page \texttt{/admin/audit-logs}, qui offre une vue paginée et filtrable de l'ensemble des actions effectuées dans le système.
+
+\subsubsection{Module de Configuration Administrative}
+\label{ch4:module_config}
+
+Le module d'administration gère la configuration structurelle du système à travers quatre entités singleton (identifiant fixe \texttt{id=1L}) et plusieurs entités de référence. Les configurations singleton sont \texttt{GeneralSettings} (nom de l'institution, logo, fuseau horaire, statut de configuration initiale), \texttt{DefenseSettings} (horaires de début/fin, durée des soutenances, intervalle de pause, périodes de création de groupes), \texttt{EmailConfig} (serveur SMTP, identifiants, nom d'expéditeur) et \texttt{DocumentConfig} (taille maximale des fichiers, extensions autorisées, limite de versions).
+
+Les entités de référence (\texttt{Grade}, \texttt{Level}, \texttt{Major}, \texttt{JuryRoleTemplate}) sont gérées via des interfaces CRUD standard avec recherche et pagination. Le composant \texttt{ConfigEntityManager} est un composant réutilisable qui fournit automatiquement les dialogues de création, modification et suppression pour toute entité de référence, réduisant ainsi la duplication de code entre les différentes pages de configuration.
+
+Le \texttt{SetupGuard} implémente une logique de première utilisation : si \texttt{setupCompleted} est à \texttt{false}, l'utilisateur est redirigé vers la page de configuration (\texttt{/admin/config}) avant d'accéder à toute autre page d'administration. Cette mécanique garantit que les paramètres essentiels (nom de l'institution, durée des soutenances) sont configurés avant la première utilisation du système.
+
+\subsubsection{Fonctionnalités Étudiant et Enseignant}
+\label{ch4:features_student_teacher}
+
+Le module étudiant offre trois fonctionnalités principales. La page \texttt{/student/group} permet de créer un groupe de projet, de rejoindre un groupe existant via un code d'invitation, et de consulter la composition actuelle du groupe. La page \texttt{/student/documents} affiche la liste des documents requis (convocation, fiche d'évaluation, etc.) avec leur statut (manquant, soumis, accepté) et permet de télécharger les convocations. Le hook \texttt{useStudentGroup} gère la logique de création et de jonction de groupe avec validation côté client.
+
+Le module enseignant complète les fonctionnalités de jury. La page d'indisponibilités fournit un calendrier interactif permettant de déclarer les créneaux d'indisponibilité sur les prochaines semaines. Les indisponibilités sont enregistrées via l'endpoint dédié et prise en compte par le moteur de conflits (RG8). La page de planning personnel affiche le planning de l'enseignant, filtré pour ne montrer que les soutenances auxquelles il est assigné en tant que membre de jury.
+
+\subsection{Interface utilisateur et navigation}
+\label{ch4:interface}
+
+L'interface utilisateur est organisée en sections distinctes accessibles via une sidebar adaptative, chaque section correspondant à un rôle spécifique. Le tableau~\ref{tab:pages_mapping} présente la cartographie complète des routes de l'application :
 
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{lp{6cm}p{5cm}}
+    \begin{tabular}{lll}
         \toprule
         \rowcolor{primary!10}
-        \textbf{Rôle} & \textbf{Pages principales} & \textbf{URL} \\
+        \textbf{Chemin} & \textbf{Page / Composant} & \textbf{Accès} \\
         \midrule
-        \multirow{6}{*}{\textbf{Admin}}
-            & Tableau de bord & \texttt{/admin} \\
-            & Gestion utilisateurs & \texttt{/admin/users/*} \\
-            & Salles & \texttt{/admin/rooms} \\
-            & Sessions académiques & \texttt{/admin/sessions} \\
-            & Configuration & \texttt{/admin/config} \\
-            & Journal d'audit & \texttt{/admin/audit-logs} \\
+        \texttt{/login} & Connexion & Public \\
+        \texttt{/verify-account} & Activation de compte & Public \\
+        \texttt{/forgot-password} & Mot de passe oublié & Public \\
+        \texttt{/reset-password} & Réinitialisation MDP & Public \\
         \midrule
-        \multirow{6}{*}{\textbf{Coordinator}}
-            & Tableau de bord & \texttt{/coordinator} \\
-            & Projets \& Groupes & \texttt{/coordinator/projects} \\
-            & \textbf{Defense Designer} & \texttt{/coordinator/schedule} \\
-            & Jurys & \texttt{/coordinator/juries} \\
-            & Conflits & \texttt{/coordinator/conflicts} \\
-            & Notes & \texttt{/coordinator/grades} \\
+        \texttt{/admin} & Dashboard Admin & Admin \\
+        \texttt{/admin/config} & Configuration système & Admin \\
+        \texttt{/admin/departments} & Gestion départements & Admin \\
+        \texttt{/admin/rooms} & Gestion salles & Admin \\
+        \texttt{/admin/users/students} & Gestion étudiants & Admin \\
+        \texttt{/admin/users/teachers} & Gestion enseignants & Admin \\
+        \texttt{/admin/users/coordinators} & Gestion coordinateurs & Admin \\
+        \texttt{/admin/audit-logs} & Journal d'audit & Admin \\
         \midrule
-        \multirow{4}{*}{\textbf{Teacher}}
-            & Tableau de bord & \texttt{/teacher} \\
-            & Planning & \texttt{/teacher/schedule} \\
-            & Évaluations & \texttt{/teacher/evaluations} \\
-            & Indisponibilités & \texttt{/teacher/unavailability} \\
+        \texttt{/coordinator} & Dashboard Coordinateur & Coord. \\
+        \texttt{/coordinator/schedule} & Defense Designer & Coord. \\
+        \texttt{/coordinator/projects} & Projets \& Groupes & Coord. \\
+        \texttt{/coordinator/juries} & Constitution jurys & Coord. \\
+        \texttt{/coordinator/defense-sessions} & Sessions de soutenance & Coord. \\
+        \texttt{/coordinator/conflicts} & Tableau des conflits & Coord. \\
+        \texttt{/coordinator/grades} & Suivi des notes & Coord. \\
+        \texttt{/coordinator/documents} & Documents & Coord. \\
         \midrule
-        \multirow{3}{*}{\textbf{Student}}
-            & Tableau de bord & \texttt{/student} \\
-            & Groupe & \texttt{/student/group} \\
-            & Documents & \texttt{/student/documents} \\
+        \texttt{/teacher} & Dashboard Enseignant & Ens. \\
+        \texttt{/teacher/schedule} & Planning personnel & Ens. \\
+        \texttt{/teacher/evaluations} & Saisie des notes & Ens. \\
+        \texttt{/teacher/unavailability} & Indisponibilités & Ens. \\
+        \midrule
+        \texttt{/student} & Dashboard Étudiant & Étud. \\
+        \texttt{/student/group} & Groupe de projet & Étud. \\
+        \texttt{/student/documents} & Documents \& convocation & Étud. \\
+        \midrule
+        \texttt{/profile} & Profil utilisateur & Tous \\
+        \texttt{/notifications} & Notifications & Tous \\
+        \midrule
+        \texttt{/print/evaluation-sheet} & Fiche d'évaluation & Public \\
+        \texttt{/print/attendance-list} & Liste de présence & Public \\
+        \texttt{/print/jury-convocation} & Convocation jury & Public \\
+        \texttt{/print/schedule} & Planning imprimable & Public \\
+        \texttt{/print/proces-verbal} & Procès-verbal & Public \\
         \bottomrule
     \end{tabular}
-    \caption{Architecture des pages par rôle}
-    \label{tab:pages_par_role}
+    \caption{Cartographie complète des pages de l'application}
+    \label{tab:pages_mapping}
 \end{table}
 
-\subsubsection{Écran de connexion}
+Chaque route protégée est encapsulée dans un composant \texttt{ProtectedRoute} qui vérifie le rôle de l'utilisateur depuis le token JWT stocké localement. En cas de non-autorisation, l'utilisateur est redirigé vers la page de connexion. Les routes d'administration (hors configuration) sont en outre protégées par \texttt{SetupGuard}, qui vérifie que la configuration initiale du système a été effectuée. Les routes d'impression (\texttt{/print/*}) sont les seules routes authentifiées en dehors du layout \texttt{DashboardLayout}, car elles nécessitent un rendu sans sidebar ni barre de navigation pour produire des documents propres à l'impression.
 
-Point d'entrée unique pour tous les utilisateurs avec validation des identifiants et redirection selon le rôle.
+\subsection{Bonnes pratiques adoptées}
+\label{ch4:bonnes_pratiques}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{../../assets/prototype/login.png}
-    \caption{Interface : Page de connexion}
-    \label{fig:ui_login}
-\end{figure}
+Le développement du système a été guidé par des bonnes pratiques industry visant à garantir la qualité, la maintenabilité et la reproductibilité du code.
 
-\subsubsection{Defense Designer (Coordinateur)}
+\subsubsection{Tests automatisés}
+\label{ch4:tests}
 
-Vue centrale de planification avec système de glisser-déposer (DnD Kit) et validation de conflits en temps réel.
+La stratégie de tests suit la pyramide des tests : un grand nombre de tests unitaires à la base, un nombre modéré de tests d'intégration au milieu, et un nombre réduit de tests de bout en bout au sommet. Côté backend, 86 classes de test JUnit 5 + Mockito couvrent les services, les contrôleurs et les utilitaires, avec une couverture de 85\% des lignes et 70\% des branches mesurée par JaCoCo. Côté frontend, 91 fichiers de test Vitest + React Testing Library couvrent les pages, les hooks, les composants et les utilitaires, avec une stratégie de mocking basée sur MSW (Mock Service Worker) qui simule les réponses de l'API sans appel réseau. Les tests E2E Playwright (environ 65 tests) valident les parcours utilisateur complets contre l'API réelle, avec une authentification préalable pour les 4 rôles.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{../../assets/prototype/coordinator-dashboard.png}
-    \caption{Interface : Defense Designer (Planification)}
-    \label{fig:ui_designer}
-\end{figure}
+\subsubsection{Hooks de pré-commit}
+\label{ch4:hooks}
 
-Fonctionnalités clés de cette vue, l'interface permet l'affichage d'un calendrier par jour ou par salle, une barre latérale regroupant les projets non planifiés, ainsi qu'un mécanisme de glisser-déposer pour l'assignation des projets à un créneau. Des indicateurs visuels signalent les conflits—en rouge pour les blocages et en orange pour les avertissements—tandis que des boutons dédiés permettent l'auto-génération, la validation et la publication du planning.
+Husky et lint-staged implémentent des hooks de pré-commit qui s'exécutent automatiquement avant chaque commit Git. Pour les fichiers TypeScript/TSX, ESLint et Prettier sont exécutés en parallèle. Pour les fichiers Java, le formatage est vérifié via SpotBugs, Checkstyle et PMD. Si l'une de ces vérifications échoue, le commit est bloqué, empêchant l'introduction de code non formaté ou contenant des erreurs de linting dans le dépôt. Cette barrière de qualité, combinée aux hooks post-commit qui exécutent les tests unitaires, constitue un filet de sécurité qui maintient la qualité du code à chaque étape du développement.
 
-\subsubsection{Tableau de bord Administrateur}
+\subsubsection{Conventions Git et GitHub}
+\label{ch4:git_conventions}
 
-Vue globale avec compteurs et graphiques Recharts.
+Les messages de commit suivent les conventions sémantiques : préfixes \texttt{feat:}, \texttt{fix:}, \texttt{chore:}, \texttt{docs:}, \texttt{test:}, suivis d'une description en anglais à l'impératif. Les pull requests documentent les changements apportés et lient les issues GitHub correspondantes. Les issues GitHub servent de support au suivi des tâches, avec des labels de priorité (\texttt{high}, \texttt{medium}, \texttt{low}) et de catégorie (\texttt{bug}, \texttt{feature}, \texttt{documentation}). Les releases GitHub documentent les versions majeures avec un changelog structuré.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../../assets/prototype/admin-dashboard.png}
-    \caption{Interface : Tableau de bord Admin}
-    \label{fig:ui_admin}
-\end{figure}
+\subsubsection{Pipeline CI/CD}
+\label{ch4:cicd}
 
-\subsubsection{Formulaire d'évaluation (Enseignant)}
-
-Interface de notation par membre de jury avec champ commentaire et coefficients.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{../../assets/prototype/teacher-dashboard.png}
-    \caption{Interface : Formulaire d'évaluation}
-    \label{fig:ui_evaluation}
-\end{figure}
-
-\subsubsection{Espace Étudiant}
-
-Vue simplifiée affichant les informations de soutenance : date, heure, salle, composition du jury.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../../assets/prototype/student-dashboard.png}
-    \caption{Interface : Espace étudiant}
-    \label{fig:ui_student}
-\end{figure}
-
-\subsubsection{Impression : Convocation}
-
-Composant \texttt{/print/student-convocation} optimisé pour export PDF (Ctrl+P).
-
-\begin{figure}[H]
-    \centering
-    \includesvg[width=0.7\textwidth]{../../assets/prototype/convocation.svg}
-    \caption{Interface : Modèle de convocation (impression)}
-    \label{fig:ui_convocation}
-\end{figure}
-
-Autres vues d'impression disponibles :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item Feuille d'évaluation
-    \item Liste de présence
-    \item Planning global
-    \item Procès-verbal
-    \item Convocation jury
-\end{itemize}
+Le pipeline GitHub Actions automatise la construction, les tests et la synchronisation entre les dépôts. Trois workflows distincts s'exécutent à chaque push sur \texttt{main} : le workflow de l'API compile le code Java avec Maven, exécute les tests unitaires et vérifie la couverture de code. Le workflow de l'UI lance le build Vite et les tests Vitest. Le workflow E2E synchronise les sources, démarre les deux serveurs, et exécute les tests Playwright. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt E2E, garantissant que les tests d'intégration s'exécutent toujours sur la dernière version du code.
 
 \subsection{Difficultés rencontrées et solutions}
 \label{ch4:difficultes}
 
-Les principales difficultés rencontrées lors du développement incluent la gestion optimisée des conflits horaires et l'équilibrage automatique de la charge des jurys, résolues par des algorithmes de vérification systématique et des heuristiques de répartition.
+Plusieurs difficultés techniques ont été rencontrées au cours du développement, nécessitant des solutions adaptées.
+
+La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive (DnD) et la base de données. Le Defense Designer manipule un état local complexe (associations jury $\rightarrow$ créneau) qui doit être validé contre 8 règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final. Cette approche réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
+
+Une seconde difficulté a été la \textbf{duplication du moteur de conflits} entre Java et TypeScript. Pour garantir la cohérence, les deux implémentations suivent exactement la même séquence de vérifications et les mêmes structures de données (projet, salle, enseignant, indisponibilité). Les tests unitaires des deux moteurs valident les mêmes scénarios, et les messages d'erreur sont maintenus de manière cohérente entre les deux implémentations.
+
+Une troisième difficulté a été la \textbf{conception du système de templates de jurys}. Les départements ont des besoins différents en termes de composition de jury (certains exigent un Président, un Rapporteur et un Examinateur, d'autres ajoutent un Co-encadrant). La solution a été d'implémenter des \texttt{JuryRoleTemplate} configurables par l'administrateur, chaque template définissant les rôles nécessaires, le nombre de membres par rôle et le coefficient associé. Cette flexibilité permet au système de s'adapter à différents contextes sans modification du code.
+
+La quatrième difficulté concernait la \textbf{compatibilité inter-navigateurs des composants d'impression}. Les feuilles de style \texttt{@media print} se comportent différemment selon les navigateurs (Chrome, Firefox, Safari), notamment pour le rendu des tableaux et la gestion des sauts de page. La solution a été d'adapter les composants Print pour qu'ils fonctionnent de manière optimale sur Chrome (le navigateur le plus utilisé), tout en restant fonctionnels sur les autres navigateurs.
 
 \subsection{Conclusion}
 \label{ch4:conclusion}
 
-Ce chapitre a présenté l'implémentation du système selon l'architecture définie au chapitre précédent. Le backend Spring Boot et le frontend React ont été structurés pour assurer la maintenabilité et l'évolutivité de l'application.
+Ce chapitre a présenté la traduction technique de la conception. L'utilisation d'une architecture découplée (API REST + SPA React), d'un moteur de conflits rigoureux implémenté en Java et dupliqué en TypeScript pour la réactivité, et d'une interface utilisateur moderne basée sur Tailwind CSS et shadcn/ui, a permis de répondre aux exigences de fiabilité et d'ergonomie fixées. Les modules de notifications, d'audit et de configuration administrative complètent le système en offrant les fonctionnalités transverses nécessaires à un usage productif. Les bonnes pratiques adoptées (tests automatisés, hooks de pré-commit, conventions Git, pipeline CI/CD) garantissent la maintenabilité du code à long terme. Le système est désormais prêt pour la phase de validation qui sera détaillée au chapitre suivant.

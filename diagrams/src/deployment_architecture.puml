@@ -1,5 +1,5 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
 node "Poste Utilisateur" as client {
     artifact "Navigateur Web\n(Chrome, Firefox, etc.)" as browser

@@ -1,36 +1,24 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
-actor "Coordinateur" as Coord
-boundary "Interface Documents" as Front
-control "Controller" as Controller
-entity "Document Service" as Service
-entity "PDF Generator" as PDF
-database "Base de données" as DB
+actor "Utilisateur" as User
+boundary "Print Component (React)" as Front
+entity "Browser Engine" as Browser
+entity "CSS Styles (@media print)" as CSS
 
-Coord -> Front : Sélectionne soutenances
-Front -> Controller : GET /api/documents/convocations (ids)
-activate Controller
+User -> Front : Cliquer sur "Imprimer la convocation"
+activate Front
 
-Controller -> Service : genererConvocations(ids)
-activate Service
+Front -> Front : Charger données de la soutenance
+Front -> Browser : Demander l'impression (window.print())
+deactivate Front
 
-Service -> DB : Récupérer infos (Étudiant, Jury, Salle, Date)
-activate DB
-DB --> Service : Données complètes
-deactivate DB
-
-Service -> PDF : createPDF(template, data)
-activate PDF
-PDF --> Service : Flux binaire (byte[])
-deactivate PDF
-
-Service --> Controller : Document prêt
-deactivate Service
-
-Controller --> Front : 200 OK (Application/pdf)
-deactivate Controller
-
-Front --> Coord : Téléchargement automatique
+activate Browser
+Browser -> CSS : Appliquer styles d'impression
+CSS -> Browser : Masquer UI (Navigation, Buttons)\nForcer format A4 / Marges
+Browser -> User : Afficher dialogue d'impression système
+User -> Browser : Confirmer "Enregistrer en PDF"
+Browser -> User : Générer fichier PDF local
+deactivate Browser
 
 @enduml

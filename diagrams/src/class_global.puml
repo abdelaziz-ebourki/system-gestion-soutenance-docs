@@ -1,7 +1,7 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
-' --- Énumérations ---
+' --- Enums ---
 
 enum RoleEnum {
     ADMINISTRATEUR
@@ -10,40 +10,32 @@ enum RoleEnum {
     ETUDIANT
 }
 
-enum JuryRole {
-    PRESIDENT
-    RAPPORTEUR 
-    EXAMINATEUR
-    ENCADRANT
+enum DefenseSessionStatus {
+    DRAFT
+    ACTIVE
+    CLOSED
 }
 
-enum SoutenanceStatus {
-    CREEE
-    PLANIFIEE
-    JURY_AFFECTE
-    CONVOQUEE
-    EN_COURS
-    TERMINEE
-    EVALUEE
-    CLOTUREE
-    ANNULEE
+enum DefenseType {
+    RATTRAPAGE
+    NORMAL
 }
 
-enum SessionStatus {
-    OUVERTE
-    VERROUILLEE
-    CLOTUREE
+enum DefenseStatus {
+    PLANNED
+    SCHEDULED
+    JURY_ASSIGNED
+    CONVOCATION_SENT
+    IN_PROGRESS
+    FINISHED
+    EVALUATED
+    CLOSED
+    CANCELLED
 }
 
 enum DecisionEnum {
     ADMIS
-    ADMIS_AVEC_CORRECTIONS
     AJOURNE
-}
-
-enum ConvocationType {
-    ETUDIANT
-    JURY
 }
 
 enum NotificationStatus {
@@ -52,185 +44,207 @@ enum NotificationStatus {
     ECHEC
 }
 
-enum ProjetType {
+enum ProjectType {
     PFE
     MEMOIRE
     STAGE
 }
 
-' --- Classes ---
+' --- Abstract User ---
 
-abstract class Utilisateur {
-    + int id
-    + string nom
-    + string prenom
-    + string email
-    + string password
+abstract class User {
+    + Long id
+    + String nom
+    + String prenom
+    + String email
+    + String password
     + RoleEnum role
-    + boolean actif
-    + seConnecter(email, password)
+    + Boolean actif
+    + seConnecter()
     + seDeconnecter()
     + modifierProfil()
 }
 
-class Administrateur {
-    + gererComptes()
-    + configurerSalles()
-    + definirPeriodes()
+' --- Entity Classes ---
+
+class DefenseSession {
+    + Long id
+    + String libelle
+    + LocalDate dateDebut
+    + LocalDate dateFin
+    + Integer breakDuration
+    + Map<String, Integer> evaluationCoefficients
+    + DefenseSessionStatus statut
+    + DefenseType defenseType
 }
 
-class Coordinateur {
-    + creerSession()
-    + validerPlanning()
-    + genererDocuments()
+class Defense {
+    + Long id
+    + LocalDate datePassage
+    + LocalTime heureDebut
+    + Integer dureeMinutes
+    + DefenseStatus statut
 }
 
-class Enseignant {
-    + string grade
-    + string specialite
-    + string departement
-    + consulterConvocations()
-    + getDisponibilites()
+class Project {
+    + Long id
+    + String titre
+    + String description
+    + ProjectType type
 }
 
-class Etudiant {
-    + string cne
-    + string filiere
-    + string niveau
-    + consulterSoutenance()
-}
-
-class MembreJury {
-    + JuryRole roleJury
-    + boolean present
-}
-
-class Projet {
-    + int id
-    + string titre
-    + string description
-    + ProjetType type
-    + string statut
-}
-
-class Soutenance {
-    + int id
-    + date datePassage
-    + time heureDebut
-    + int dureeMinutes
-    + SoutenanceStatus statut
-    + planifier()
-    + annuler()
-}
-
-class Salle {
-    + int id
-    + string nom
-    + string batiment
-    + int capacite
-    + boolean disponible
-    + verifierDisponibilite()
+class Room {
+    + Long id
+    + String nom
+    + String batiment
+    + Integer capacite
 }
 
 class Evaluation {
-    + int id
-    + float note
-    + string observations
-    + boolean validee
-    + saisir()
-    + valider()
+    + Long id
+    + Double note
+    + String observations
+    + Boolean validee
 }
 
-class ResultatSoutenance {
-    + int id
-    + float moyenneFinale
-    + DecisionEnum decision
-    + boolean validee
-    + calculerMoyenne()
-}
-
-class Indisponibilite {
-    + int id
-    + date dateDebut
-    + date dateFin
-    + time heureDebut
-    + time heureFin
-    + string motif
-}
-
-class SessionGlobale {
-    + int id
-    + string libelle
-    + date dateDebut
-    + date dateFin
-    + SessionStatus statut
-}
-
-class Convocation {
-    + int id
-    + ConvocationType type
-    + string cheminFichier
-    + boolean envoyee
-    + generer()
+class Unavailability {
+    + Long id
+    + LocalDate dateDebut
+    + LocalDate dateFin
+    + LocalTime heureDebut
+    + LocalTime heureFin
+    + String motif
 }
 
 class Notification {
-    + int id
-    + string sujet
-    + string contenu
+    + Long id
+    + String sujet
+    + String contenu
     + NotificationStatus statut
-    + datetime dateEnvoi
+    + LocalDateTime dateEnvoi
+}
+
+class StudentDocument {
+    + Long id
+    + String type
+    + String cheminFichier
+    + Boolean envoyee
+    + LocalDateTime dateGeneration
+}
+
+class StudentGroup {
+    + Long id
+    + String name
+    + String academicYear
+}
+
+class Department {
+    + Long id
+    + String nom
+}
+
+class Major {
+    + Long id
+    + String nom
+}
+
+class Level {
+    + Long id
+    + String nom
+}
+
+class Grade {
+    + Long id
+    + String nom
+}
+
+class GeneralSettings {
+    + Long id
+    + Integer defaultDefenseDuration
+    + Integer defaultBreakDuration
+}
+
+class DefenseSettings {
+    + Long id
+    + Integer minJuryMembers
+    + Integer maxDefenseDuration
+}
+
+class DocumentConfig {
+    + Long id
+    + String headerTemplate
+    + String footerTemplate
+}
+
+class EmailConfig {
+    + Long id
+    + String smtpHost
+    + Integer smtpPort
+    + String username
+}
+
+class AuditLog {
+    + Long id
+    + String action
+    + String entityType
+    + Long entityId
+    + LocalDateTime timestamp
+}
+
+class ActivationToken {
+    + String token
+    + LocalDateTime expiryDate
+    + Boolean used
 }
 
 class ResetToken {
-    + int id
-    + string token
-    + datetime expireLe
-    + boolean utilise
+    + String token
+    + LocalDateTime expiryDate
+    + Boolean used
 }
 
-' --- Relations ---
+class JuryRoleTemplate {
+    + Long id
+    + String name
+}
 
-' Héritage
-Utilisateur <|-- Administrateur
-Utilisateur <|-- Coordinateur
-Utilisateur <|-- Enseignant
-Utilisateur <|-- Etudiant
-Enseignant <|-- MembreJury
+' --- Relationships ---
 
-' Associations
-Etudiant "*" -- "1" Projet : travaille sur
-Enseignant "1..*" -- "*" Projet : encadre
-Projet "1" -- "1" Soutenance : fait l'objet de
-SessionGlobale "1" *-- "*" Soutenance : contient
-Soutenance "*" -- "1" Salle : se déroule dans
-Soutenance "1" -- "3..*" MembreJury : composée de
-Soutenance "1" -- "0..*" Evaluation : reçoit
-MembreJury "1" -- "0..*" Evaluation : saisit
-Soutenance "1" -- "0..1" ResultatSoutenance : consolide
-Soutenance "1" -- "1..*" Convocation : génère
-Enseignant "1" -- "0..*" Indisponibilite : déclare
-Utilisateur "1" -- "0..*" Notification : reçoit
-Utilisateur "1" -- "0..*" ResetToken : possède
+User "1" -- "0..*" Project : encadre >
+User "1" -- "0..*" Unavailability : déclare >
+User "1" -- "0..*" Notification : reçoit >
+User "1" -- "0..*" AuditLog : effectue >
+
+DefenseSession "1" *-- "0..*" Defense : contient >
+DefenseSession "1" *-- "0..*" StudentGroup : contient >
+
+Defense "1" -- "1" Room : se déroule dans >
+Defense "1" -- "1" Project : porte sur >
+Defense "1" -- "0..*" Evaluation : reçoit >
+Defense "1" -- "0..*" StudentDocument : génère >
+
+Evaluation "1" -- "1" User : saisie par >
+
+StudentGroup "1" -- "1" Level : niveau >
+StudentGroup "1" -- "1" Major : filière >
+
+Major "1" -- "1" Department : appartient à >
 
 ' --- Layout Hints ---
-RoleEnum -[hidden]right- JuryRole
-JuryRole -[hidden]right- SoutenanceStatus
-SoutenanceStatus -[hidden]right- SessionStatus
-SessionStatus -[hidden]right- DecisionEnum
-DecisionEnum -[hidden]right- ConvocationType
-ConvocationType -[hidden]right- NotificationStatus
-NotificationStatus -[hidden]right- ProjetType
 
-RoleEnum -[hidden]down- Utilisateur
-Administrateur -[hidden]right- Coordinateur
-Coordinateur -[hidden]right- Enseignant
-Enseignant -[hidden]right- Etudiant
+RoleEnum -[hidden]right- DefenseSessionStatus
+DefenseSessionStatus -[hidden]right- DefenseType
+DefenseType -[hidden]right- DefenseStatus
+DefenseStatus -[hidden]right- DecisionEnum
+DecisionEnum -[hidden]right- NotificationStatus
+NotificationStatus -[hidden]right- ProjectType
 
-SessionGlobale -[hidden]right- Soutenance
-Soutenance -[hidden]right- Salle
-Soutenance -[hidden]down- Evaluation
-Evaluation -[hidden]right- Convocation
-ResultatSoutenance -[hidden]right- Notification
+RoleEnum -[hidden]down- User
+
+DefenseSession -[hidden]right- Defense
+Defense -[hidden]right- Project
+Defense -[hidden]down- Evaluation
+Evaluation -[hidden]right- StudentDocument
+StudentGroup -[hidden]right- Department
 
 @enduml

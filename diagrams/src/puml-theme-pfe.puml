@@ -1,128 +1,61 @@
-!$THEME = "pfe"
-
-!$PRIMARY = "#003366"
-!$SECONDARY = "#F2F4F7"
+!$PRIMARY = "#008080"
+!$SECONDARY = "#F8F9FA"
+!$ACCENT = "#E67E22"
 !$TEXT = "#000000"
 !$WHITE = "#FFFFFF"
-!$NOTE_BG = "#FEFFDD"
-
-<style>
-  root {
-    FontColor $TEXT
-    LineColor $PRIMARY
-    LineThickness 1
-    Margin 5
-  }
-  node {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-    LineThickness 1
-    RoundCorner 5
-    SeparatorColor $PRIMARY
-  }
-  class {
-    BackgroundColor $SECONDARY
-    HeaderBackgroundColor $PRIMARY
-    FontColor $TEXT
-    HeaderFontColor $WHITE
-    LineThickness 1
-    SeparatorColor $PRIMARY
-  }
-  actor {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-  }
-  usecase {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-  }
-  component {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-    Padding 10
-  }
-  database {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-  }
-  boundary {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-  }
-  control {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-  }
-  entity {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-  }
-  participant {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-  }
-  group {
-    LineColor $PRIMARY
-    FontColor $PRIMARY
-    Header {
-      BackgroundColor $PRIMARY
-      FontColor $WHITE
-    }
-    Body {
-      BackgroundColor $SECONDARY
-    }
-  }
-  lifeLine {
-    LineColor $PRIMARY
-    BackgroundColor $SECONDARY
-  }
-  rectangle {
-    LineColor $PRIMARY
-    RoundCorner 5
-  }
-  arrow {
-    LineColor $PRIMARY
-    FontColor $PRIMARY
-  }
-  package {
-    BackgroundColor white
-    LineColor $PRIMARY
-    LineThickness 1
-  }
-  note {
-    BackgroundColor $NOTE_BG
-    LineColor $PRIMARY
-  }
-  activity {
-    BackgroundColor $SECONDARY
-  }
-  state {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-    FontColor $TEXT
-  }
-  diamond {
-    BackgroundColor $PRIMARY
-    LineColor $PRIMARY
-    FontColor $WHITE
-  }
-  circle {
-    BackgroundColor $PRIMARY
-    LineColor $PRIMARY
-  }
-  stop {
-    BackgroundColor $PRIMARY
-    LineColor $PRIMARY
-  }
-</style>
+!$NOTE_BG = "#FFF2E6"
 
 ' Skinparams global
 skinparam shadowing false
-skinparam SequenceGroupBackgroundColor $SECONDARY
-skinparam classAttributeIconSize 0
-skinparam packageStyle rectangle
-skinparam actorStyle rectangle
-skinparam roundcorner 5
+skinparam roundcorner 8
 skinparam Padding 5
 skinparam defaultFontName "SansSerif"
 skinparam defaultFontSize 12
+
+' Colors
+skinparam ActivityBackgroundColor $SECONDARY
+skinparam ActivityBorderColor $PRIMARY
+skinparam ActivityDiamondBackgroundColor $ACCENT
+skinparam ActivityDiamondBorderColor $ACCENT
+skinparam ActivityDiamondFontColor $WHITE
+
+skinparam ActorBackgroundColor $SECONDARY
+skinparam ActorBorderColor $PRIMARY
+
+skinparam ClassBackgroundColor $SECONDARY
+skinparam ClassBorderColor $PRIMARY
+skinparam ClassHeaderBackgroundColor $PRIMARY
+skinparam ClassAttributeIconSize 0
+
+skinparam ComponentBackgroundColor $SECONDARY
+skinparam ComponentBorderColor $PRIMARY
+
+skinparam DatabaseBackgroundColor $SECONDARY
+skinparam DatabaseBorderColor $PRIMARY
+
+skinparam NoteBackgroundColor $NOTE_BG
+skinparam NoteBorderColor $ACCENT
+
+skinparam StateBackgroundColor $SECONDARY
+skinparam StateBorderColor $PRIMARY
+
+skinparam UsecaseBackgroundColor $SECONDARY
+skinparam UsecaseBorderColor $PRIMARY
+
+skinparam SequenceGroupBackgroundColor $SECONDARY
+skinparam SequenceGroupBorderColor $PRIMARY
+skinparam SequenceLifeLineBorderColor $PRIMARY
+skinparam SequenceParticipantBackgroundColor $SECONDARY
+skinparam SequenceParticipantBorderColor $PRIMARY
+skinparam ControlBackgroundColor $SECONDARY
+skinparam ControlBorderColor $PRIMARY
+skinparam BoundaryBackgroundColor $SECONDARY
+skinparam BoundaryBorderColor $PRIMARY
+skinparam EntityBackgroundColor $SECONDARY
+skinparam EntityBorderColor $PRIMARY
+
+skinparam ArrowColor $PRIMARY
+skinparam ArrowFontColor $PRIMARY
+
+skinparam PackageBackgroundColor $WHITE
+skinparam PackageBorderColor $PRIMARY

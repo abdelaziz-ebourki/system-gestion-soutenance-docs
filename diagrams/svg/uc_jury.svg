@@ -1,1 +1,104 @@
-<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="448px" preserveAspectRatio="none" style="width:857px;height:448px;background:#FFFFFF;" version="1.1" viewBox="0 0 857 448" width="857px" zoomAndPan="magnify"><defs/><g><!--cluster Module Jury--><g id="cluster_Module Jury"><rect fill="none" height="430" rx="2.5" ry="2.5" style="stroke:#003366;stroke-width:1.0;" width="627" x="224" y="12"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="72" x="501.5" y="31.8281">Module Jury</text></g><g id="elem_UC1"><ellipse cx="352.8026" cy="243.1281" fill="#F2F4F7" rx="92.8026" ry="21.6281" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="105" x="300.3026" y="245.7841">Consulter planning</text></g><g id="elem_UC2"><ellipse cx="352.8188" cy="322.1638" fill="#F2F4F7" rx="101.3188" ry="22.6638" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="124" x="290.8188" y="324.8198">Consulter convocation</text></g><g id="elem_UC3"><ellipse cx="353.189" cy="403.0378" fill="#F2F4F7" rx="103.189" ry="23.0378" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="129" x="288.689" y="405.6938">D&#233;clarer indisponibilit&#233;</text></g><g id="elem_UC4"><ellipse cx="353.1102" cy="79.1281" fill="#F2F4F7" rx="83.6102" ry="21.6281" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="92" x="307.1102" y="81.7841">Saisir &#233;valuation</text></g><g id="elem_UC5"><ellipse cx="352.9162" cy="160.9832" fill="#F2F4F7" rx="112.9162" ry="24.9832" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="154" x="275.9162" y="163.6393">G&#233;n&#233;rer fiches d'&#233;valuation</text></g><g id="elem_UC7"><ellipse cx="712.3224" cy="84.8645" fill="#F2F4F7" rx="122.3224" ry="26.8645" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="177" x="623.8224" y="87.5205">Consulter informations &#233;tudiant</text></g><g id="elem_UC6"><ellipse cx="712.6208" cy="172.2242" fill="#F2F4F7" rx="114.1208" ry="25.2242" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="157" x="634.1208" y="174.8802">Valider / modifier &#233;valuation</text></g><!--entity Jury--><g id="elem_Jury"><ellipse cx="91.5" cy="208.5" fill="#F2F4F7" rx="8" ry="8" style="stroke:#003366;stroke-width:1.0;"/><path d="M91.5,216.5 L91.5,243.5 M78.5,224.5 L104.5,224.5 M91.5,243.5 L78.5,258.5 M91.5,243.5 L104.5,258.5 " fill="none" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="161" x="11" y="278.3281">Enseignant / Membre de jury</text></g><!--link UC5 to UC6--><!--link UC4 to UC6--><!--link UC6 to UC4--><g id="link_UC6_UC4"><path d="M625.83,188.3 C584.08,191.87 534.68,189.26 496,167 C473.87,154.26 485.88,134.02 466,118 C451.97,106.7 440.1272,100.5014 423.1372,94.6914 " fill="none" id="UC6-to-UC4" style="stroke:#003366;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#003366" points="417.46,92.75,424.6816,99.4469,422.191,94.3678,427.2701,91.8773,417.46,92.75" style="stroke:#003366;stroke-width:1.0;"/><text fill="#003366" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="50" x="503" y="157.8281">&#171;extend&#187;</text></g><!--link UC4 to UC7--><g id="link_UC4_UC7"><path d="M436.47,80.38 C482.04,81.15 533.5108,82.0092 584.1208,82.8592 " fill="none" id="UC4-to-UC7" style="stroke:#003366;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#003366" points="590.12,82.96,581.1884,78.8094,585.1207,82.876,581.0541,86.8083,590.12,82.96" style="stroke:#003366;stroke-width:1.0;"/><text fill="#003366" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="52" x="502" y="72.8281">&#171;include&#187;</text></g><!--link Jury to UC1--><g id="link_Jury_UC1"><path d="M177.11,243 C203.59,243 226.93,243 253.89,243 " fill="none" id="Jury-to-UC1" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="259.89,243,250.89,239,254.89,243,250.89,247,259.89,243" style="stroke:#003366;stroke-width:1.0;"/></g><!--link Jury to UC2--><g id="link_Jury_UC2"><path d="M177.13,269.97 C190.14,274.04 203.42,278.16 216,282 C240.37,289.43 261.5019,295.7037 284.8919,302.5537 " fill="none" id="Jury-to-UC2" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="290.65,304.24,283.137,297.8717,285.8515,302.8347,280.8886,305.5493,290.65,304.24" style="stroke:#003366;stroke-width:1.0;"/></g><!--link Jury to UC3--><g id="link_Jury_UC3"><path d="M128.27,286.6 C151.03,311.82 182.47,342.36 216,362 C234.73,372.97 250.8967,379.5371 271.6067,385.6671 " fill="none" id="Jury-to-UC3" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="277.36,387.37,269.8654,380.9801,272.5656,385.9509,267.5948,388.6511,277.36,387.37" style="stroke:#003366;stroke-width:1.0;"/></g><!--link Jury to UC5--><g id="link_Jury_UC5"><path d="M177.11,216.26 C212.9,204.95 248.2089,193.798 281.5289,183.268 " fill="none" id="Jury-to-UC5" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="287.25,181.46,277.463,180.358,282.4824,182.9667,279.8737,187.9861,287.25,181.46" style="stroke:#003366;stroke-width:1.0;"/></g><!--link Jury to UC4--><g id="link_Jury_UC4"><path d="M125.7,199.4 C148.41,172.37 180.71,138.93 216,118 C236.7,105.72 255.6848,98.6465 278.3848,92.7165 " fill="none" id="Jury-to-UC4" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="284.19,91.2,274.4712,89.6046,279.3523,92.4638,276.4932,97.3449,284.19,91.2" style="stroke:#003366;stroke-width:1.0;"/></g><!--SRC=[TP5BJiCm48RtFiNG3QkqeWygeIgRWf0gTOLWWrYuyIGPv8mhFoeGua0vHow64oAKgDGRU_n__ypOS-LBh12EEK9kJGLJeJ7tu0rOAaeFYYncdWmB8JDlB4mUs24LBDd33FPO7Io2GdWFzdC2qi4k7eHeNP8BZJ3P6nNYlkk0Bm5n1OUPT57R6dP1UxHmr9APkEXoF6zlBd6PuPF9PDjIZyx7w7rJPrhQY18hSaV3T21DlgbxVZ7cdoGvij3K9wd3CEzop3qsDJTrcpUdh4G7wlhSinAN-YREZQqwriLYFYYANzZRrcFNYzIaecS6bL6K4_xNtkrlgNY0vBKafP3VmZ7fcZWJsg4ctPl-jEaqRI_W3ZOR_F38AarxSTcBwquapdHG6DLl8TefGfAatOW6mNmOB8R1QXWiVm00]--></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="422px" preserveAspectRatio="none" style="width:772px;height:422px;" version="1.1" viewBox="0 0 772 422" width="772px" zoomAndPan="magnify"><defs/><g><!--MD5=[c0dcda1ba42c01e59d2e3c33a63dbdfb]
+cluster Module Jury--><rect fill="#FFFFFF" height="387" rx="4" ry="4" style="stroke: #008080; stroke-width: 1.5;" width="537" x="224" y="24"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="72" x="456.5" y="43.8281">Module Jury</text><ellipse cx="329.9732" cy="233.0404" fill="#F8F9FA" rx="66.4732" ry="17.5404" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="105" x="277.4732" y="237.7125">Consulter planning</text><ellipse cx="329.7534" cy="303.8507" fill="#F8F9FA" rx="77.2534" ry="17.8507" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="124" x="267.7534" y="308.5227">Consulter convocation</text><ellipse cx="329.8532" cy="375.7706" fill="#F8F9FA" rx="79.3532" ry="18.2706" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="129" x="265.3532" y="380.4427">Déclarer indisponibilité</text><ellipse cx="329.8314" cy="86.9199" fill="#F8F9FA" rx="58.8314" ry="17.4199" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="92" x="283.8314" y="91.5919">Saisir évaluation</text><ellipse cx="330.1697" cy="159.9339" fill="#F8F9FA" rx="90.1697" ry="20.4339" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="154" x="253.1697" y="164.606">Générer fiches d'évaluation</text><ellipse cx="644.4772" cy="95.9954" fill="#F8F9FA" rx="100.4772" ry="22.4954" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="177" x="555.9772" y="100.6675">Consulter informations étudiant</text><ellipse cx="644.4975" cy="174.1995" fill="#F8F9FA" rx="91.4975" ry="20.6995" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="157" x="565.9975" y="178.8716">Valider / modifier évaluation</text><!--MD5=[12629590de3abbc86218b65a4e7370ed]
+entity Jury--><ellipse cx="91.5" cy="198.5" fill="#F8F9FA" rx="8" ry="8" style="stroke: #008080; stroke-width: 1.5;"/><path d="M91.5,206.5 L91.5,233.5 M78.5,214.5 L104.5,214.5 M91.5,233.5 L78.5,248.5 M91.5,233.5 L104.5,248.5 " fill="none" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="161" x="11" y="268.8281">Enseignant / Membre de jury</text><!--MD5=[3ab3c4f0aa88f122bda36575115a204e]
+link UC5 to UC6--><!--MD5=[f44bba18f1d0323aea3cfc69b2c53cb9]
+link UC4 to UC6--><!--MD5=[aa51ccb7921928330ad442e765fe1063]
+link UC6 to UC4--><path d="M579.26,188.44 C539.48,193.89 488.77,194.22 450,172 C427.51,159.12 439.78,138.75 420,122 C408.71,112.45 394.51,105.3 380.78,100.05 " fill="none" id="UC6-&gt;UC4" style="stroke: #008080; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#008080" points="375.75,98.2,382.8161,105.0607,380.4427,99.9259,385.5775,97.5524,375.75,98.2" style="stroke: #008080; stroke-width: 1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="50" x="457" y="162.8281">«extend»</text><!--MD5=[5de79bcd4d0d9c382e7637adece796ee]
+link UC4 to UC7--><path d="M389.05,88.67 C431.2,89.89 489.38,91.56 539.47,93 " fill="none" id="UC4-&gt;UC7" style="stroke: #008080; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#008080" points="544.6,93.15,535.7179,88.8946,539.602,93.0072,535.4894,96.8913,544.6,93.15" style="stroke: #008080; stroke-width: 1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="52" x="456" y="81.8281">«include»</text><!--MD5=[8ba41773446885bbcc9bd66ee24efa22]
+link Jury to UC1--><path d="M177.21,233 C203.81,233 232.86,233 258.37,233 " fill="none" id="Jury-&gt;UC1" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="263.42,233,254.42,229,258.42,233,254.42,237,263.42,233" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[5d26fb9198aef9c6ba682474dc4de88e]
+link Jury to UC2--><path d="M177.21,258.43 C210.42,268.4 247.46,279.52 276.65,288.28 " fill="none" id="Jury-&gt;UC2" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="281.63,289.78,274.1502,283.3728,276.8389,288.3498,271.8619,291.0386,281.63,289.78" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[2d327bd8a22a129b2c1ace0658c0af76]
+link Jury to UC3--><path d="M135.3,277.14 C157.71,298.23 186.58,322.43 216,339 C232.36,348.21 251.36,355.55 269.05,361.18 " fill="none" id="Jury-&gt;UC3" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="274.01,362.72,266.6006,356.2315,269.2348,361.2376,264.2287,363.8717,274.01,362.72" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[e4080a8f92b39c018ab7af3f332224ae]
+link Jury to UC5--><path d="M177.21,206.85 C208.29,197.26 242.73,186.63 270.94,177.92 " fill="none" id="Jury-&gt;UC5" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="275.77,176.43,265.9887,175.2783,270.9948,177.9124,268.3606,182.9185,275.77,176.43" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[e7696d5571429b27bfcf6078b0503cf4]
+link Jury to UC4--><path d="M132.35,188.97 C154.96,166.24 184.91,139.65 216,122 C234.52,111.49 256.58,103.75 276.28,98.26 " fill="none" id="Jury-&gt;UC4" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="281.23,96.91,271.4943,95.4214,276.4065,98.2268,273.6012,103.139,281.23,96.91" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[bed8ffa3fc4b00c6c37b14bda77b44f7]
+@startuml
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam Padding 5
+skinparam defaultFontName "SansSerif"
+skinparam defaultFontSize 12
+
+skinparam ActivityBackgroundColor #F8F9FA
+skinparam ActivityBorderColor #008080
+skinparam ActivityDiamondBackgroundColor #E67E22
+skinparam ActivityDiamondBorderColor #E67E22
+skinparam ActivityDiamondFontColor #FFFFFF
+
+skinparam ActorBackgroundColor #F8F9FA
+skinparam ActorBorderColor #008080
+
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #008080
+skinparam ClassHeaderBackgroundColor #008080
+skinparam ClassAttributeIconSize 0
+
+skinparam ComponentBackgroundColor #F8F9FA
+skinparam ComponentBorderColor #008080
+
+skinparam DatabaseBackgroundColor #F8F9FA
+skinparam DatabaseBorderColor #008080
+
+skinparam NoteBackgroundColor #FFF2E6
+skinparam NoteBorderColor #E67E22
+
+skinparam StateBackgroundColor #F8F9FA
+skinparam StateBorderColor #008080
+
+skinparam UsecaseBackgroundColor #F8F9FA
+skinparam UsecaseBorderColor #008080
+
+skinparam SequenceGroupBackgroundColor #F8F9FA
+skinparam SequenceGroupBorderColor #008080
+skinparam SequenceLifeLineBorderColor #008080
+skinparam SequenceParticipantBackgroundColor #F8F9FA
+skinparam SequenceParticipantBorderColor #008080
+skinparam ControlBackgroundColor #F8F9FA
+skinparam ControlBorderColor #008080
+skinparam BoundaryBackgroundColor #F8F9FA
+skinparam BoundaryBorderColor #008080
+skinparam EntityBackgroundColor #F8F9FA
+skinparam EntityBorderColor #008080
+
+skinparam ArrowColor #008080
+skinparam ArrowFontColor #008080
+
+skinparam PackageBackgroundColor #FFFFFF
+skinparam PackageBorderColor #008080
+left to right direction
+
+actor "Enseignant / Membre de jury" as Jury
+
+rectangle "Module Jury" {
+    usecase "Consulter planning" as UC1
+    usecase "Consulter convocation" as UC2
+    usecase "Déclarer indisponibilité" as UC3
+    usecase "Saisir évaluation" as UC4
+    usecase "Générer fiches d'évaluation" as UC5
+
+    usecase "Consulter informations étudiant" as UC7
+    usecase "Valider / modifier évaluation" as UC6
+
+    UC6 -[hidden]up- UC5
+    UC6 -[hidden]left- UC4
+
+    UC6 ..> UC4 : <<extend>>
+    UC4 ..> UC7 : <<include>>
+}
+
+Jury - -> UC1
+Jury - -> UC2
+Jury - -> UC3
+Jury - -> UC5
+Jury - -> UC4
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 11:22:07 WEST 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 21.0.11+10-1-24.04.2-Ubuntu
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

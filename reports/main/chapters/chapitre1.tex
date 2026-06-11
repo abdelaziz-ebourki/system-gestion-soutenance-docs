@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch1:intro}
 
-Ce chapitre présente l'environnement dans lequel s'est déroulé notre projet de fin d'études. Il décrit la Faculté des Sciences Ben M'Sick (FSBM) -- son histoire, ses missions, sa structure organisationnelle -- ainsi que le département d'accueil et le cadre spécifique du stage. Cette contextualisation permet de mieux comprendre les enjeux institutionnels et pédagogiques qui ont motivé la réalisation de notre système de gestion des soutenances.
+Ce chapitre présente l'environnement dans lequel s'est déroulé notre projet de fin d'études. Il décrit la Faculté des Sciences Ben M'Sick (FSBM) -- son histoire, ses missions, sa structure organisationnelle -- ainsi que le département d'accueil et le cadre spécifique du stage. Cette contextualisation permet de mieux comprendre les enjeux institutionnels et pédagogiques qui ont motivé la réalisation de notre système de gestion des soutenances. Comprendre l'organisme d'accueil est essentiel pour appréhender les contraintes réelles auxquelles fait face le département MIP dans l'organisation de ses soutenances, et pour justifier les choix techniques adoptés dans notre solution.
 
 \subsection{Présentation générale de l'organisme}
 \label{ch1:presentation}
@@ -16,7 +16,11 @@ Ce chapitre présente l'environnement dans lequel s'est déroulé notre projet d
 \subsubsection{Historique et fiche signalétique}
 \label{ch1:historique}
 
-La Faculté des Sciences Ben M'Sick (FSBM) est l'une des composantes de l'Université Hassan II de Casablanca, l'une des plus grandes universités du Maroc. Située dans l'arrondissement de Ben M'Sick, à Casablanca, elle a été créée pour répondre à la demande croissante de formation scientifique dans la région du Grand Casablanca.
+La Faculté des Sciences Ben M'Sick (FSBM) est l'une des composantes de l'Université Hassan II de Casablanca (UH2C). Elle a ouvert ses portes en \textbf{1984}, dans le cadre d'une politique de décentralisation des institutions universitaires au Maroc, et est rattachée à l'Université Hassan II -- Mohammedia -- Casablanca, qui regroupe six établissements universitaires répartis sur deux campus : le campus de Casablanca et le campus de Mohammedia.
+
+Dès son ouverture, la FSBM a accordé un intérêt particulier au développement de la recherche scientifique parallèlement à sa mission d'enseignement et de formation. De 1984 à 2003, elle a dispensé divers formations de type premier cycle (DEUG) et deuxième cycle (Licences es-sciences : Bac+4) dans divers spécialités. À partir de 1989, les premières formations de 3ème cycle (CEA et DES) ont commencé grâce à la mise en place d'un certain nombre d'équipes et de laboratoires de recherche. En 1997, avec la création des UFR (Unités de Formation et de Recherche), la nouvelle réorganisation de la formation à et par la recherche a donné lieu à de nouveaux regroupements de chercheurs autour de nouvelles thématiques. Depuis 2003, la faculté dispense une formation modulaire et semestrielle dans le cadre de la réforme pédagogique de l'enseignement supérieur conformément au système LMD (Licence-Master-Doctorat).
+
+En 2008, suite à la réorganisation du cycle doctorat, la faculté a mis en place le Centre d'Études Doctorales (CED) : « Sciences et applications », adossé à l'ensemble des structures de recherches accréditées par l'université. Le 1er septembre 2014, une étape majeure a été franchie avec la fusion de l'Université Hassan II Mohammedia et de l'Université Hassan II Casablanca, donnant naissance à l'Université Hassan II de Casablanca (UH2C). Cette fusion avait pour objectifs d'optimiser les ressources, d'harmoniser les programmes académiques et de renforcer la compétitivité de l'université au niveau national et international.
 
 \begin{table}[H]
     \centering
@@ -24,29 +28,40 @@ La Faculté des Sciences Ben M'Sick (FSBM) est l'une des composantes de l'Univer
     \begin{tabular}{lp{10cm}}
         \toprule
         \rowcolor{primary!10}
-        \textbf{Information} & \textbf{Détail} \\
+        \textbf{Information}          & \textbf{Détail}                                                       \\
         \midrule
-        Nom officiel         & Faculté des Sciences Ben M'Sick (FSBM) \\
-        Université de rattachement & Université Hassan II de Casablanca \\
-        Adresse              & Avenue Commandant Driss El Harti, Ben M'Sick, Casablanca \\
-        Année de création    & 1997 \\
-        Type                 & Établissement public d'enseignement supérieur \\
-        Domaines             & Sciences exactes, Sciences et technologies \\
+        Nom officiel                  & Faculté des Sciences Ben M'Sick (FSBM)                                \\
+        Université de rattachement    & Université Hassan II de Casablanca (UH2C)                             \\
+        Adresse                       & Avenue Commandant Driss El Harti, Ben M'Sick, Casablanca              \\
+        Année de création             & 1984                                                                  \\
+        Type                          & Établissement public d'enseignement supérieur                         \\
+        Domaines                      & Sciences exactes, Sciences et technologies                            \\
+        Nombre de départements        & 6 (Mathématiques, Informatique, Physique, Chimie, Biologie, Géologie) \\
+        Licences fondamentales        & 6 parcours (selon l'offre de formation affichée par la FSBM)           \\
+        Masters                       & 18 spécialités (selon l'offre de formation affichée par la FSBM)      \\
+        Structures de recherche       & 23 (19 laboratoires, 2 centres, 1 observatoire, 1 plateforme)         \\
+        Effectif étudiant (2015--2016) & $\approx$ 11\,500 étudiants \\
         \bottomrule
     \end{tabular}
-    \caption{Fiche signalétique de la FSBM}
+    \caption{Fiche signalétique de la FSBM (effectif publié en 2015--2016)}
     \label{tab:fsbm_fiche}
 \end{table}
 
 \subsubsection{Missions et activités}
 \label{ch1:missions}
 
-La FSBM remplit plusieurs missions fondamentales. Elle assure tout d'abord la formation initiale en dispensant un enseignement supérieur de qualité dans les disciplines scientifiques fondamentales et appliquées aux niveaux Licence, Master et Doctorat. Parallèlement, elle développe une activité intense de recherche scientifique au sein de ses divers laboratoires et équipes. L'établissement se consacre également à préparer activement ses étudiants à leur insertion dans le monde professionnel à travers des formations adaptées, tout en contribuant au rayonnement académique, scientifique et technologique de la région et du pays.
+La FSBM remplit plusieurs missions fondamentales qui structurent son fonctionnement au quotidien. Sur le plan de la formation, elle assure la formation initiale en dispensant un enseignement supérieur de qualité dans les disciplines scientifiques fondamentales et appliquées aux niveaux Licence, Master et Doctorat. L'offre de formation couvre un large éventail de spécialités, des mathématiques pures à l'informatique appliquée, en passant par les sciences physiques et de la vie, permettant aux étudiants de construire un parcours académique solide et diversifié.
+
+Parallèlement à sa mission d'enseignement, la faculté développe une activité intense de recherche scientifique au sein de ses 23 structures de recherche, qui incluent 19 laboratoires, 2 centres de recherche, un observatoire et une plateforme technologique (PINTECH). Ces unités de recherche, souvent labellisées par le Centre National pour la Recherche Scientifique et Technique (CNRST), travaillent sur des projets nationaux et internationaux, contribuant ainsi à l'avancement des connaissances dans des domaines tels que les mathématiques appliquées, l'intelligence artificielle, la modélisation physique, la biotechnologie et la chimie des matériaux. La présence de ces laboratoires enrichit l'environnement pédagogique en permettant aux étudiants de s'initier à la recherche dès le cycle de licence.
+
+L'établissement se consacre également à préparer activement ses étudiants à leur insertion dans le monde professionnel à travers des formations adaptées, des stages pratiques et des partenariats avec des entreprises du secteur technologique. La faculté a noué des relations de coopération internationale à travers la signature de conventions et accords avec des universités, des institutions universitaires, des centres et des laboratoires de recherche au Maroc et à l'étranger. Enfin, elle contribue au rayonnement académique, scientifique et technologique de la région et du pays en organisant des colloques, des journées scientifiques et des échanges académiques avec des institutions partenaires.
 
 \subsubsection{Secteurs d'intervention}
 \label{ch1:secteurs}
 
-La faculté couvre un spectre étendu de disciplines scientifiques, incluant les mathématiques—avec l'algèbre, l'analyse, les probabilités, les statistiques et les mathématiques appliquées—ainsi que l'informatique, qui englobe le développement logiciel, les bases de données, les réseaux et l'intelligence artificielle. Les sciences physiques, la chimie, les sciences de la vie (biologie moléculaire, biotechnologie, écologie) et les sciences de la terre (géologie, géophysique, géomatique) complètent cette offre de formation diversifiée.
+La faculté couvre un spectre étendu de disciplines scientifiques organisées en six départements principaux. Le département de Mathématiques propose les licences en Mathématiques Fondamentales et Appliquées, en plus des masters spécialisés en analyse, algèbre, probabilités-statistiques et mathématiques appliquées. Le département d'Informatique est responsable de la filière Licence MIP (Mathématiques, Informatique et Physique) et de plusieurs masters en informatique, couvrant des domaines tels que le développement logiciel, les bases de données, les réseaux, l'intelligence artificielle et le traitement de l'information.
+
+Les sciences physiques sont représentées par le département de Physique, qui forme les étudiants aux fondements de la mécanique, de l'électromagnétisme, de la thermodynamique et de l'optique. Le département de Chimie offre des formations en chimie générale, organique, analytique et des matériaux. Les sciences de la vie sont traitées par le département de Biologie, avec des spécialités en biologie moléculaire, biotechnologie, écologie et sciences de la santé. Enfin, le département de Géologie couvre les sciences de la terre, la géophysique, la géomatique et la gestion de l'environnement. Cette diversité disciplinaire fait de la FSBM un établissement de premier plan dans le paysage de l'enseignement supérieur scientifique marocain, formant chaque année des milliers de diplômés susceptibles d'occuper des postes clés dans les secteurs académique, industriel et technologique.
 
 \subsection{Structure organisationnelle}
 \label{ch1:organisation}
@@ -54,12 +69,39 @@ La faculté couvre un spectre étendu de disciplines scientifiques, incluant les
 \subsubsection{Organigramme}
 \label{ch1:organigramme}
 
-La FSBM est administrée par un Doyen, assisté par des Vice-Doyens et un Secrétaire Général. Sa structure s'articule autour de plusieurs organes décisionnels et entités fonctionnelles, au premier rang desquels figure le Conseil de faculté, instance délibérante composée d'enseignants-chercheurs, d'étudiants et de représentants administratifs. Le fonctionnement académique est encadré par des commissions pédagogiques chargées de l'organisation et du suivi des filières. La faculté s'appuie également sur des départements pédagogiques, des laboratoires de recherche ainsi que des services administratifs essentiels, notamment la scolarité, les ressources humaines, les finances et la bibliothèque.
+La FSBM est administrée par un Doyen, assisté par des Vice-Doyens et un Secrétaire Général. Sa structure s'articule autour de plusieurs organes décisionnels et entités fonctionnelles, au premier rang desquels figure le Conseil de faculté, instance délibérante composée d'enseignants-chercheurs, d'étudiants et de représentants administratifs. Le fonctionnement académique est encadré par des commissions pédagogiques chargées de l'organisation et du suivi des filières.
+
+La structure de gouvernance de la faculté peut être décomposée en trois niveaux. Au niveau stratégique, le Conseil de faculté définit les orientations générales, valide les programmes de formation et approuve le budget annuel. Au niveau opérationnel, le Doyen et les Vice-Doyens coordonnent les activités pédagogiques, scientifiques et administratives. Au niveau départemental, les chefs de département et leurs conseils assurent la gestion quotidienne des filières, la coordination des emplois du temps et le suivi pédagogique des étudiants. La faculté s'appuie également sur des laboratoires de recherche ainsi que des services administratifs essentiels, notamment la scolarité, les ressources humaines, les finances et la bibliothèque.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+            level 1/.style={sibling distance=3.5cm},
+            level 2/.style={sibling distance=2.2cm},
+            every node/.style={draw, rounded corners, align=center, fill=primary!5, font=\small},
+            edge from parent/.style={draw, -latex}
+        ]
+        \node {Doyen}
+        child {node {Vice-Doyen\\Pédagogique}
+                child {node {Conseil de\\département}}
+            }
+        child {node {Vice-Doyen\\Recherche}
+                child {node {Laboratoires}}
+            }
+        child {node {Secrétaire\\Général}
+                child {node {Services\\administratifs}}
+            };
+    \end{tikzpicture}
+    \caption{Organigramme simplifié de la FSBM}
+    \label{fig:organigramme}
+\end{figure}
 
 \subsubsection{Description des départements}
 \label{ch1:departements}
 
-La structuration pédagogique repose sur plusieurs départements, chacun responsable d'une ou plusieurs filières. Le Département de Mathématiques propose les licences en Mathématiques Fondamentales et Appliquées, en plus des masters spécialisés. Le Département d'Informatique est responsable de la filière Licence MIP (Mathématiques, Informatique et Physique) et de plusieurs masters en informatique. Les autres domaines sont couverts par le Département de Physique, le Département de Chimie, le Département de Biologie et le Département de Géologie, qui offrent chacun des formations spécialisées. Ces départements sont dirigés par des chefs élus, assistés par un conseil de département, assurant la coordination des enseignements et des emplois du temps.
+La structuration pédagogique repose sur six départements, chacun responsable d'une ou plusieurs filières. Le Département de Mathématiques propose les licences en Mathématiques Fondamentales et Appliquées, en plus des masters spécialisés. Le Département d'Informatique est responsable de la filière Licence MIP (Mathématiques, Informatique et Physique) et de plusieurs masters en informatique, incluant des spécialités telles que Data Sciences et Big Data, Intelligence Artificielle, et Traitement de l'Information. Les autres domaines sont couverts par le Département de Physique, le Département de Chimie, le Département de Biologie et le Département de Géologie, qui offrent chacun des formations spécialisées.
+
+Ces départements sont dirigés par des chefs élus, assistés par un conseil de département, assurant la coordination des enseignements et des emplois du temps. Chaque département dispose de son propre ensemble de salles de cours, de salles informatiques et de laboratoires, lui permettant d'organiser ses activités de formation de manière autonome. Le département d'Informatique, en particulier, dispose de plusieurs salles équipées de postes de travail connectés, indispensables aux enseignements pratiques en développement logiciel et en administration de bases de données.
 
 \subsection{Environnement du stage}
 \label{ch1:environnement}
@@ -67,18 +109,29 @@ La structuration pédagogique repose sur plusieurs départements, chacun respons
 \subsubsection{Département d'accueil}
 \label{ch1:equipe}
 
-Notre projet de fin d'études s'est déroulé au sein de la filière \textbf{Licence Fondamentale MIP (Mathématiques, Informatique et Physique)} du Département d'Informatique. Cette filière vise à former des étudiants polyvalents possédant une solide base en mathématiques et une maîtrise des technologies de l'information. La formation couvre des domaines variés tels que le développement logiciel, les bases de données, les réseaux, l'algorithmique avancée et l'intelligence artificielle.
+Notre projet de fin d'études s'est déroulé au sein de la filière \textbf{Licence Fondamentale MIP (Mathématiques, Informatique et Physique)} du Département d'Informatique. Cette filière, créée pour former des étudiants polyvalents possédant une solide base en mathématiques et une maîtrise des technologies de l'information, a été conçue en réponse à la demande croissante du secteur technologique marocain pour des profils à l'interface entre les mathématiques et l'informatique. La formation couvre des domaines variés tels que le développement logiciel, les bases de données, les réseaux, l'algorithmique avancée et l'intelligence artificielle, tout en maintenant un socle mathématique rigoureux incluant l'analyse, l'algèbre, les probabilités et les statistiques.
 
-Le corps enseignant de la filière est composé de professeurs de l'enseignement supérieur, de professeurs habilités et de professeurs assistants, couvrant l'ensemble des spécialités du programme.
+Le corps enseignant de la filière est composé de professeurs de l'enseignement supérieur, de professeurs habilités et de professeurs assistants, couvrant l'ensemble des spécialités du programme. Cette diversité de profils garantit aux étudiants un encadrement de qualité dans chaque domaine d'études, depuis les fondements théoriques jusqu'aux applications pratiques les plus récentes.
 
 \subsubsection{Contexte du projet au sein de l'organisme}
 \label{ch1:contexte_projet}
 
-Le projet de système de gestion des soutenances et des jurys s'inscrit dans une volonté de modernisation des processus administratifs et pédagogiques au sein de la faculté. Actuellement, l'organisation des soutenances -- qu'il s'agisse des soutenances de PFE, de mémoires de master ou de projets de licence -- repose sur des méthodes manuelles et des outils bureautiques génériques.
+Le projet de système de gestion des soutenances et des jurys s'inscrit dans une volonté de modernisation des processus administratifs et pédagogiques au sein de la faculté. Actuellement, l'organisation des soutenances -- qu'il s'agisse des soutenances de PFE, de mémoires de master ou de thèses -- repose sur des méthodes manuelles et des outils bureautiques génériques. Les coordinateurs utilisent des fichiers Excel pour suivre les projets, des emails pour communiquer avec les enseignants et les étudiants, et des supports papier pour les convocations et les procès-verbaux. Cette organisation, bien que fonctionnelle pour un petit nombre de soutenances, montre rapidement ses limites lorsque le volume d'étudiants augmente.
 
-Le département MIP, confronté à un volume croissant d'étudiants et à une complexité accrue dans la coordination des jurys, a identifié le besoin d'un outil informatique dédié. Ce projet a donc été proposé par \textbf{Pr. Mohammed AIT DAOUD} dans le cadre des projets de fin d'études de la licence MIP, avec pour objectif de fournir une solution concrète et opérationnelle répondant aux besoins réels du département.
+Le département MIP, confronté à un volume croissant d'étudiants -- avec plusieurs centaines d'étudiants par promotion -- et à une complexité accrue dans la coordination des jurys, a identifié le besoin d'un outil informatique dédié. Les problèmes les plus fréquemment rencontrés incluent les conflits d'horaires entre enseignants, les erreurs de planification liées à la manipulation manuelle de grandes quantités de données, l'absence de traçabilité des décisions prises lors de l'organisation des sessions, et la lourdeur de la génération des documents administratifs (convocations, fiches d'évaluation, procès-verbaux). Ces difficultés sont amplifiées lors des sessions de rattrapage, où la planification doit être reprise en tenant compte des contraintes de disponibilité des enseignants et des salles déjà partiellement occupées.
+
+Ce projet a donc été proposé par \textbf{Pr. Mohammed AIT DAOUD} dans le cadre des projets de fin d'études de la licence MIP, avec pour objectif de fournir une solution concrète et opérationnelle répondant aux besoins réels du département. Le choix de ce sujet reflète la volonté de la faculté de s'appuyer sur les compétences de ses propres étudiants pour moderniser ses outils de gestion, tout en offrant aux futurs diplômés l'opportunité de travailler sur un projet à dimension réelle.
+
+\subsubsection{Encadrement et organisation du stage}
+\label{ch1:encadrement}
+
+Le stage s'est déroulé sous la double supervision de \textbf{Pr. Mohammed AIT DAOUD}, professeur au département d'Informatique de la FSBM, et de \textbf{Dr. Salma SAMMAH}, également membre du corps enseignant de la filière MIP. Cette structure d'encadrement a permis de bénéficier de orientations complémentaires : une vision architecturale et méthodologique du côté de Pr. AIT DAOUD, et un regard plus orienté vers les aspects fonctionnels et la validation métier du côté de Dr. SAMMAH.
+
+Les deux étudiants responsables du projet se sont réparti les tâches en fonction de leurs centres d'intérêt et de leurs compétences complémentaires. L'un s'est principalement concentré sur le développement du backend (API REST, logique métier, sécurité) et l'autre sur le frontend (interface utilisateur, composants React, intégration des designs). Cette répartition a permis un développement parallèle efficace, chaque étudiant travaillant de manière autonome tout en maintenant une coordination étroite via des points réguliers et un dépôt Git commun.
+
+Le suivi du projet s'est organizé autour de réunions hebdomadaires avec les encadrants, au cours desquelles l'avancement était présenté, les difficultés étaient discutées et les orientations techniques étaient validées. Cette organisation agile a permis d'ajuster le périmètre du projet en cours de développement, en priorisant les fonctionnalités critiques (planification, détection de conflits) par rapport aux fonctionnalités secondaires qui pouvaient être reportées.
 
 \subsection{Conclusion}
 \label{ch1:conclusion}
 
-La Faculté des Sciences Ben M'Sick constitue un cadre académique riche et diversifié, offrant des formations scientifiques de qualité dans un large éventail de disciplines. Le département MIP, par sa proximité avec les technologies de l'information, est naturellement le lieu idéal pour le développement d'une solution numérique de gestion des soutenances. Ce contexte a directement inspiré les choix technologiques et architecturaux qui seront présentés dans les chapitres suivants.
+La Faculté des Sciences Ben M'Sick constitue un cadre académique riche et diversifié, comptant plusieurs milliers d'étudiants et offrant des formations scientifiques de qualité dans un large éventail de disciplines. Le département MIP, par sa proximité avec les technologies de l'information et par le volume croissant de ses étudiants, est confronté à des défis croissants dans l'organisation de ses soutenances. Ce constat, combiné à la volonté de modernisation de la faculté -- qui a déjà engagé sa transformation numérique à travers le système LMD et la plateforme PINTECH -- et à l'expertise technique disponible au sein de son corps étudiant, a créé le contexte idéal pour le développement d'une solution numérique de gestion des soutenances. Ce contexte a directement inspiré les choix technologiques et architecturaux qui seront présentés dans les chapitres suivants.

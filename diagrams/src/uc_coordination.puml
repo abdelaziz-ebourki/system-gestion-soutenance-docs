@@ -1,5 +1,5 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 left to right direction
 
 actor "Coordinateur" as Coord

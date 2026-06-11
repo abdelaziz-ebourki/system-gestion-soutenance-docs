@@ -1,49 +1,105 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
-package "com.fsbm.pfe" {
-    package "controller" {
-        [AuthController]
-        [PlanningController]
-        [JuryController]
-        [DocumentController]
+title Structure des packages — Backend Spring Boot
+
+package "com.system_gestion_soutenance.api" as root {
+
+    package "auth" {
+        [AuthController] as AC
+        [AuthService] as AS
+        [ActivationTokenService] as ATS
     }
-    
-    package "service" {
-        [SecurityService]
-        [PlanningService]
-        [ConflictService]
-        [NotificationService]
-        [DocumentService]
+
+    package "admin" {
+        package "audit" {
+            [AuditLogController] as ALC
+            [AuditLogService] as ALS
+        }
+        package "config" {
+            [DocumentConfigController] as DCC
+            [EmailConfigController] as ECC
+            [GeneralSettingsController] as GSC
+            [GradeConfigController] as GC2
+            [JuryRoleTemplateController] as JRC
+            [LevelConfigController] as LC
+            [MajorConfigController] as MC
+            [DefenseSettingsController] as DSC
+        }
+        package "defensesession" {
+            [DefenseSessionController] as DSC2
+            [DefenseSessionService] as DSS
+        }
+        [DepartmentController] as DeptC
+        [FacultyController] as FC
+        [RoomController] as RC
+        [StatsController] as StC
     }
-    
-    package "repository" {
-        [UserRepository]
-        [SoutenanceRepository]
-        [ProjetRepository]
-        [SalleRepository]
+
+    package "coordinator" {
+        package "conflict" {
+            [ConflictController] as CC
+            [ConflictDetectionService] as CDS
+        }
+        [DefenseController] as DC
+        [CoordinatorDefenseSessionController] as CDSC
+        [DocumentController] as DoC
+        [GradeController] as GC3
+        [GroupController] as GrC
+        [JuryController] as JC
+        [ProjectController] as PrC
+        [ScheduleController] as SC
+        [CoordinatorStatsController] as CSC
+        [UnavailabilityController] as UC
     }
-    
-    package "entity" {
-        [Utilisateur]
-        [Soutenance]
-        [Projet]
-        [Evaluation]
+
+    package "teacher" {
+        package "evaluation" {
+            [EvaluationController] as EC
+            [EvaluationService] as ES
+        }
+        [TeacherScheduleController] as TSC
+        [TeacherStatsController] as TStC
+        [TeacherUnavailabilityController] as TUC
     }
-    
-    package "dto" {
-        [SoutenanceRequest]
-        [UserResponse]
+
+    package "student" {
+        [StudentConvocationController] as SConC
+        [StudentDefenseController] as SDC
+        [StudentDocumentController] as SDoC
+        [StudentGroupController] as SGrC
+        [StudentStatsController] as SStC
     }
-    
-    package "security" {
-        [JwtProvider]
-        [UserDetailsServiceImpl]
+
+    package "notification" {
+        [NotificationController] as NC
+        [NotificationService] as NS
+    }
+
+    package "user" {
+        [UserController] as UC2
+        [UserService] as US
+    }
+
+    package "seed" {
+        [SeedDataInitializer] as SDI
+    }
+
+    package "common" {
+        package "audit" as caudit
+        package "config" as cconfig
+        package "exception" as cexception
+        package "mapper" as cmapper
+        package "util" as cutil
     }
 }
 
-controller --> service
-service --> repository
-repository --> entity
-service ..> dto
+AC --> AS
+ALC --> ALS
+DSC2 --> DSS
+CC --> CDS
+EC --> ES
+NC --> NS
+UC2 --> US
+
 @enduml

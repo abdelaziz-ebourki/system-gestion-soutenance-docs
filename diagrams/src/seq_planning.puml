@@ -1,59 +1,45 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
 actor "Coordinateur" as Coord
-boundary "Interface Planning" as Front
-control "Controller" as Controller
-entity "Planning Service" as Service
-entity "Conflict Service" as Conflict
-database "Base de données" as DB
+boundary "Defense Designer (React)" as Front
+control "Conflict Engine (TS)" as LocalEngine
+entity "Schedule Controller (API)" as API
+entity "Conflict Service (Java)" as BackendEngine
+database "MySQL" as DB
 
-Coord -> Front : Définit (Étudiant, Date, Salle, Horaire)
-Front -> Controller : POST /api/planning/validate
-activate Controller
+Coord -> Front : Glisser-déposer un Jury sur un créneau
+activate Front
 
-Controller -> Service : validerPlanning(details)
-activate Service
+Front -> LocalEngine : validateSlotAssignment(projectId, slot, context)
+activate LocalEngine
+LocalEngine -> LocalEngine : Exécuter les 8 vérifications (Local)
+LocalEngine --> Front : Résultat (isValid, issues)
+deactivate LocalEngine
 
-Service -> Conflict : vérifierDisponibilitéSalle(salle, date, heure)
-activate Conflict
-Conflict -> DB : Rechercher occupations salle
-activate DB
-DB --> Conflict : Résultats
-deactivate DB
-Conflict --> Service : Status Salle
-deactivate Conflict
-
-Service -> Conflict : vérifierDoublePlanification(étudiant)
-activate Conflict
-Conflict -> DB : Vérifier si étudiant déjà planifié
-activate DB
-DB --> Conflict : Résultats
-deactivate DB
-Conflict --> Service : Status Étudiant
-deactivate Conflict
-
-alt Aucun conflit détecté
-    Service --> Controller : Validé
-    Controller --> Front : 200 OK (Prêt à enregistrer)
-    Coord -> Front : Confirme l'enregistrement
-    Front -> Controller : POST /api/planning/save
-    Controller -> Service : enregistrer(details)
-    activate Service
-    Service -> DB : Enregistrer Soutenance
-    activate DB
-    DB --> Service : OK
-    deactivate DB
-    Service --> Controller : Confirmé
-    deactivate Service    
-    Controller --> Front : 201 Created
-    Front --> Coord : Afficher confirmation
-else Conflits détectés
-    Service --> Controller : Erreur conflits
-    deactivate Service
-    Controller --> Front : 409 Conflict (Détails)
-    deactivate Controller
-    Front --> Coord : Afficher alertes
+alt Conflit critique détecté
+    Front -> Coord : Afficher Toast d'erreur + Suggestion intelligente
+else Valide
+    Front -> Front : Mettre à jour l'état local (schedule)
+    Front -> Coord : Afficher "Positionné avec succès"
 end
+
+Coord -> Front : Cliquer sur "Enregistrer"
+Front -> API : POST /api/coordinator/schedule (Full State)
+activate API
+
+API -> BackendEngine : validate(request, sessionId)
+activate BackendEngine
+BackendEngine -> DB : Vérifier intégrité et conflits finaux
+DB --> BackendEngine : Données
+BackendEngine --> API : Validation OK
+deactivate BackendEngine
+
+API -> DB : Persister SlotAssignments
+DB --> API : OK
+API --> Front : 200 OK (Confirmé)
+deactivate API
+Front -> Coord : Notification "Planning enregistré"
+deactivate Front
 
 @enduml

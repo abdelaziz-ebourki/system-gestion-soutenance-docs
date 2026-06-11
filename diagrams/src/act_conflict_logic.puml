@@ -1,29 +1,57 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
 start
-:Réception demande de planification;
+:Réception d'une tentative de planification;
+note right: (Date, Salle, Horaire, Projet)
+
 fork
-  :Vérifier RG1 (Enseignant);
-  if (Enseignant déjà occupé sur ce créneau ?) then (Oui)
-    :Ajouter "Erreur : Conflit Enseignant";
+  :Vérifier **RG1 : Chevauchement Enseignant**;
+  if (Enseignant déjà occupé ?) then (Oui)
+    :Ajouter "Erreur : Double affectation enseignant";
   endif
 fork again
-  :Vérifier RG2 (Salle);
-  if (Salle déjà occupée sur ce créneau ?) then (Oui)
-    :Ajouter "Erreur : Conflit Salle";
+  :Vérifier **RG2 : Occupation Salle**;
+  if (Salle déjà occupée ?) then (Oui)
+    :Ajouter "Erreur : Créneau salle occupé";
   endif
 fork again
-  :Vérifier RG3 (Étudiant);
-  if (Étudiant déjà planifié ailleurs ?) then (Oui)
-    :Ajouter "Erreur : Double Planification";
+  :Vérifier **RG3 : Capacité Salle**;
+  if (Étudiants > Capacité ?) then (Oui)
+    :Ajouter "Erreur : Capacité insuffisante";
+  endif
+fork again
+  :Vérifier **RG4 : Limites Session**;
+  if (Date hors [Début, Fin] ?) then (Oui)
+    :Ajouter "Erreur : Date hors session";
+  endif
+fork again
+  :Vérifier **RG5 : Conflit Encadrant**;
+  if (Encadrant déjà sollicité ?) then (Oui)
+    :Ajouter "Avertissement : Conflit encadrant";
+  endif
+fork again
+  :Vérifier **RG6 : Double Planification**;
+  if (Projet déjà planifié ?) then (Oui)
+    :Ajouter "Erreur : Projet déjà affecté";
+  endif
+fork again
+  :Vérifier **RG7 : Intervalle de Pause**;
+  if (Pause < breakDuration ?) then (Oui)
+    :Ajouter "Avertissement : Pause insuffisante";
+  endif
+fork again
+  :Vérifier **RG8 : Indisponibilités**;
+  if (Enseignant a déclaré indisponibilité ?) then (Oui)
+    :Ajouter "Erreur : Enseignant indisponible";
   endif
 end fork
 
-if (Liste d'erreurs vide ?) then (Oui)
-  :Retourner "VALIDÉ";
+if (Présence d'erreurs critiques ?) then (Oui)
+  :Retourner **ÉCHEC** + Liste des conflits;
+  :Suggérer résolution intelligente;
 else (Non)
-  :Retourner "ÉCHEC" + Liste des conflits;
+  :Retourner **VALIDÉ**;
 endif
 
 stop

@@ -1,5 +1,5 @@
 @startuml
-!theme pfe from .
+!include puml-theme-pfe.puml
 
 rectangle "Espace Public" {
     [Page de Connexion] as Login

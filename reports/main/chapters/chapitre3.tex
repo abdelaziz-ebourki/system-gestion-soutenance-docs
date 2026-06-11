@@ -8,19 +8,16 @@
 \subsection{Introduction}
 \label{ch3:intro}
 
-Ce chapitre constitue le cœur de la phase d'analyse et de conception du système. Il définit le cahier des charges fonctionnel, présente les règles de gestion qui encadrent le système, détaille la modélisation UML complète -- des cas d'utilisation aux diagrammes de séquence --, décrit l'architecture technique et le modèle de données relationnel, et enfin présente la conception de l'interface utilisateur.
+Ce chapitre détaille la phase de conception du système de gestion des soutenances. Il définit les exigences fonctionnelles et non fonctionnelles, formalise les règles de gestion qui régissent la planification, et présente la modélisation UML du système. Cette étape est cruciale pour garantir que la solution technique répond précisément aux besoins du département. Dans un projet de développement logiciel, la qualité de la phase de conception détermine directement la maintenabilité et l'évolutivité du système résultant. C'est pourquoi nous avons adopté une démarche rigoureuse combinant analyse des besoins, modélisation UML et définition formelle des règles de gestion, afin de disposer d'un référentiel clair avant de passer à l'implémentation.
 
 \subsection{Présentation générale du projet}
 \label{ch3:presentation_generale}
 
-Le projet consiste à développer une application web pour la gestion des soutenances et des jurys au sein de la Faculté des Sciences Ben M'Sick. Le système permet de :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item Planifier les soutenances individuelles au sein de sessions globales définies par l'administration.
-    \item Affecter automatiquement les jurys en respectant les contraintes de charge et de spécialité.
-    \item Détecter les conflits horaires, de salle et de double affectation.
-    \item Générer les convocations et documents administratifs.
-    \item Gérer les évaluations et produire les résultats consolidés.
-\end{itemize}
+Le projet consiste en la réalisation d'une application web centralisée permettant l'organisation complète des sessions de soutenances. Contrairement à une simple gestion d'agenda, le système agit comme un moteur de planification intelligent capable d'orchestrer des sessions globales (normale, rattrapage) avec des paramètres configurables incluant la durée des soutenances, les pauses entre les passages, et les coefficients d'évaluation par rôle.
+
+Le système couvre l'ensemble du cycle de vie d'une soutenance : de la création des projets et la constitution des jurys, en passant par la planification interactive des créneaux via un éditeur visuel par glisser-déposer (\textit{Defense Designer}), jusqu'à la saisie des évaluations et la génération automatique des documents administratifs (convocations, procès-verbaux, fiches d'évaluation). Chaque étape est validée par un moteur de détection de conflits garantissant l'intégrité du planning.
+
+Le périmètre du projet a été défini en collaboration avec l'encadrant et le département d'accueil. Sont inclus dans le périmètre : la gestion des utilisateurs et des rôles, la configuration académique (filières, niveaux, salles), la gestion des projets et des groupes d'étudiants, la constitution des jurys, la planification interactive des créneaux, la détection automatique de conflits, la saisie des évaluations, la génération de documents et le système de notifications. Sont exclus du périmètre : la gestion financière, la publication des résultats finaux (bulletins), l'intégration avec le système d'information universitaire existant, et le développement d'une application mobile.
 
 \subsection{Cahier des charges}
 \label{ch3:cahier_charges}
@@ -28,71 +25,140 @@ Le projet consiste à développer une application web pour la gestion des souten
 \subsubsection{Acteurs du système}
 \label{ch3:acteurs}
 
-Le système doit servir quatre catégories d'acteurs distinctes, chacune disposant de droits d'accès et de fonctionnalités spécifiques. L'Administrateur gère les comptes utilisateurs, configure les paramètres généraux et supervise le bon fonctionnement global de la plateforme. Le Coordinateur, acteur central de l'organisation, prend en charge la planification des soutenances dans le cadre d'une session globale, l'affectation des jurys, la validation des plannings et la consultation des rapports de synthèse. Les enseignants, en leur qualité de membres de jury, consultent leurs convocations, prennent connaissance des dossiers des étudiants et saisissent les notes et observations après chaque soutenance. Enfin, les étudiants ont accès à leur espace dédié pour consulter les informations relatives à leur soutenance—date, heure, salle et composition du jury—ainsi que pour télécharger leur convocation.
+Le système repose sur une gestion stricte des accès basée sur les rôles (\textit{Role-Based Access Control — RBAC}). Quatre acteurs principaux sont identifiés, chacun disposant d'un périmètre fonctionnel spécifique. Le choix de quatre rôles uniquement, sans possibilité de superposition, simplifie considérablement la logique de contrôle d'accès tout en couvrant l'ensemble des besoins identifiés.
+
+L'\textbf{Administrateur} est responsable de la configuration structurelle de l'établissement. Il gère les départements, filières, niveaux et salles. Il est également en charge de la création des comptes utilisateurs (import CSV, activation) et de la configuration globale des paramètres du système (durée des soutenances, templates de jurys, configuration email). Ce rôle est le seul à pouvoir accéder à la configuration système et aux journaux d'audit.
+
+Le \textbf{Coordinateur} est l'acteur central du système. Il gère l'ensemble du cycle de planification : import et validation des projets, constitution des jurys selon les templates de rôles, utilisation du \textit{Defense Designer} pour la planification interactive des créneaux, consultation du tableau de bord des conflits, et suivi des évaluations. Il peut également publier le planning final et générer les documents administratifs. Ce rôle nécessite une vue d'ensemble de toutes les soutenances et une compréhension des contraintes de chaque acteur.
+
+L'\textbf{Enseignant} est membre du corps professoral impliqué dans les soutenances. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, saisit les notes des étudiants qui lui sont assignés, et accède à ses convocations. Son interaction avec le système est principalement consultative, à l'exception de la saisie des notes et de la déclaration d'indisponibilités.
+
+L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les informations relatives à sa soutenance (date, salle, jury), consulte la composition de son groupe de projet, et télécharge sa convocation officielle au format A4. Son périmètre d'action est le plus limité, ce qui est cohérent avec son rôle dans le processus de soutenance.
+
+Le tableau~\ref{tab:acteurs_use_cases} résume la répartition des fonctionnalités principales par acteur.
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \begin{tabular}{lp{2.4cm}p{2.4cm}p{2.4cm}p{2.4cm}}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Fonctionnalité} & \textbf{Admin} & \textbf{Coord.} & \textbf{Enseign.} & \textbf{Étudiant} \\
+        \midrule
+        Gestion départements & \checkmark & — & — & — \\
+        Gestion salles & \checkmark & — & — & — \\
+        Gestion utilisateurs & \checkmark & — & — & — \\
+        Configuration système & \checkmark & — & — & — \\
+        Gestion projets & — & \checkmark & — & — \\
+        Constitution jurys & — & \checkmark & — & — \\
+        Planification créneaux & — & \checkmark & — & — \\
+        Détection conflits & — & \checkmark & — & — \\
+        Saisie indisponibilités & — & — & \checkmark & — \\
+        Saisie évaluations & — & — & \checkmark & — \\
+        Consultation planning & — & \checkmark & \checkmark & \checkmark \\
+        Consultation groupe & — & — & — & \checkmark \\
+        Téléchargement documents & — & — & — & \checkmark \\
+        \bottomrule
+    \end{tabular}
+    \caption{Répartition des fonctionnalités par acteur}
+    \label{tab:acteurs_use_cases}
+\end{table}
 
 \subsubsection{Besoins fonctionnels}
 \label{ch3:besoins_fonctionnels}
 
-\textbf{Gestion des utilisateurs.} Le système doit permettre la création et la gestion des comptes utilisateurs avec une authentification sécurisée. Les quatre rôles définis -- administrateur, coordinateur, enseignant et étudiant -- doivent chacun disposer d'un ensemble de droits spécifiques.
+Les besoins sont organisés par modules métier, chacun correspondant à un sous-système cohérent de l'application. Chaque module a été identifié lors des entretiens avec le coordinateur et l'encadrant, puis priorisé en fonction de son impact sur le processus global de soutenance.
 
-\textbf{Gestion des étudiants.} L'application doit permettre l'enregistrement des étudiants avec leurs informations complètes : nom, prénom, code national d'étudiant (CNE), filière, niveau, titre du projet et encadrant. Une fonction d'import depuis un fichier CSV ou Excel est prévue. Chaque étudiant doit être associé à un projet spécifique.
+Le \textbf{module Gestion Identité} assure l'authentification sécurisée via JWT avec tokens d'accès et de rafraîchissement. Il gère la récupération de mot de passe avec lien à durée limitée (1 heure), l'activation de compte avec validation de la force du mot de passe (via la bibliothèque zxcvbn), et l'interface de connexion unifiée avec redirection automatique basée sur le rôle de l'utilisateur. Ce module constitue la porte d'entrée du système et doit garantir la confidentialité des données tout en offrant une expérience fluide.
 
-\textbf{Gestion des enseignants et jurys.} Le système doit permettre l'ajout et la gestion des enseignants. Par défaut, tous les enseignants sont considérés comme disponibles pour les jurys, mais ils peuvent déclarer leurs plages d'indisponibilité. La composition d'un jury doit inclure la désignation d'un président, d'un rapporteur, d'un examinateur et, le cas échéant, de l'encadrant de l'étudiant.
+Le \textbf{module Gestion Académique} couvre l'administration des filières (MIP, BCG, etc.), des niveaux (L3, M1, M2) et des grades académiques. Il inclut l'import massif des étudiants et des salles via fichiers CSV avec validation des données et gestion des erreurs ligne par ligne. L'interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour tout au long de l'année universitaire.
 
-\textbf{Gestion des salles.} La gestion des salles comprend l'ajout de nouvelles salles, le renseignement de leur capacité, la consultation de leur disponibilité et l'affectation à une soutenance spécifique.
+Le \textbf{module Gestion des Projets et Jurys} gère la création et le suivi des projets avec des statuts (proposé, approuvé, rejeté). Il permet la constitution des jurys selon des templates configurables avec rôles normalisés (Président, Rapporteur, Examinateur), et assure le suivi de la charge des enseignants pour éviter les sur-affectations. Ce module est le point de départ du processus de planification, car les projets et jurys sont les entités qui seront ensuite placés dans le planning.
 
-\textbf{Planification des soutenances.} La planification permet la création des soutenances individuelles au sein d'une session globale définie par l'administration, avec la date, l'heure de début, la durée et la salle. Chaque soutenance doit être associée à un étudiant ou à un groupe, et un planning global doit être consultable selon différents critères.
+Le \textbf{module Planification (Defense Designer)} est l'élément le plus innovant du système. Il fournit une interface interactive de type canevas permettant au coordinateur de planifier les soutenances par glisser-déposer. Les jurys sont listés dans une barre latérale et peuvent être déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération permet de peupler automatiquement le planning en optimisant l'occupation des salles.
 
-\textbf{Affectation des jurys.} L'affectation des jurys consiste à associer un ensemble d'enseignants à chaque soutenance. Le système doit vérifier qu'un enseignant n'est pas affecté à deux soutenances simultanées et doit rechercher une répartition équilibrée de la charge.
+Le \textbf{module Moteur de Conflits} assure la validation systématique de 8 règles de gestion lors de chaque modification du planning (voir \ref{ch3:regles_gestion}). Le moteur est dupliqué côté client pour un retour instantané lors des interactions et exécuté côté serveur pour garantir l'intégrité lors de la sauvegarde. Cette architecture double-validation est un choix architectural majeur qui combine réactivité et fiabilité.
 
-\textbf{Gestion des conflits.} La détection des conflits est une fonctionnalité critique. Le système doit détecter et signaler -- avant validation -- les conflits de salle, les conflits d'horaire pour un enseignant, la double planification d'un même étudiant et les doublons de planification.
+Le \textbf{module Évaluation} gère la saisie des notes par rôle de jury avec des coefficients dynamiques configurés par session. Le calcul automatique de la moyenne pondérée élimine les erreurs de calcul manuel. Le suivi de l'avancement des évaluations avec indication visuelle du statut (en attente, complétée) permet au coordinateur d'identifier rapidement les évaluations en retard.
 
-\textbf{Génération de documents.} Le système doit générer : convocations des étudiants, convocations des jurys, planning général, fiches d'évaluation, listes de présence et procès-verbal simplifié. Les formats supportés sont le PDF, l'impression directe et l'export Excel/CSV.
+Le \textbf{module Édition Documentaire} génère 5 types de documents (convocation jury, convocation étudiant, fiche d'évaluation, liste de présence, procès-verbal) via des vues React optimisées pour l'impression A4 utilisant la stratégie \texttt{@media print}. Cette approche client-side évite la complexité d'une génération PDF serveur tout en produisant des documents de qualité professionnelle.
 
-\textbf{Saisie des évaluations.} Les membres du jury ou le coordinateur doivent pouvoir saisir les notes individuelles, ajouter des remarques, puis consolider le résultat final. La décision finale (admis, admis avec corrections, ajourné) est enregistrée après calcul de la moyenne.
-
-\textbf{Tableau de bord.} Un tableau de bord synthétique doit afficher le nombre total de soutenances, le nombre de jurys mobilisés, les salles utilisées, les soutenances planifiées par jour ainsi que le suivi des soutenances évaluées et restant à évaluer.
+Le \textbf{module Notifications et Audit} fournit un système de notifications internes avec différents niveaux (success, warning, error) et la journalisation des actions critiques avec piste d'audit complète pour la traçabilité. Chaque action significative (création, modification, suppression) est enregistrée avec l'identifiant de l'utilisateur, l'horodatage et les détails de l'opération.
 
 \subsubsection{Besoins non fonctionnels}
 \label{ch3:besoins_non_fonctionnels}
 
-\textbf{Performance.} L'affichage d'un planning ne doit pas excéder deux secondes. La recherche d'un utilisateur doit être quasi instantanée. La génération d'un document PDF ne doit pas dépasser cinq secondes dans des conditions normales d'utilisation.
+Les besoins non fonctionnels définissent les qualités transverses du système, souvent aussi critiques que les fonctionnalités elles-mêmes pour garantir l'adoption et la satisfaction des utilisateurs.
 
-\textbf{Sécurité.} L'accès est protégé par une authentification par identifiant et mot de passe. Les mots de passe sont stockés sous forme de hachage cryptographique (BCrypt). Les fonctionnalités et les données sont strictement restreintes selon le rôle de l'utilisateur connecté.
+La \textbf{réactivité} est un besoin fondamental pour le Defense Designer. Le retour sur conflit lors du drag-and-drop doit être instantané (latence $< 100$ms) grâce à la validation locale via le moteur de conflits TypeScript. L'interface utilisateur ne doit pas présenter de blocage perceptible lors des interactions, ce qui impose de maintenir l'état du planning dans la mémoire du navigateur et de ne jamais effectuer d'appels réseau pendant les opérations de glisser-déposer.
 
-\textbf{Fiabilité.} Le système doit éviter toute perte de données lors des opérations de création ou de modification. Les erreurs de saisie doivent être signalées par des messages compréhensibles. En cas de défaillance, le système doit pouvoir restaurer son état antérieur sans corruption des données.
+La \textbf{sécurité} repose sur le chiffrement des mots de passe via BCrypt, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Les tokens ont une durée de validité limitée (2 heures) et sont stockés dans le \texttt{localStorage} du navigateur. Une attention particulière a été portée à la protection contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale.
 
-\textbf{Maintenabilité.} Le code source doit être structuré, documenté et versionné avec Git. Une architecture modulaire facilitera les évolutions ultérieures.
+La \textbf{disponibilité} est assurée par une architecture stateless du backend, permettant un déploiement horizontal scalable. L'API REST ne maintient pas d'état de session côté serveur, chaque requête étant autonome via le token JWT. Cette conception facilite également les tests et le débogage, car chaque requête contient toute l'information nécessaire à son traitement.
+
+L'\textbf{ergonomie} vise une interface moderne et responsive basée sur Tailwind CSS 4 et shadcn/ui. La navigation est contextualisée par rôle avec une sidebar adaptative qui ne présente que les fonctionnalités accessibles à l'utilisateur connecté. Le thème clair/sombre avec persistance du choix améliore le confort d'utilisation lors de sessions de travail prolongées.
+
+La \textbf{maintenabilité} est garantie par une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. L'utilisation de DTOs pour l'isolation des couches API et de MapStruct pour le mapping objet protège le modèle interne des variations de l'interface exposée.
+
+La \textbf{qualité} est mesurée par une couverture de code minimale de 85\% (lignes) et 70\% (branches) via JaCoCo côté Java. Le linting automatisé avec ESLint (TypeScript) et Spotless/Checkstyle/PMD/SpotBugs (Java) intégré dans le cycle Maven assure la conformité du code aux conventions de l'équipe.
 
 \subsection{Règles de gestion}
 \label{ch3:regles_gestion}
 
-\begin{projectbox}{Règles de gestion (RG)}
-    Les règles de gestion encadrent les opérations du système de manière automatisée. Ainsi, il est strictement interdit d'affecter un enseignant à deux soutenances dont les horaires se chevauchent (RG1), et aucune salle ne peut être réservée pour deux soutenances simultanées (RG2). Le système garantit qu'un étudiant ne peut avoir qu'une seule soutenance programmée (RG3). Concernant la composition des jurys, la règle RG4 impose un minimum de trois membres, incluant un président, un rapporteur et un examinateur, l'encadrant de l'étudiant pouvant compléter cette commission. Cependant, la règle RG5 dispose que l'encadrant ne peut en aucun cas assumer le rôle de président du jury. Enfin, la note finale est calculée comme la moyenne des notes individuelles validées par les membres du jury (RG6).
+Le moteur de conflits implémente les règles de gestion (RG) suivantes, garantissant l'intégrité du planning. Ces règles ont été définies en collaboration avec le coordinateur du département MIP et formalisées sous forme de contraintes vérifiables algorithmiquement.
+
+\begin{projectbox}{Règles de Gestion du Planning}
+\begin{description}
+    \item[RG1 (Enseignants)] Un enseignant ne peut être affecté à deux soutenances dont les horaires se chevauchent.
+    \item[RG2 (Salles)] Une salle ne peut accueillir qu'une seule soutenance pour un créneau donné.
+    \item[RG3 (Capacité)] Le nombre d'étudiants d'un projet ne doit pas excéder la capacité de la salle assignée.
+    \item[RG4 (Période)] Toutes les soutenances d'une session doivent être planifiées entre la \textit{startDate} et la \textit{endDate} de ladite session.
+    \item[RG5 (Encadrants)] Un encadrant ne doit pas être sollicité sur plusieurs projets le même jour pour éviter la surcharge.
+    \item[RG6 (Unicité)] Un projet ne peut être planifié qu'une seule fois par session.
+    \item[RG7 (Pause)] Un intervalle minimum (\textit{breakDuration}) doit être respecté entre deux soutenances dans une même salle.
+    \item[RG8 (Disponibilité)] Aucune soutenance ne peut être planifiée sur un créneau déclaré comme indisponible par un membre du jury.
+\end{description}
 \end{projectbox}
 
-Ces règles sont appliquées automatiquement lors de chaque opération de planification ou d'affectation.
+Ces règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le Defense Designer.
 
-\subsection{Modules du système}
-\label{ch3:modules}
+Le tableau~\ref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement.
 
-L'application est structurée en sept modules fonctionnels cohérents. Le premier, dédié à l'authentification et à la gestion des rôles, assure l'accès sécurisé à la plateforme. Le module de gestion académique centralise les informations relatives aux étudiants, aux projets, aux encadrants et aux enseignants. Le module de planification permet d'organiser les soutenances individuelles au sein des sessions globales, incluant la définition des horaires et la réservation des salles. Le module de gestion des jurys facilite leur affectation et la prise en compte des indisponibilités déclarées par les enseignants. Le module d'évaluation supporte tout le processus de notation, d'observations et de délibération finale. Le module de génération documentaire automatise la production des convocations, plannings et autres documents officiels. Enfin, le tableau de bord fournit une vue synthétique et en temps réel de l'activité du système.
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{llccc}
+        \toprule
+        \rowcolor{primary!10}
+        \textbf{Règle} & \textbf{Description} & \textbf{Java} & \textbf{TypeScript} & \textbf{Sévérité} \\
+        \midrule
+        RG1 & Chevauchement enseignant & \checkmark & \checkmark & error \\
+        RG2 & Occupation de salle & \checkmark & \checkmark & error \\
+        RG3 & Capacité de salle & \checkmark & \checkmark & error \\
+        RG4 & Bornes de période & \checkmark & \checkmark & error \\
+        RG5 & Surcharge encadrant & \checkmark & \checkmark & warning \\
+        RG6 & Unicité de projet & \checkmark & \checkmark & error \\
+        RG7 & Intervalle de pause & \checkmark & \checkmark & error \\
+        RG8 & Indisponibilité & \checkmark & \checkmark & error \\
+        \bottomrule
+    \end{tabular}
+    \caption{Correspondance entre les règles de gestion et leurs implémentations}
+    \label{tab:rg_mapping}
+\end{table}
+
+Lorsqu'une règle ne peut être satisfaite (par exemple, aucun créneau disponible pour un jury donné), le système ne propose pas de mécanisme d'override automatique. Le coordinateur doit soit modifier les paramètres de la session (dates, salles), soit reconfigurer la composition du jury, soit déclarer une indisponibilité compensatoire. Cette approche conservative garantit l'intégrité du planning au prix d'une flexibilité réduite, un choix délibéré compte tenu du caractère critique des contraintes académiques.
 
 \subsection{Conception UML}
 \label{ch3:conception_uml}
 
-Cette section détaille la modélisation UML complète du système. Les diagrammes présentés couvrent l'ensemble des vues nécessaires à la compréhension du système : vue fonctionnelle (cas d'utilisation), vue statique (classes), vue dynamique (séquences, activités, états).
+La modélisation UML permet de formaliser les différentes visions du système : qui fait quoi (cas d'utilisation), comment les données sont structurées (classes), comment les composants interagissent (séquence), et comment les processus se déroulent (activité). Nous avons utilisé les diagrammes UML 2.5, implémentés via PlantUML pour faciliter la maintenance et la régénération automatique des figures.
 
 \subsubsection{Diagrammes de cas d'utilisation}
 \label{ch3:uc}
 
-Les diagrammes de cas d'utilisation permettent de délimiter le périmètre du projet en identifiant les interactions entre les différents acteurs et les fonctionnalités offertes par l'application. Chaque module répond à des objectifs spécifiques, garantissant une séparation claire des responsabilités.
+Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque acteur. Ils ont été construits à partir des entretiens avec le coordinateur et l'encadrant, puis validés lors des revues de conception.
 
-\begin{projectbox}{Remarque}
-    Par souci de clarté visuelle, le cas d'utilisation « S'authentifier » est omis des diagrammes détaillés mais reste une pré-condition transversale à toutes les actions du système.
-\end{projectbox}
-
-\paragraph{Hiérarchie des acteurs.} Le système distingue plusieurs profils d'utilisateurs, chacun possédant des droits et des responsabilités spécifiques. La hiérarchie permet d'hériter des fonctionnalités communes, notamment la consultation du planning et la gestion du profil personnel.
+Le diagramme de la \ref{fig:uc_hierarchy} présente la hiérarchie générale des acteurs. L'acteur de base « Utilisateur » est spécialisé en quatre rôles distincts, chacun héritant de la capacité de s'authentifier. Cette hiérarchie simple reflète l'architecture RBAC du système, où chaque rôle correspond à un ensemble disjoint de permissions.
 
 \begin{figure}[H]
     \centering
@@ -101,7 +167,7 @@ Les diagrammes de cas d'utilisation permettent de délimiter le périmètre du p
     \label{fig:uc_hierarchy}
 \end{figure}
 
-\paragraph{Module Administration.} Ce module est réservé à la gestion technique et structurelle de la plateforme. L'administrateur veille au bon fonctionnement du système en gérant les ressources de base.
+Le diagramme de la \ref{fig:uc_admin} détaille les cas d'utilisation de l'Administrateur. Ce rôle est le seul à pouvoir configurer les structures académiques (départements, filières, salles), gérer les comptes utilisateurs (création, modification, suppression, import CSV) et consulter les journaux d'audit. Il configure également les paramètres globaux du système (templates de jurys, durée des soutenances, configuration email).
 
 \begin{figure}[H]
     \centering
@@ -110,137 +176,39 @@ Les diagrammes de cas d'utilisation permettent de délimiter le périmètre du p
     \label{fig:uc_admin}
 \end{figure}
 
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{10cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Cas d'utilisation} & \textbf{Description} \\
-        \midrule
-        Gérer comptes utilisateurs & Création, modification (incluant rôles et mots de passe) et suppression des comptes. \\
-        \addlinespace
-        Gérer salles & Administration du catalogue des salles, capacité et disponibilités. \\
-        \addlinespace
-        Gérer sessions globales & Création, modification et clôture des sessions globales (normale, rattrapage). \\
-        \addlinespace
-        Gérer paramètres système & Configuration des paramètres transversaux : durées par défaut, périodes, règles générales. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Description des cas d'utilisation -- Administrateur}
-    \label{tab:uc_admin}
-\end{table}
-
-\paragraph{Module Coordination.} Le coordinateur est l'acteur central du processus de planification. Dans ce module, le terme \textit{soutenance} désigne une séance individuelle planifiée pour un étudiant et son jury, tandis que la \textit{session globale} désigne le cadre administratif créé par l'administrateur. Le coordinateur travaille sur les soutenances contenues dans une session globale, de l'importation massive des données à la validation finale du planning.
+Le diagramme de la \ref{fig:uc_coordination} détaille les cas d'utilisation du Coordinateur, l'acteur le plus sollicité par le système. Il gère le cycle complet : des projets et groupes d'étudiants, à la constitution des jurys, en passant par la planification interactive via le Defense Designer, la validation du planning, et la génération des documents. Les relations « include » et « extend » modélisent les dépendances entre cas d'utilisation (par exemple, « Affecter un jury » inclut « Vérifier les conflits »).
 
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{uc_coordination}
-    \caption{Cas d'utilisation : Coordination des soutenances}
+    \caption{Cas d'utilisation : Coordination et Defense Designer}
     \label{fig:uc_coordination}
 \end{figure}
 
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{10cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Cas d'utilisation} & \textbf{Description} \\
-        \midrule
-        Assigner jurys & Constitution des commissions (président, rapporteur, examinateur). \\
-        \addlinespace
-        Planifier soutenances & Planification des créneaux, définition des horaires et affectation des salles. \\
-        \addlinespace
-        Valider planning & Confirmation finale du planning après traitement des alertes et conflits. \\
-        \addlinespace
-        Gérer projets & Gestion des thèmes, titres de PFE et association étudiants-projets-encadrants. \\
-        \addlinespace
-        Consulter planning & Visualisation globale filtrable (date, salle, enseignant, filière, étudiant). \\
-        \addlinespace
-        Rechercher / Filtrer & Recherche multicritère avancée pour la supervision. \\
-        \addlinespace
-        Générer convocations & Production automatique des documents PDF pour étudiants et jurys. \\
-        \addlinespace
-        Générer planning général & Production du planning complet et liste de présence pour la session. \\
-        \addlinespace
-        Consulter rapports & Accès aux synthèses, statistiques et procès-verbaux simplifiés. \\
-        \addlinespace
-        Vérifier conflits & Détection des chevauchements, doubles planifications et doublons. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Description des cas d'utilisation -- Coordinateur}
-    \label{tab:uc_coordination}
-\end{table}
-
-\paragraph{Module Jury.} Les enseignants interagissent avec le système principalement pour consulter leurs obligations de jury et évaluer les travaux des étudiants.
+Le diagramme de la \ref{fig:uc_jury} présente les cas d'utilisation de l'Enseignant en tant que membre de jury. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, saisit les notes et observations pour les étudiants qui lui sont assignés, et accède à ses convocations. Le cas « Saisir les évaluations » inclut la consultation des informations de l'étudiant, garantissant que le jury dispose du contexte nécessaire avant de noter.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{uc_jury}
-    \caption{Cas d'utilisation : Enseignant et Jury}
+    \pumlsvg[0.7\textwidth]{uc_jury}
+    \caption{Cas d'utilisation : Enseignant / Membre de jury}
     \label{fig:uc_jury}
 \end{figure}
 
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{10cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Cas d'utilisation} & \textbf{Description} \\
-        \midrule
-        Consulter planning & Accès au planning personnel des soutenances. \\
-        \addlinespace
-        Consulter convocation & Visualisation et téléchargement des convocations. \\
-        \addlinespace
-        Saisir évaluation & Enregistrement des notes et observations pendant ou après la soutenance. \\
-        \addlinespace
-        Valider / modifier évaluation & Finalisation de la notation et modification des remarques. \\
-        \addlinespace
-        Consulter informations étudiant & Consultation des détails du projet et du dossier. \\
-        \addlinespace
-        Générer fiches d'évaluation & Création des supports de notation pour la session. \\
-        \addlinespace
-        Déclarer indisponibilité & Signalement des créneaux horaires non disponibles. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Description des cas d'utilisation -- Enseignant}
-    \label{tab:uc_jury}
-\end{table}
-
-\paragraph{Module Étudiant.} L'interface dédiée à l'étudiant est conçue pour être simple et directe. Elle lui permet de se concentrer sur les informations essentielles liées à sa soutenance.
+Le diagramme de la \ref{fig:uc_student} présente les cas d'utilisation de l'Étudiant. Son périmètre est le plus restreint : il consulte les informations relatives à sa soutenance (date, salle, jury), télécharge sa convocation, et gère son groupe de projet (création, recherche de coéquipiers). Le cas « Télécharger la convocation » inclut la consultation des informations de soutenance, car la convocation doit contenir la date, l'heure, la salle et la composition du jury.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{uc_student}
-    \caption{Cas d'utilisation : Espace Étudiant}
+    \pumlsvg[0.6\textwidth]{uc_student}
+    \caption{Cas d'utilisation : Étudiant}
     \label{fig:uc_student}
 \end{figure}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{10cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Cas d'utilisation} & \textbf{Description} \\
-        \midrule
-        Télécharger convocation & Récupération du document PDF officiel. \\
-        \addlinespace
-        Consulter infos de soutenance & Visualisation de la date, l'heure, la salle et le jury. \\
-        \addlinespace
-        Consulter résultats & Consultation des notes et de la décision finale. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Description des cas d'utilisation -- Étudiant}
-    \label{tab:uc_student}
-\end{table}
 
 \subsubsection{Diagramme de classes}
 \label{ch3:classes}
 
-Le diagramme de classes constitue le pivot de la conception statique. Il définit la structure de données interne et les règles métier qui régissent les interactions entre les objets du système.
+Le diagramme de classes traduit la structure des données persistées. On y observe une hiérarchie d'utilisateurs basée sur l'héritage JOINED (\texttt{User} avec spécialisation par rôle via le discriminant \texttt{dtype}), et les relations centrales entre les entités métier.
+
+Plusieurs choix de conception méritent d'être soulignés. La classe \texttt{JuryMember} est une entité \texttt{@Embeddable} stockée dans une table d'association \texttt{defense\_members}, plutôt qu'une entité JPA à part entière. Ce choix simplifie la gestion des jurys en évitant une table supplémentaire tout en permettant de stocker le rôle du membre (Président, Rapporteur, Examinateur) et la référence vers l'enseignant. La classe \texttt{Evaluation} stocke le \texttt{teacherId} sous forme de \texttt{Long} plutôt que d'une relation \texttt{@ManyToOne}, ce qui permet de conserver les évaluations même en cas de modification de la composition du jury. La table d'association \texttt{defense\_session\_coefficients} (\texttt{@ElementCollection}) permet de pondérer dynamiquement les notes selon le rôle du membre du jury au sein de chaque session, offrant ainsi une flexibilité maximale dans la configuration de la notation.
 
 \begin{figure}[H]
     \centering
@@ -249,575 +217,133 @@ Le diagramme de classes constitue le pivot de la conception statique. Il défini
     \label{fig:class_global}
 \end{figure}
 
-Les entités clés identifiées sont les suivantes :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \textbf{Utilisateur :} Classe de base gérant l'identité, les identifiants de connexion et les droits d'accès (rôles).
-    \item \textbf{Soutenance :} Entité centrale faisant le lien entre un projet, un jury, une salle et un créneau temporel au sein d'une session globale.
-    \item \textbf{Projet :} Représente le travail académique (PFE, Mémoire, Stage), supervisé par un encadrant.
-    \item \textbf{Jury :} Structure d'association définissant les rôles (Président, Rapporteur, Examinateur).
-    \item \textbf{Évaluation et résultat :} Chaque membre du jury saisit une note individuelle ; le résultat consolide ces notes en moyenne finale.
-\end{itemize}
-
-\subsubsection{Cycle de vie d'une soutenance}
-\label{ch3:etat_soutenance}
-
-Le diagramme d'états ci-dessous illustre les transitions de l'entité Soutenance. Ce cycle garantit que les actions (saisie des notes, génération des convocations) ne sont autorisées que lorsque la soutenance est dans l'état approprié.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.6\textwidth]{state_soutenance}
-    \caption{Diagramme d'états : Cycle de vie d'une soutenance}
-    \label{fig:state_soutenance}
-\end{figure}
-
-\subsubsection{Diagrammes d'activité}
-\label{ch3:activite}
-
-Les diagrammes d'activité détaillent la logique algorithmique et le flux de contrôle des processus métier critiques.
-
-\textbf{Workflow de planification.} Ce processus décrit les étapes de planification des soutenances à l'intérieur d'une session globale. Le workflow est itératif, permettant au coordinateur de corriger les anomalies détectées (conflits de salle, indisponibilité) avant la validation finale.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.6\textwidth]{act_planning}
-    \caption{Diagramme d'activité : Planification de session}
-    \label{fig:act_planning}
-\end{figure}
-
-\textbf{Déroulement des évaluations.} Ce diagramme illustre le processus d'évaluation, du contrôle de présence jusqu'au calcul automatique de la moyenne finale.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.58\textwidth]{act_evaluation}
-    \caption{Diagramme d'activité : Processus d'évaluation}
-    \label{fig:act_evaluation}
-\end{figure}
-
 \subsubsection{Diagrammes de séquence}
 \label{ch3:sequence}
 
-Les diagrammes de séquence détaillent les interactions chronologiques entre les composants (Client, Contrôleur, Services, Modèle) lors de l'exécution des processus métier.
+Les diagrammes de séquence modélisent les interactions entre les composants du système pour des cas d'utilisation critiques. Nous en présentons trois qui illustrent les flux les plus complexes.
 
-\textbf{Processus d'authentification.} L'authentification repose sur un échange sécurisé où le contrôleur valide les identifiants via le service utilisateur avant de générer un token JWT.
+Le diagramme de la \ref{fig:seq_planning} modélise le flux de planification interactive via le Defense Designer. Ce processus repose sur un cycle de validation itératif où le frontend et le backend collaborent pour garantir l'absence de conflits :
 
-\begin{figure}[H]
-    \centering
-    \pumlsvg[\textwidth]{seq_auth}
-    \caption{Diagramme de séquence : Authentification}
-    \label{fig:seq_auth}
-\end{figure}
-
-\textbf{Planification et détection de conflits.} Lors de la planification, le PlanningService sollicite le ConflictService pour vérifier l'absence de chevauchements.
+\begin{enumerate}
+    \item L'utilisateur fait glisser un jury depuis la barre latérale vers une cellule du calendrier.
+    \item Le hook \texttt{useDefenseSchedule} construit le contexte (\texttt{ConflictContext}) à partir des données locales.
+    \item Le moteur TypeScript (\texttt{validateSlotAssignment}) exécute les 8 vérifications.
+    \item En cas d'erreur, un toast est affiché avec une suggestion de résolution ; le dépôt est annulé.
+    \item En cas de succès, l'état local (\texttt{schedule}) est mis à jour immédiatement (\textit{optimistic update}).
+    \item Lors de la sauvegarde, les données sont envoyées au serveur qui ré-exécute les vérifications via \texttt{ConflictDetectionService} avant persistance.
+\end{enumerate}
 
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{seq_planning}
-    \caption{Diagramme de séquence : Planification de soutenance}
+    \caption{Séquence de planification interactive via le Defense Designer}
     \label{fig:seq_planning}
 \end{figure}
 
-\textbf{Affectation et validation du jury.} L'affectation des jurys illustre les règles métier RG4 et RG5. Le service métier coordonne la sélection des enseignants selon la charge de travail et la spécialité.
+Le diagramme de la \ref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les credentials (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT contenant l'identifiant utilisateur et son rôle. Le frontend stocke le token dans le \texttt{localStorage} et redirige l'utilisateur vers la page correspondant à son rôle.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{seq_jury_assignment}
-    \caption{Diagramme de séquence : Affectation du jury}
-    \label{fig:seq_jury}
+    \pumlsvg[0.8\textwidth]{seq_auth}
+    \caption{Séquence d'authentification via JWT}
+    \label{fig:seq_auth}
 \end{figure}
 
-\textbf{Saisie et validation d'une évaluation.} Ce flux montre comment les membres du jury enregistrent leurs notes. Le système recalcule la moyenne provisoire à chaque saisie et ne finalise le résultat que lorsque toutes les notes sont validées.
+Le diagramme de la \ref{fig:seq_evaluation} modélise le flux de soumission d'une évaluation. L'enseignant saisit le score et le commentaire pour un étudiant, le frontend envoie une requête POST à l'endpoint d'évaluation, le serveur valide la note (plage 0--20), enregistre l'évaluation, met à jour le statut (PENDING $\rightarrow$ SUBMITTED), et retourne la confirmation. Le moteur de notation calculera ensuite la moyenne pondérée une fois toutes les évaluations d'un jury soumises.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{seq_evaluation}
-    \caption{Diagramme de séquence : Saisie d'évaluation}
+    \pumlsvg[0.8\textwidth]{seq_evaluation}
+    \caption{Séquence de soumission d'une évaluation}
     \label{fig:seq_evaluation}
 \end{figure}
 
-\textbf{Génération PDF.} Le service de documents extrait les données consolidées du modèle pour les injecter dans un template normalisé.
+\subsubsection{Diagrammes d'activité et de machine d'états}
+\label{ch3:activite}
+
+L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \ref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les 8 règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat au frontend.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{seq_pdf_generation}
-    \caption{Diagramme de séquence : Génération PDF}
-    \label{fig:seq_pdf}
+    \pumlsvg[0.7\textwidth]{act_conflict_logic}
+    \caption{Logique de validation des 8 règles de gestion (RG1-RG8)}
+    \label{fig:act_conflict}
 \end{figure}
 
-\textbf{Import massif de données.} Le processus d'importation gère la lecture de fichiers externes, effectue une validation ligne par ligne et assure la persistance transactionnelle.
+Le diagramme de la \ref{fig:act_evaluation} modélise le processus d'évaluation d'une soutenance, de la saisie des notes par les membres du jury jusqu'à la clôture de la session. Les notes sont saisies individuellement par chaque membre, puis le système calcule automatiquement la moyenne pondérée en appliquant les coefficients configurés pour la session. Une fois toutes les évaluations soumises, une décision est proposée (Admis, Admis avec corrections, Ajouré) et le procès-verbal peut être généré.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{seq_import_data}
-    \caption{Diagramme de séquence : Import massif de données}
-    \label{fig:seq_import}
+    \pumlsvg[0.7\textwidth]{act_evaluation}
+    \caption{Processus d'évaluation et de notation d'une soutenance}
+    \label{fig:act_evaluation}
 \end{figure}
 
-\textbf{Validation finale et notifications.} La validation par le coordinateur verrouille le planning et déclenche des événements asynchrones (génération et envoi des notifications).
+Le diagramme de la \ref{fig:state_soutenance} modélise le cycle de vie complet d'une soutenance via une machine à états. La soutenance traverse successivement les états : CREEE, PLANIFIEE, JURY\_AFFECTE, CONVOQUEE, EN\_COURS, EVALUEE, et CLOTUREE. L'état ANNULE reachable depuis PLANIFIEE, CONVOQUEE et EVALUEE permet de gérer les annulations à différents stades du processus. Cette modélisation garantit que chaque soutenance suit un parcours validé et que les transitions non autorisées sont bloquées par le système.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{seq_validate_planning}
-    \caption{Diagramme de séquence : Validation finale et notifications}
-    \label{fig:seq_validation}
+    \pumlsvg[0.7\textwidth]{state_soutenance}
+    \caption{Machine à états du cycle de vie d'une soutenance}
+    \label{fig:state_soutenance}
 \end{figure}
 
-\textbf{Récupération de compte.} En cas d'oubli du mot de passe, un lien temporaire contenant un jeton unique est envoyé pour une réinitialisation sécurisée.
+\subsection{Architecture logicielle}
+\label{ch3:architecture_logicielle}
 
-\begin{figure}[H]
-    \centering
-    \pumlsvg[\textwidth]{seq_reset_password}
-    \caption{Diagramme de séquence : Réinitialisation de mot de passe}
-    \label{fig:seq_reset_password}
-\end{figure}
+Le système adopte une architecture découplée pour maximiser la maintenabilité et la testabilité. La séparation frontend/backend via une API REST permet à chaque couche d'évoluer indépendamment.
 
-\subsection{Architecture technique}
-\label{ch3:architecture_technique}
-
-Le système repose sur une architecture web moderne organisée en couches, garantissant une séparation claire des responsabilités, une sécurité renforcée et une maintenance facilitée.
-
-\subsubsection{Architecture en couches}
-\label{ch3:couches}
-
-L'application suit le pattern \textbf{MVC (Modèle-Vue-Contrôleur)} adapté au Web :
-\begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \textbf{Vue (View) :} Assurée par le Frontend React, elle gère l'interface utilisateur et l'expérience interactive de manière asynchrone.
-    \item \textbf{Contrôleur (Controller) :} Les contrôleurs Spring Boot exposent des endpoints REST, reçoivent les requêtes du client et orchestrent les réponses.
-    \item \textbf{Modèle (Model) :} Comprend la logique métier (Services), l'accès aux données (Repositories) et la structure de persistance MySQL.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.8\textwidth]{arch_layers}
-    \caption{Architecture générale en trois couches}
-    \label{fig:arch_layers}
-\end{figure}
-
-\subsubsection{Architecture technique des composants}
-\label{ch3:composants}
-
-Le diagramme suivant détaille l'organisation interne des modules et leur mode de communication. On y observe la séparation nette entre le client web et le serveur d'application qui encapsule la logique métier complexe.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[\textwidth]{component_architecture}
-    \caption{Architecture technique des composants}
-    \label{fig:component_architecture}
-\end{figure}
-
-\subsubsection{Sécurité et Authentification JWT}
-\label{ch3:securite_jwt}
-
-Pour répondre aux exigences de sécurité et de performance, le système implémente une authentification \textbf{stateless} basée sur les \textbf{JSON Web Tokens (JWT)} :
+\subsubsection{Backend (API REST)}
+Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité}. Cette structure permet d'isoler la logique métier (notamment le \texttt{ConflictDetectionService}) de la couche d'accès aux données. Les DTOs assurent le découplage entre les API exposées et le modèle interne. Le projet est organisé en dix packages fonctionnels :
 
 \begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \textbf{Génération :} Lors de la connexion, le serveur valide les identifiants et génère un token signé cryptographiquement contenant l'identité et le rôle de l'utilisateur.
-    \item \textbf{Transmission :} Ce token est renvoyé au client (React) qui le stocke localement et l'inclut dans le header \texttt{Authorization} de chaque requête API ultérieure.
-    \item \textbf{Validation :} Le backend (Spring Security) intercepte chaque requête, vérifie la signature du token et extrait les droits d'accès sans avoir à interroger la base de données pour la session.
+    \item \texttt{auth/} -- authentification JWT, mot de passe oublié, activation de compte
+    \item \texttt{admin/} -- gestion des entités académiques (salles, départements, filières, configuration)
+    \item \texttt{coordinator/} -- cœur métier (projets, groupes, jurys, planification, conflits, notes, documents)
+    \item \texttt{teacher/} -- evaluations, indisponibilités, planning personnel
+    \item \texttt{student/} -- groupe, documents, convocation, statistiques
+    \item \texttt{notification/} -- système de notifications et email
+    \item \texttt{common/} -- configuration Spring Security, exceptions, mappers, audit
+    \item \texttt{seed/} -- initialisation des données de démonstration
+    \item \texttt{user/} -- hiérarchie des utilisateurs (User, Teacher, Student, Coordinator)
 \end{itemize}
+
+\subsubsection{Frontend (SPA)}
+L'interface est conçue comme une application monopage (\textit{Single Page Application}) utilisant React 19 avec TypeScript 6 en mode strict. L'état asynchrone est géré par \textbf{TanStack Query v5}, qui assure la synchronisation avec l'API, la mise en cache et le rechargement automatique. Le \textit{Defense Designer} implémente un état local optimiste pour une fluidité maximale lors du drag-and-drop, grâce à la bibliothèque \textbf{@dnd-kit/core}. Chaque page est chargée via \texttt{React.lazy()} pour optimiser le temps de chargement initial, et les routes sont protégées par des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur avant d'autoriser l'accès.
+
+\subsubsection{Sécurité et contrôle d'accès}
+Le flux de sécurité repose sur trois mécanismes complémentaires. L'authentification utilise des tokens JWT signés avec une clé HMAC-SHA, contenant l'identifiant utilisateur et son rôle. Le filtre \texttt{JwtAuthFilter} intercepte chaque requête, extrait le token du header \texttt{Authorization} ou du cookie \texttt{jwt\_token}, le valide, et configure le contexte de sécurité Spring. Le contrôle d'autorisation est implémenté via les annotations \texttt{@PreAuthorize} sur les contrôleurs, qui restreignent l'accès aux endpoints en fonction du rôle de l'utilisateur courant. Enfin, la configuration CORS autorise les origines du frontend en développement (\texttt{localhost:5173}) et en production.
 
 \subsection{Modélisation de la base de données}
 \label{ch3:mld}
 
-Le Modèle Logique de Données (MLD) traduit les diagrammes de classes en structures tabulaires optimisées pour la persistance dans une base de données relationnelle MySQL.
+Le Modèle Logique de Données (MLD) traduit les classes JPA en tables relationnelles. La base de données H2 en développement utilise le même schéma que MySQL en production, garantissant la compatibilité entre les environnements.
 
-Le modèle distingue explicitement les \textbf{sessions globales}, administrées au niveau institutionnel, et les \textbf{soutenances}, qui représentent les passages individuels planifiés par le coordinateur. Il ajoute également les tables de support nécessaires : indisponibilités des enseignants, convocations, notifications et jetons de réinitialisation.
+L'héritage des utilisateurs est implémenté via la stratégie JOINED : la table \texttt{users} contient les attributs communs (email, password, role, firstName, lastName, isActive), tandis que les tables \texttt{teachers}, \texttt{students} et \texttt{coordinators} stockent les attributs spécifiques. Cette stratégie, plus coûteuse en jointures que la stratégie SINGLE\_TABLE, a été choisie pour sa clarté sémantique et sa facilité d'évolution.
+
+Les données flexibles sont gérées via les annotations \texttt{@ElementCollection} : les membres d'un jury (\texttt{defense\_members}), les créneaux d'indisponibilité (\texttt{unavailability\_slots}), les coefficients d'évaluation par session (\texttt{defense\_session\_coefficients}), et les rôles d'un template de jury (\texttt{template\_roles}). Cette approche, bien que moins performante que des tables séparées pour les données volumineuses, est adaptée au volume de données attendu dans un contexte universitaire.
+
+Les entités de configuration (GeneralSettings, DefenseSettings, EmailConfig, DocumentConfig) utilisent un pattern singleton avec un identifiant fixe (\texttt{id=1L}), simplifiant la gestion des paramètres globaux par le système.
 
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{mld_schema}
-    \caption{Modèle Logique de Données (MLD)}
+    \caption{Modèle Logique de Données (MLD) synchronisé}
     \label{fig:mld_schema}
 \end{figure}
 
-\subsubsection{Dictionnaire des données}
-\label{ch3:dictionnaire}
+\subsection{Normes et standards respectés}
+\label{ch3:normes}
 
-Ce dictionnaire détaille les attributs de l'ensemble des entités du MLD, organisés par domaine fonctionnel.
+Le développement du système suit des normes et standards industry pour garantir la qualité, la maintenabilité et la cohérence du code source.
 
-\paragraph{Gestion des utilisateurs et des rôles.}
+Côté Java, le code respecte les conventions de nommage Java (camelCase pour les méthodes et variables, PascalCase pour les classes), les directives de codage Google (limitation à 100 caractères par ligne, gestion des imports non utilisés), et les bonnes pratiques Spring (injection de dépendances par constructeur, annotations de validation sur les DTOs). Les noms de tables et de colonnes suivent la convention snake\_case en base de données, reflétée par les annotations \texttt{@Table} et \texttt{@Column}.
 
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant unique de l'utilisateur. \\
-        nom, prenom    & VARCHAR       & NOT NULL            & Informations civiles. \\
-        email          & VARCHAR       & UNIQUE              & Adresse de contact et identifiant de connexion. \\
-        password       & VARCHAR       & NOT NULL            & Hash du mot de passe (BCrypt). \\
-        role           & ENUM          & NOT NULL            & Rôle (ADMIN, COORDINATEUR, ENSEIGNANT, ETUDIANT). \\
-        actif          & BOOLEAN       & DEFAULT TRUE        & État d'activation du compte. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table utilisateurs}
-    \label{tab:table_utilisateurs}
-\end{table}
+Côté TypeScript, le code suit les conventions Airbnb (formatage Prettier, règles ESLint strictes), le typage strict est activé (\texttt{strict: true} dans le \texttt{tsconfig.json}), et les noms de fichiers utilisent le kebab-case (\texttt{conflict-engine.ts}, \texttt{use-defense-schedule.ts}). Les composants React suivent le pattern fonctionnel avec hooks, sans/classes.
 
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        cne            & VARCHAR       & PK                  & Code National de l'Étudiant. \\
-        filiere        & VARCHAR       & NOT NULL            & Nom de la filière d'attachement. \\
-        niveau         & VARCHAR       & NOT NULL            & Niveau académique (ex: Licence, Master). \\
-        user\_id       & INT           & FK                  & Référence vers le compte utilisateur. \\
-        projet\_id     & INT           & FK                  & Référence vers le projet porté par l'étudiant. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table etudiants}
-    \label{tab:table_etudiants}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant unique de l'enseignant. \\
-        grade          & VARCHAR       & -                   & Grade académique (ex: PES, PH). \\
-        specialite     & VARCHAR       & -                   & Domaine d'expertise. \\
-        user\_id       & INT           & FK                  & Référence vers le compte utilisateur. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table enseignants}
-    \label{tab:table_enseignants}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant unique du profil spécifique. \\
-        user\_id       & INT           & FK                  & Référence vers le compte utilisateur. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table administrateurs / coordinateurs}
-    \label{tab:table_admin_coord}
-\end{table}
-
-\paragraph{Organisation académique et logistique.}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant de la session globale. \\
-        libelle        & VARCHAR       & NOT NULL            & Nom de la session (normale, rattrapage). \\
-        date\_debut    & DATE          & NOT NULL            & Début de la période de soutenances. \\
-        date\_fin      & DATE          & NOT NULL            & Fin de la période de soutenances. \\
-        statut         & ENUM          & NOT NULL            & État (OUVERTE, VERROUILLEE, CLOTUREE). \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table sessions\_globales}
-    \label{tab:table_sessions}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant unique du projet. \\
-        titre          & VARCHAR       & NOT NULL            & Intitulé du sujet de PFE/Mémoire. \\
-        description    & TEXT          & -                   & Résumé ou détails du projet. \\
-        type           & ENUM          & NOT NULL            & Type (PFE, MEMOIRE, STAGE). \\
-        encadrant\_id  & INT           & FK                  & Référence vers l'enseignant encadrant. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table projets}
-    \label{tab:table_projets}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant unique de la salle. \\
-        nom            & VARCHAR       & NOT NULL            & Nom ou numéro de la salle. \\
-        batiment       & VARCHAR       & -                   & Localisation géographique. \\
-        capacite       & INT           & -                   & Nombre de places assises. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table salles}
-    \label{tab:table_salles}
-\end{table}
-
-\paragraph{Soutenances et Évaluations.}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant unique de la soutenance. \\
-        date\_passage  & DATE          & NOT NULL            & Date prévue pour la séance. \\
-        heure\_debut   & TIME          & NOT NULL            & Heure précise du début. \\
-        duree          & INT           & -                   & Durée prévue en minutes. \\
-        statut         & ENUM          & NOT NULL            & État (PLANIFIEE, CONVOQUEE, EVALUEE...). \\
-        salle\_id      & INT           & FK                  & Référence à la salle occupée. \\
-        projet\_id     & INT           & FK                  & Référence au projet présenté. \\
-        session\_id    & INT           & FK                  & Référence à la session globale. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table soutenances}
-    \label{tab:table_soutenances}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        soutenance\_id & INT           & PK, FK              & Référence à la soutenance. \\
-        enseignant\_id & INT           & PK, FK              & Référence à l'enseignant membre. \\
-        role\_jury     & ENUM          & NOT NULL            & Rôle (PRESIDENT, RAPPORTEUR, EXAMINATEUR). \\
-        present        & BOOLEAN       & -                   & Confirmation de présence. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table membres\_jury}
-    \label{tab:table_membres_jury}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant de la note individuelle. \\
-        note           & FLOAT         & NOT NULL            & Note attribuée par un membre du jury. \\
-        observations   & TEXT          & -                   & Remarques du membre évaluateur. \\
-        validee        & BOOLEAN       & DEFAULT FALSE       & Note confirmée. \\
-        soutenance\_id & INT           & FK                  & Référence à la soutenance évaluée. \\
-        enseignant\_id & INT           & FK                  & Membre du jury ayant saisi la note. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table evaluations}
-    \label{tab:table_evaluations}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant du résultat consolidé. \\
-        moyenne\_finale & FLOAT        & NOT NULL            & Moyenne des notes validées (RG6). \\
-        decision       & ENUM          & NOT NULL            & Décision finale (ADMIS, AJOURNE...). \\
-        observations\_finales & TEXT   & -                   & Remarques finales du jury. \\
-        validee        & BOOLEAN       & DEFAULT FALSE       & Verrouillage du résultat. \\
-        soutenance\_id & INT           & FK, UNIQUE          & Soutenance concernée. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table resultats\_soutenance}
-    \label{tab:table_resultats}
-\end{table}
-
-La table \texttt{evaluations} conserve la traçabilité des notes par membre du jury. La table \texttt{resultats\_soutenance} porte le résultat unique affiché à l'étudiant.
-
-\paragraph{Documents, disponibilités et sécurité opérationnelle.}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant de la convocation. \\
-        type           & ENUM          & NOT NULL            & Type (ETUDIANT ou JURY). \\
-        chemin\_fichier & VARCHAR      & -                   & Emplacement du PDF généré. \\
-        envoyee        & BOOLEAN       & DEFAULT FALSE       & Envoi effectué. \\
-        date\_generation & DATETIME    & NOT NULL            & Date de génération. \\
-        soutenance\_id & INT           & FK                  & Soutenance concernée. \\
-        utilisateur\_id & INT          & FK                  & Destinataire. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table convocations}
-    \label{tab:table_convocations}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant de l'indisponibilité. \\
-        date\_debut    & DATE          & NOT NULL            & Premier jour indisponible. \\
-        date\_fin      & DATE          & NOT NULL            & Dernier jour indisponible. \\
-        heure\_debut   & TIME          & -                   & Début du créneau si partiel. \\
-        heure\_fin     & TIME          & -                   & Fin du créneau si partiel. \\
-        motif          & VARCHAR       & -                   & Motif ou commentaire. \\
-        enseignant\_id & INT           & FK                  & Enseignant concerné. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table indisponibilites}
-    \label{tab:table_indisponibilites}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant de la notification. \\
-        sujet          & VARCHAR       & NOT NULL            & Objet du message. \\
-        contenu        & TEXT          & NOT NULL            & Corps du message. \\
-        statut         & ENUM          & NOT NULL            & EN\_ATTENTE, ENVOYEE ou ECHEC. \\
-        date\_envoi    & DATETIME      & -                   & Date effective d'envoi. \\
-        utilisateur\_id & INT          & FK                  & Destinataire. \\
-        soutenance\_id & INT           & FK                  & Soutenance liée. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table notifications}
-    \label{tab:table_notifications}
-\end{table}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lp{2cm}lp{6cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Champ} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
-        \midrule
-        id             & INT           & PK, AI              & Identifiant du jeton. \\
-        token          & VARCHAR       & UNIQUE, NOT NULL    & Valeur aléatoire du jeton sécurisé. \\
-        expire\_le     & DATETIME      & NOT NULL            & Date limite d'utilisation. \\
-        utilise        & BOOLEAN       & DEFAULT FALSE       & Empêche la réutilisation. \\
-        utilisateur\_id & INT          & FK                  & Compte utilisateur concerné. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Dictionnaire -- Table reset\_tokens}
-    \label{tab:table_reset_tokens}
-\end{table}
-
-\subsection{Conception de l'interface utilisateur}
-\label{ch3:conception_ihm}
-
-\subsubsection{Plan de navigation}
-\label{ch3:sitemap}
-
-Le diagramme suivant présente le sitemap de l'application et les points d'entrée selon les rôles utilisateurs.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[\textwidth]{nav_sitemap}
-    \caption{Sitemap et plan de navigation}
-    \label{fig:nav_sitemap}
-\end{figure}
-
-\subsubsection{Prototypes d'interface}
-\label{ch3:prototypes}
-
-Cette section présente les maquettes graphiques des principales interfaces de l'application. Le design privilégie la sobriété, l'efficacité et une navigation intuitive.
-
-\paragraph{Interface d'accès.} L'écran de connexion constitue le point d'entrée unique du système. Il assure la sécurité des accès et redirige chaque utilisateur vers son espace dédié selon son rôle.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{../../assets/prototype/login.png}
-    \caption{Interface de connexion}
-    \label{fig:login}
-\end{figure}
-
-\paragraph{Tableau de bord Administrateur.} Cette interface offre une vision globale sur l'infrastructure. Elle permet de gérer le cycle de vie des comptes utilisateurs et de configurer les ressources logistiques.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../../assets/prototype/admin-dashboard.png}
-    \caption{Interface : Tableau de bord Administrateur}
-    \label{fig:admin_dashboard}
-\end{figure}
-
-\paragraph{Tableau de bord Coordinateur.} Centre névralgique de la planification, cette vue permet au coordinateur d'importer les données, d'orchestrer les sessions et de visualiser l'état d'avancement.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../../assets/prototype/coordinator-dashboard.png}
-    \caption{Interface : Tableau de bord Coordinateur}
-    \label{fig:coordinator_dashboard}
-\end{figure}
-
-\paragraph{Espace Enseignant.} Cette interface permet aux enseignants de consulter leur planning de jury, de télécharger leurs convocations et d'accéder aux formulaires de notation.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../../assets/prototype/teacher-dashboard.png}
-    \caption{Interface : Tableau de bord Enseignant}
-    \label{fig:teacher_dashboard}
-\end{figure}
-
-\paragraph{Espace Étudiant.} L'étudiant dispose d'une interface épurée affichant les informations cruciales : date, heure, salle et composition du jury, avec téléchargement de la convocation.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../../assets/prototype/student-dashboard.png}
-    \caption{Interface : Tableau de bord Étudiant}
-    \label{fig:student_dashboard}
-\end{figure}
-
-\subsubsection{Modèle de convocation officielle}
-\label{ch3:convocation_modele}
-
-La convocation est le document administratif pivot du système. Elle constitue l'acte officiel qui déclenche la phase d'exécution des soutenances. L'automatisation complète de ce document via le service dédié apporte plusieurs garanties :
-\begin{itemize}
-    \item \textbf{Intégrité des données :} les informations sont extraites directement de la base après validation des conflits, éliminant les erreurs humaines.
-    \item \textbf{Valeur administrative :} justificatif officiel d'absence pour l'étudiant et convocation de mission pour les enseignants.
-    \item \textbf{Réactivité :} génération instantanée dès le verrouillage de la session par le coordinateur.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includesvg[width=\textwidth, inkscapelatex=false]{../../assets/prototype/convocation.svg}
-    \caption{Spécimen de convocation officielle (Format A4)}
-    \label{fig:convocation}
-\end{figure}
+Les messages de commit suivent les conventions Git : préfixes sémantiques (\texttt{feat:}, \texttt{fix:}, \texttt{chore:}, \texttt{docs:}), description en anglais, imperative mood. Les issues GitHub documentent les fonctionnalités et les corrections, avec des labels de priorité et de catégorie.
 
 \subsection{Conclusion}
 \label{ch3:conclusion}
 
-Ce chapitre a présenté l'analyse complète des besoins du système, depuis la définition des acteurs et des fonctionnalités jusqu'à la modélisation UML détaillée. Les règles de gestion qui encadrent le système ont été formalisées, les sept modules fonctionnels ont été décrits, et l'architecture technique -- couches MVC, composants, sécurité JWT -- a été spécifiée. Le modèle de données relationnel a été défini avec son dictionnaire complet. Enfin, la conception de l'interface utilisateur a été illustrée à travers les maquettes des écrans principaux et le modèle de convocation.
+Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des 8 règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité, machine à états) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry garantit la maintenabilité du système à long terme.

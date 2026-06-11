@@ -1,1 +1,88 @@
-<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="383px" preserveAspectRatio="none" style="width:438px;height:383px;background:#FFFFFF;" version="1.1" viewBox="0 0 438 383" width="438px" zoomAndPan="magnify"><defs/><g><!--cluster Module Administration--><g id="cluster_Module Administration"><rect fill="none" height="365" rx="2.5" ry="2.5" style="stroke:#003366;stroke-width:1.0;" width="288" x="144" y="12"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="139" x="218.5" y="31.8281">Module Administration</text></g><g id="elem_UC1"><ellipse cx="287.9251" cy="82.085" fill="#F2F4F7" rx="110.9251" ry="24.585" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="149" x="213.4251" y="84.7411">G&#233;rer comptes utilisateurs</text></g><g id="elem_UC2"><ellipse cx="288.1396" cy="163.1281" fill="#F2F4F7" rx="66.6396" ry="21.6281" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="68" x="254.1396" y="165.7841">G&#233;rer salles</text></g><g id="elem_UC3"><ellipse cx="288.0163" cy="244.9033" fill="#F2F4F7" rx="112.5163" ry="24.9033" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="153" x="211.5163" y="247.5593">G&#233;rer les sessions globales</text></g><g id="elem_UC4"><ellipse cx="288.2191" cy="333.0438" fill="#F2F4F7" rx="128.2191" ry="28.0438" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="191" x="192.7191" y="335.6999">G&#233;rer les  param&#232;tres du syst&#232;me</text></g><!--entity Admin--><g id="elem_Admin"><ellipse cx="53" cy="169.5" fill="#F2F4F7" rx="8" ry="8" style="stroke:#003366;stroke-width:1.0;"/><path d="M53,177.5 L53,204.5 M40,185.5 L66,185.5 M53,204.5 L40,219.5 M53,204.5 L66,219.5 " fill="none" style="stroke:#003366;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="84" x="11" y="239.3281">Administrateur</text></g><!--link Admin to UC1--><g id="link_Admin_UC1"><path d="M90.66,160.47 C103.78,147.15 119.45,133.52 136,124 C156.16,112.4 173.9192,105.4671 196.3292,99.2371 " fill="none" id="Admin-to-UC1" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="202.11,97.63,192.3675,96.1867,197.2927,98.9692,194.5102,103.8944,202.11,97.63" style="stroke:#003366;stroke-width:1.0;"/></g><!--link Admin to UC2--><g id="link_Admin_UC2"><path d="M100.03,195.9 C137.04,189.39 183.3208,181.2398 223.1608,174.2298 " fill="none" id="Admin-to-UC2" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="229.07,173.19,219.513,170.8101,224.1456,174.0565,220.8993,178.6891,229.07,173.19" style="stroke:#003366;stroke-width:1.0;"/></g><!--link Admin to UC3--><g id="link_Admin_UC3"><path d="M100.03,212.1 C128.28,217.07 159.4808,222.5602 193.1808,228.4902 " fill="none" id="Admin-to-UC3" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="199.09,229.53,190.9194,224.0308,194.1657,228.6635,189.533,231.9098,199.09,229.53" style="stroke:#003366;stroke-width:1.0;"/></g><!--link Admin to UC4--><g id="link_Admin_UC4"><path d="M89.33,247.66 C102.69,261.87 118.84,276.63 136,287 C154.41,298.13 170.0149,304.9231 190.7249,311.5431 " fill="none" id="Admin-to-UC4" style="stroke:#003366;stroke-width:1.0;"/><polygon fill="#003366" points="196.44,313.37,189.0852,306.8196,191.6774,311.8476,186.6494,314.4398,196.44,313.37" style="stroke:#003366;stroke-width:1.0;"/></g><!--SRC=[TOz1JWCn34NtFiLdzaMYxHe9iM35aWEuCvvff6Goifq5GjodFSTSZ121QANYZVNZzx_ZEpzA4YoZODISS4zHHeTdQ9YEZY6ez1xoJCIzPqNtDAGm1tDbbw8TsD2UYBv9dgSew5xpK6g_O6j4Xmz2hMBIirNgPJshAFgS5XT3yH23jLXhkM_F3pSDnZ7ABxAzYTGvJCpgMiCKyu7_7Bj_7LXOEQqdrog60ditNqz9Venx-YHgDs6pUMpVkrJRAxMxKlil]--></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="365px" preserveAspectRatio="none" style="width:401px;height:365px;" version="1.1" viewBox="0 0 401 365" width="401px" zoomAndPan="magnify"><defs/><g><!--MD5=[b7355e040c61ae5e775e192a1fec7e1f]
+cluster Module Administration--><rect fill="#FFFFFF" height="330" rx="4" ry="4" style="stroke: #008080; stroke-width: 1.5;" width="246" x="144" y="24"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="139" x="197.5" y="43.8281">Module Administration</text><ellipse cx="266.9695" cy="88.9939" fill="#F8F9FA" rx="87.9695" ry="19.9939" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="149" x="192.4695" y="93.666">Gérer comptes utilisateurs</text><ellipse cx="267.2306" cy="161.0943" fill="#F8F9FA" rx="44.7306" ry="17.0943" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="68" x="233.2306" y="165.7664">Gérer salles</text><ellipse cx="267.2284" cy="233.8457" fill="#F8F9FA" rx="89.7284" ry="20.3457" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="153" x="190.7284" y="238.5177">Gérer les sessions globales</text><ellipse cx="266.874" cy="313.7748" fill="#F8F9FA" rx="106.874" ry="23.7748" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="191" x="171.374" y="318.4469">Gérer les  paramètres du système</text><!--MD5=[97ab183161fd5d1db7fba7485cf76add]
+entity Admin--><ellipse cx="53" cy="163.5" fill="#F8F9FA" rx="8" ry="8" style="stroke: #008080; stroke-width: 1.5;"/><path d="M53,171.5 L53,198.5 M40,179.5 L66,179.5 M53,198.5 L40,213.5 M53,198.5 L66,213.5 " fill="none" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="84" x="11" y="233.8281">Administrateur</text><!--MD5=[ea3353ea01154d76428968f204f6b4ca]
+link Admin to UC1--><path d="M97.24,153.73 C109.04,143.49 122.36,133.43 136,126 C153.95,116.22 174.74,108.81 194.35,103.29 " fill="none" id="Admin-&gt;UC1" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="199.31,101.93,189.5702,100.4683,194.4902,103.2601,191.6984,108.1801,199.31,101.93" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[de97aa311480b161bc35f3609e8d693b]
+link Admin to UC2--><path d="M100,189.97 C135.87,183.71 185.4,175.07 221,168.85 " fill="none" id="Admin-&gt;UC2" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="226.15,167.95,216.5977,165.5512,221.2239,168.8067,217.9685,173.4329,226.15,167.95" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[48bca86a3c4accf12c9b2d9c814b033a]
+link Admin to UC3--><path d="M100,205.81 C126.13,210.25 159.52,215.92 189.49,221.01 " fill="none" id="Admin-&gt;UC3" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="194.65,221.88,186.4531,216.4201,189.7215,221.0372,185.1045,224.3057,194.65,221.88" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[9c5d918ecfd1c00c01cdb5a4c09a381c]
+link Admin to UC4--><path d="M95.99,242.04 C108.1,252.96 121.88,263.85 136,272 C152.15,281.32 170.64,288.87 188.51,294.87 " fill="none" id="Admin-&gt;UC4" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="193.53,296.52,186.2448,289.8924,188.7837,294.9474,183.7287,297.4864,193.53,296.52" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[6e429bdddab94ea47959cb5a7ed89eae]
+@startuml
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam Padding 5
+skinparam defaultFontName "SansSerif"
+skinparam defaultFontSize 12
+
+skinparam ActivityBackgroundColor #F8F9FA
+skinparam ActivityBorderColor #008080
+skinparam ActivityDiamondBackgroundColor #E67E22
+skinparam ActivityDiamondBorderColor #E67E22
+skinparam ActivityDiamondFontColor #FFFFFF
+
+skinparam ActorBackgroundColor #F8F9FA
+skinparam ActorBorderColor #008080
+
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #008080
+skinparam ClassHeaderBackgroundColor #008080
+skinparam ClassAttributeIconSize 0
+
+skinparam ComponentBackgroundColor #F8F9FA
+skinparam ComponentBorderColor #008080
+
+skinparam DatabaseBackgroundColor #F8F9FA
+skinparam DatabaseBorderColor #008080
+
+skinparam NoteBackgroundColor #FFF2E6
+skinparam NoteBorderColor #E67E22
+
+skinparam StateBackgroundColor #F8F9FA
+skinparam StateBorderColor #008080
+
+skinparam UsecaseBackgroundColor #F8F9FA
+skinparam UsecaseBorderColor #008080
+
+skinparam SequenceGroupBackgroundColor #F8F9FA
+skinparam SequenceGroupBorderColor #008080
+skinparam SequenceLifeLineBorderColor #008080
+skinparam SequenceParticipantBackgroundColor #F8F9FA
+skinparam SequenceParticipantBorderColor #008080
+skinparam ControlBackgroundColor #F8F9FA
+skinparam ControlBorderColor #008080
+skinparam BoundaryBackgroundColor #F8F9FA
+skinparam BoundaryBorderColor #008080
+skinparam EntityBackgroundColor #F8F9FA
+skinparam EntityBorderColor #008080
+
+skinparam ArrowColor #008080
+skinparam ArrowFontColor #008080
+
+skinparam PackageBackgroundColor #FFFFFF
+skinparam PackageBorderColor #008080
+left to right direction
+
+actor "Administrateur" as Admin
+
+rectangle "Module Administration" {
+    usecase "Gérer comptes utilisateurs" as UC1
+    usecase "Gérer salles" as UC2
+    usecase "Gérer les sessions globales" as UC3
+    usecase "Gérer les  paramètres du système" as UC4
+}
+
+Admin - -> UC1
+Admin - -> UC2
+Admin - -> UC3
+Admin - -> UC4
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 11:22:07 WEST 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 21.0.11+10-1-24.04.2-Ubuntu
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
