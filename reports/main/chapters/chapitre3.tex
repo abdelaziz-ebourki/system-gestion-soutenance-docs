@@ -78,7 +78,7 @@ Les besoins sont organisés par modules métier, chacun correspondant à un sous
 
 L'\textbf{authentification} est assurée par le module Gestion Identité via JWT avec tokens d'accès et de rafraîchissement. La récupération de mot de passe utilise un lien à durée limitée (1 heure), et l'activation de compte valide la force du mot de passe (bibliothèque zxcvbn). L'interface de connexion unifiée redirige automatiquement selon le rôle de l'utilisateur.
 
-L'\textbf{administration des filières} (MIP, BCG, etc.), des niveaux (L3, M1, M2) et des grades académiques relève du module Gestion Académique, qui inclut l'import massif des étudiants et des salles via fichiers Excel avec validation des données et gestion des erreurs ligne par ligne. Une interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour.
+L'\textbf{administration des filières} (MIP, BCG, etc.) et des niveaux (Licence 3, Master 2, etc.) relève du module Gestion Académique, qui inclut l'import massif des étudiants et des salles via fichiers Excel avec validation des données et gestion des erreurs ligne par ligne. Une interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour.
 
 La \textbf{constitution des jurys} est gérée par le module Gestion des Projets et Jurys, qui suit les projets selon des statuts (proposé, approuvé, rejeté) et permet de constituer des jurys selon des templates configurables avec rôles normalisés (Président, Rapporteur, Examinateur). Le suivi de la charge des enseignants évite les sur-affectations.
 
