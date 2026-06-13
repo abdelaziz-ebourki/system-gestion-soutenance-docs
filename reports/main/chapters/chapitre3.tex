@@ -291,6 +291,15 @@ L'algorithme de détection des conflits, moteur central du système, est modéli
 
 Le système adopte une architecture découplée pour maximiser la maintenabilité et la testabilité. La séparation frontend/backend via une API REST permet à chaque couche d'évoluer indépendamment.
 
+\Cref{fig:component_architecture} présente la vue composants du système, organisée en trois couches principales : le frontend React, le backend Spring Boot et la base de données.
+
+\begin{figure}[H]
+    \centering
+    \pumlsvg[0.9\textwidth]{component_architecture}
+    \caption{Architecture en composants du système}
+    \label{fig:component_architecture}
+\end{figure}
+
 \subsubsection{Backend (API REST)}
 Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité}. Cette structure permet d'isoler la logique métier (notamment le \texttt{ConflictDetectionService}) de la couche d'accès aux données. Les DTOs assurent le découplage entre les API exposées et le modèle interne. Le projet est organisé en dix packages fonctionnels :
 

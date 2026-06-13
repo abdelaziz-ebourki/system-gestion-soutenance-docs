@@ -223,7 +223,7 @@ Côté backend, \textbf{Checkstyle} vérifie la conformité du code aux conventi
 \subsection{Architecture générale retenue}
 \label{ch2:architecture}
 
-L'application adopte une architecture web moderne en trois couches, favorisant la modularité et la séparation des préoccupations. \Cref{fig:component_architecture} présente la vue composants du système, détaillant les modules de chaque couche.
+L'application adopte une architecture web moderne en trois couches, favorisant la modularité et la séparation des préoccupations. Cette architecture est détaillée dans le chapitre suivant, qui présente la vue composants du système et la logique de chaque couche.
 
 \subsubsection{Philosophie API-first}
 \label{ch2:api_first}
@@ -246,14 +246,7 @@ Des workflows GitHub Actions assurent la synchronisation automatique : lors d'un
 
 En environnement de développement, \textbf{Docker Compose} orchestre l'ensemble des services nécessaires. Le fichier \texttt{docker-compose.yml} définit deux conteneurs : l'API Spring Boot (exposée sur le port 8080) et Mailpit (serveur SMTP de test avec interface web sur le port 8025). L'application frontend est lancée séparément via \texttt{npm run dev} (Vite dev server sur le port 5173), avec un proxy configuré pour rediriger les appels \texttt{/api} vers le backend.
 
-Cette architecture de développement est conçue pour être lancée en une seule commande (\texttt{docker compose up --build} pour le backend, \texttt{npm run dev} pour le frontend), offrant ainsi un environnement de travail immédiat pour les développeurs. La base de données H2 en mémoire est automatiquement peuplée par le \texttt{DataInitializer} lors du premier démarrage, fournissant des données de démonstration réalistes.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.9\textwidth]{component_architecture}
-    \caption{Architecture en composants du système}
-    \label{fig:component_architecture}
-\end{figure}
+Cette architecture de développement est conçue pour être lancée en une seule commande (\texttt{docker compose up --build} pour le backend, \texttt{npm run dev} pour le frontend), offrant ainsi un environnement de travail immédiat pour les développeurs. La base de données H2 en mémoire est automatiquement peuplée par le \texttt{DataInitializer} lors du premier démarrage, fournissant des données de démonstration.
 
 \subsection{Conclusion}
 \label{ch2:conclusion}
