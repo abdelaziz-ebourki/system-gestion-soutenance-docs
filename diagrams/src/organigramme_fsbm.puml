@@ -1,0 +1,40 @@
+@startmindmap
+!include puml-theme-pfe.puml
+* Organigramme
+** Doyen\nPr. Mohammed TALBI
+*** Départements
+**** Département de Biologie
+**** Département de Chimie
+**** Département de Géologie
+**** Département de Langue et Communication
+**** Département des Mathématiques et Informatique
+**** Département de Physique
+*** Secrétariat du Décanat
+**** Cellule Communication et Qualité
+**** Commission Scientifique
+**** Observatoire de la Vie Étudiante
+*** Chargés de Mission
+**** CM Apogée
+**** CM PINTECH
+**** CM PE2I
+**** CM Valorisation et Transfert de Technologie
+*** Conseil d'établissement
+**** Commission Pédagogique
+**** Commission de Recherche
+**** Commission des Affaires Culturelles et Sociales
+**** Commission de Suivi de Budget
+*** CM ad hoc
+*** Comité d'auto-évaluation
+*** Commission de suivi des marchés
+*** Conseil de gestion
+*** Comité Smart Campus
+*** Pôle Secrétariat Général
+**** Dr. Abbas YAMARI
+*** Pôle Affaires Pédagogiques
+**** Pr. Mohamed RADID
+*** Pôle Recherche Scientifique
+**** Pr. Noura YOUSFI
+*** Pôle Développement et Digitalisation
+**** Pr. Abdelwahed NAMIR
+*** Services Communs
+@endmindmap
