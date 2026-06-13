@@ -5,13 +5,25 @@ left to right direction
 actor "Étudiant" as Student
 
 rectangle "Module Étudiant" {
-    usecase "Télécharger convocation" as UC1
-    usecase "Consulter infos de soutenance" as UC2
-    usecase "Consulter résultats" as UC3
+    usecase "Consulter le tableau\nde bord" as Dashboard
+    usecase "Créer un groupe" as CreateGroup
+    usecase "Rejoindre un groupe" as JoinGroup
+    usecase "Consulter son groupe" as ViewGroup
+    usecase "Consulter les détails\nde la soutenance" as DefenseDetails
+    usecase "Télécharger\nla convocation" as DownloadConv
+    usecase "Téléverser\ndes documents" as UploadDocs
+    usecase "Consulter le résultat\nde la soutenance" as Result
 }
 
-Student --> UC1
-Student --> UC3
+DownloadConv ..> DefenseDetails : <<include>>
+Result ..> DefenseDetails : <<extend>>
 
-UC1 ..> UC2 : <<include>>
+Student --> Dashboard
+Student --> CreateGroup
+Student --> JoinGroup
+Student --> ViewGroup
+Student --> DefenseDetails
+Student --> DownloadConv
+Student --> UploadDocs
+Student --> Result
 @enduml

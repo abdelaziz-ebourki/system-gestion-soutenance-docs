@@ -4,26 +4,20 @@ left to right direction
 
 actor "Enseignant / Membre de jury" as Jury
 
-rectangle "Module Jury" {
-    usecase "Consulter planning" as UC1
-    usecase "Consulter convocation" as UC2
-    usecase "Déclarer indisponibilité" as UC3
-    usecase "Saisir évaluation" as UC4
-    usecase "Générer fiches d'évaluation" as UC5
-
-    usecase "Consulter informations étudiant" as UC7
-    usecase "Valider / modifier évaluation" as UC6
-
-    UC6 -[hidden]up- UC5
-    UC6 -[hidden]left- UC4
-
-    UC6 ..> UC4 : <<extend>>
-    UC4 ..> UC7 : <<include>>
+rectangle "Module Enseignant" {
+    usecase "Consulter le planning" as Schedule
+    usecase "Déclarer des\nindisponibilités" as Unavail
+    usecase "Saisir les évaluations" as EvalInput
+    usecase "Soumettre les\évaluations" as EvalSubmit
+    usecase "Consulter l'historique\ndes évaluations" as EvalHistory
 }
 
-Jury --> UC1
-Jury --> UC2
-Jury --> UC3
-Jury --> UC5
-Jury --> UC4
+EvalSubmit ..> EvalInput : <<include>>
+EvalHistory ..> EvalInput : <<extend>>
+
+Jury --> Schedule
+Jury --> Unavail
+Jury --> EvalInput
+Jury --> EvalSubmit
+Jury --> EvalHistory
 @enduml

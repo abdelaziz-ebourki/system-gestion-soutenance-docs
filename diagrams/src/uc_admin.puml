@@ -5,14 +5,36 @@ left to right direction
 actor "Administrateur" as Admin
 
 rectangle "Module Administration" {
-    usecase "Gérer comptes utilisateurs" as UC1
-    usecase "Gérer salles" as UC2
-    usecase "Gérer les sessions globales" as UC3
-    usecase "Gérer les  paramètres du système" as UC4
+    usecase "Consulter tableau de bord" as Dashboard
+    usecase "Gérer les départements" as Depts
+    usecase "Gérer les salles" as Rooms
+    usecase "Gérer les étudiants" as Students
+    usecase "Gérer les enseignants" as Teachers
+    usecase "Gérer les coordinateurs" as Coords
+    usecase "Configurer les filières" as Majors
+    usecase "Configurer les niveaux" as Levels
+    usecase "Consulter journaux d'audit" as Audit
+
+    usecase "Importer en masse\n(Excel)" as Import
+    usecase "Actions par lots\n(suppression, réaffectation)" as Batch
+
+    Import ..> Students : <<include>>
+    Import ..> Teachers : <<include>>
+    Import ..> Coords : <<include>>
+    Import ..> Rooms : <<include>>
+    Batch ..> Students : <<extend>>
+    Batch ..> Teachers : <<extend>>
 }
 
-Admin --> UC1
-Admin --> UC2
-Admin --> UC3
-Admin --> UC4
+Admin --> Dashboard
+Admin --> Depts
+Admin --> Rooms
+Admin --> Students
+Admin --> Teachers
+Admin --> Coords
+Admin --> Majors
+Admin --> Levels
+Admin --> Audit
+Admin --> Import
+Admin --> Batch
 @enduml

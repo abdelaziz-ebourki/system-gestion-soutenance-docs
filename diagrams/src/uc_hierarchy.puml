@@ -8,12 +8,31 @@ actor "Coordinateur" as Coord
 actor "Enseignant / Membre de jury" as Jury
 actor "Étudiant" as Student
 
-usecase "S'authentifier" as auth
+rectangle "Authentification" {
+    usecase "Se connecter" as Login
+    usecase "Activer son compte" as Activate
+    usecase "Réinitialiser mot de passe" as ResetPwd
+    usecase "Demander réinitialisation" as ForgotPwd
+    usecase "Se déconnecter" as Logout
+}
+
+rectangle "Profil et Préférences" {
+    usecase "Consulter son profil" as Profile
+    usecase "Gérer ses notifications" as Notif
+}
 
 Admin --|> User
 Coord --|> User
 Jury --|> User
 Student --|> User
 
-User -> auth
+User -> Login
+User -> Activate
+User -> ResetPwd
+User -> ForgotPwd
+User -> Logout
+User -> Profile
+User -> Notif
+
+ResetPwd ..> ForgotPwd : <<include>>
 @enduml
