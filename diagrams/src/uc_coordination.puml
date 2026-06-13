@@ -21,7 +21,6 @@ rectangle "Planification" {
 }
 
 rectangle "Édition documentaire" {
-    usecase "Générer convocations jury" as GenConv
     usecase "Générer fiches\nd'évaluation" as GenFiches
     usecase "Générer listes\nde présence" as GenPres
     usecase "Générer procès-verbaux" as GenPV
@@ -31,7 +30,6 @@ rectangle "Édition documentaire" {
 Planner ..> Conflicts : <<include>>
 Sessions ..> Planner : <<include>>
 AutoGen ..> Conflicts : <<include>>
-GenConv ..> Juries : <<include>>
 GenFiches ..> Grades : <<include>>
 
 Coord --> Dashboard
@@ -44,7 +42,6 @@ Coord --> AutoGen
 Coord --> Publish
 Coord --> Conflicts
 Coord --> Grades
-Coord --> GenConv
 Coord --> GenFiches
 Coord --> GenPres
 Coord --> GenPV

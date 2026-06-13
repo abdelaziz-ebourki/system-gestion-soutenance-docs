@@ -28,10 +28,6 @@ rectangle "Module Administration" {
 
 Admin --> Dashboard
 Admin --> Depts
-Admin --> Rooms
-Admin --> Students
-Admin --> Teachers
-Admin --> Coords
 Admin --> Majors
 Admin --> Levels
 Admin --> Audit
