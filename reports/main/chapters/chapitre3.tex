@@ -31,7 +31,7 @@ L'\textbf{Administrateur} est responsable de la configuration structurelle de l'
 
 Le \textbf{Coordinateur} est l'acteur central du système. Il gère l'ensemble du cycle de planification : import et validation des projets, constitution des jurys selon les templates de rôles, utilisation du \textit{Defense Designer} pour la planification interactive des créneaux, consultation du tableau de bord des conflits, et suivi des évaluations. Il peut également publier le planning final et générer les documents administratifs. Ce rôle nécessite une vue d'ensemble de toutes les soutenances et une compréhension des contraintes de chaque acteur.
 
-L'\textbf{Enseignant} est membre du corps professoral impliqué dans les soutenances. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, saisit les notes des étudiants qui lui sont assignés, et accède à ses convocations. Son interaction avec le système est principalement consultative, à l'exception de la saisie des notes et de la déclaration d'indisponibilités.
+L'\textbf{Enseignant} est membre du corps professoral impliqué dans les soutenances. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, consulte les rapports des projets qui lui sont assignés, saisit les notes des étudiants qui lui sont assignés, et accède à ses convocations. Son interaction avec le système est principalement consultative, à l'exception de la saisie des notes et de la déclaration d'indisponibilités.
 
 L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les informations relatives à sa soutenance (date, salle, jury), crée ou rejoint un groupe de projet, et téléverse les documents requis (rapport, présentation, archive). Il peut également télécharger sa convocation officielle au format A4. Son périmètre d'action est le plus limité, ce qui est cohérent avec son rôle dans le processus de soutenance.
 
@@ -61,6 +61,7 @@ L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les infor
         Génération documents PDF              & —              & \checkmark      & —                 & —                 \\
         Saisie indisponibilités               & —              & —               & \checkmark        & —                 \\
         Saisie évaluations                    & —              & —               & \checkmark        & —                 \\
+        Consultation rapports                    & —              & —               & \checkmark        & —                 \\
         Consultation planning                 & —              & \checkmark      & \checkmark        & \checkmark        \\
         Création/adhésion groupe              & —              & —               & —                 & \checkmark        \\
         Téléverser documents de soutenance    & —              & —               & —                 & \checkmark        \\
@@ -88,7 +89,7 @@ Le \textbf{Defense Designer} constitue l'élément le plus innovant du système.
 
 En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 7 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliqué côté client pour un retour instantané et exécuté côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
-La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère les coefficients dynamiques par session et effectue le calcul automatique de la moyenne pondérée. Le coordinateur peut consulter les notes moyennes pondérées par projet, avec le détail des scores par membre du jury.
+La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère les coefficients dynamiques par session et effectue le calcul automatique de la moyenne pondérée. Le membre du jury peut consulter le rapport du projet assigné pour préparer son évaluation, puis saisir les notes. Le coordinateur peut consulter les notes moyennes pondérées par projet, avec le détail des scores par membre du jury.
 
 L'\textbf{édition documentaire} produit 5 types de documents PDF (fiches d'évaluation, procès-verbaux, listes de présence, convocations jury, planning complet) générés côté serveur et ouverts dans un nouvel onglet du navigateur. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
 
@@ -196,7 +197,7 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
     \label{fig:uc_coordination}
 \end{figure}
 
-\Cref{fig:uc_jury} présente les cas d'utilisation de l'Enseignant en tant que membre de jury. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, saisit les notes et observations pour les étudiants qui lui sont assignés, et accède à ses convocations. Le cas « Saisir les évaluations » inclut la consultation des informations de l'étudiant, afin que le jury dispose du contexte nécessaire avant de noter.
+\Cref{fig:uc_jury} présente les cas d'utilisation de l'Enseignant en tant que membre de jury. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, consulte le rapport du projet assigné, saisit les notes et observations pour les étudiants qui lui sont assignés, et accède à ses convocations. Le cas « Saisir les évaluations » inclut la consultation des informations de l'étudiant, afin que le jury dispose du contexte nécessaire avant de noter.
 
 \begin{figure}[H]
     \centering
@@ -205,7 +206,7 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
     \label{fig:uc_jury}
 \end{figure}
 
-\Cref{fig:uc_student} présente les cas d'utilisation de l'Étudiant. Son périmètre est le plus restreint : il consulte les informations relatives à sa soutenance (date, salle, jury), télécharge sa convocation, et gère son groupe de projet (création, recherche de coéquipiers). Le cas « Télécharger la convocation » inclut la consultation des informations de soutenance, car la convocation doit contenir la date, l'heure, la salle et la composition du jury.
+\Cref{fig:uc_student} présente les cas d'utilisation de l'Étudiant. Son périmètre est le plus restreint : il consulte les informations relatives à sa soutenance (date, salle, jury), télécharge sa convocation, et gère son groupe de projet (création, recherche de coéquipiers). Le cas « Télécharger la convocation » inclut la consultation des informations de soutenance.
 
 \begin{figure}[H]
     \centering

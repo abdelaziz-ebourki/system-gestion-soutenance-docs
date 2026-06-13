@@ -17,7 +17,6 @@ EvalHistory ..> EvalInput : <<extend>>
 
 Jury --> Schedule
 Jury --> Unavail
-Jury --> EvalInput
 Jury --> EvalSubmit
 Jury --> EvalHistory
 @enduml
