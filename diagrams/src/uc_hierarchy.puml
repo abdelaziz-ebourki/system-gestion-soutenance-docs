@@ -2,11 +2,14 @@
 !include puml-theme-pfe.puml
 left to right direction
 
-actor "Utilisateur" as User
-actor "Administrateur" as Admin
-actor "Coordinateur" as Coord
-actor "Enseignant / Membre de jury" as Jury
-actor "Étudiant" as Student
+together {
+    actor "Administrateur" as Admin
+    actor "Coordinateur" as Coord
+    actor "Enseignant / Membre de jury" as Jury
+    actor "Étudiant" as Student
+
+    actor "Utilisateur" as User
+}
 
 rectangle "Authentification" {
     usecase "Se connecter" as Login
@@ -26,13 +29,13 @@ Coord --|> User
 Jury --|> User
 Student --|> User
 
-User -> Login
-User -> Activate
-User -> ResetPwd
-User -> ForgotPwd
-User -> Logout
-User -> Profile
-User -> Notif
+User ---> Login
+User ---> Activate
+User ---> ResetPwd
+User ---> ForgotPwd
+User ---> Logout
+User ---> Profile
+User ---> Notif
 
 ResetPwd ..> ForgotPwd : <<include>>
 @enduml

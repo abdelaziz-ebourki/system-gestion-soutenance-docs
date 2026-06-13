@@ -17,7 +17,7 @@ Le projet consiste en la réalisation d'une application web centralisée permett
 
 Le système couvre l'ensemble du cycle de vie d'une soutenance : de la création des projets et la constitution des jurys, en passant par la planification interactive des créneaux via un éditeur visuel par glisser-déposer (\textit{Defense Designer}), jusqu'à la saisie des évaluations et la génération automatique des documents administratifs (convocations, procès-verbaux, fiches d'évaluation). Chaque étape est validée par un moteur de détection de conflits préservant l'intégrité du planning.
 
- Les inclus dans le périmètre du projet : la gestion des utilisateurs et des rôles, la configuration académique (filières, niveaux, salles), la gestion des projets et des groupes d'étudiants, la constitution des jurys, la planification interactive des créneaux, la détection automatique de conflits, la saisie des évaluations, la génération de documents et le système de notifications. Les exclus principales du périmètre : la publication des résultats finaux (bulletins), l'intégration avec le système d'information universitaire existant.
+Les inclus dans le périmètre du projet : la gestion des utilisateurs et des rôles, la configuration académique (filières, niveaux, salles), la gestion des projets et des groupes d'étudiants, la constitution des jurys, la planification interactive des créneaux, la détection automatique de conflits, la saisie des évaluations, la génération de documents et le système de notifications. Les exclus principales du périmètre : la publication des résultats finaux (bulletins), l'intégration avec le système d'information universitaire existant.
 
 \subsection{Cahier des charges}
 \label{ch3:cahier_charges}
@@ -43,28 +43,28 @@ L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les infor
     \begin{tabularx}{\textwidth}{lXXXX}
         \toprule
 
-        \textbf{Fonctionnalité} & \textbf{Admin} & \textbf{Coord.} & \textbf{Enseign.} & \textbf{Étudiant} \\
+        \textbf{Fonctionnalité}               & \textbf{Admin} & \textbf{Coord.} & \textbf{Enseign.} & \textbf{Étudiant} \\
         \midrule
-        Dashboard personnalisé & \checkmark & \checkmark & \checkmark & \checkmark \\
-        Gestion départements & \checkmark & — & — & — \\
-        Gestion salles (+ import Excel) & \checkmark & — & — & — \\
-        Gestion utilisateurs (+ import Excel) & \checkmark & — & — & — \\
-        Configuration filières/niveaux & \checkmark & — & — & — \\
-        Journal d'audit & \checkmark & — & — & — \\
-        Gestion projets & — & \checkmark & — & — \\
-        Gestion groupes étudiants & — & \checkmark & — & — \\
-        Constitution jurys & — & \checkmark & — & — \\
-        Sessions de soutenance (cycle de vie) & — & \checkmark & — & — \\
-        Planification créneaux (DnD) & — & \checkmark & — & — \\
-        Détection conflits & — & \checkmark & — & — \\
-        Consultation notes/moyennes & — & \checkmark & — & — \\
-        Génération documents PDF & — & \checkmark & — & — \\
-        Saisie indisponibilités & — & — & \checkmark & — \\
-        Saisie évaluations & — & — & \checkmark & — \\
-        Consultation planning & — & \checkmark & \checkmark & \checkmark \\
-        Création/adhésion groupe & — & — & — & \checkmark \\
-        Téléverser documents de soutenance & — & — & — & \checkmark \\
-        Téléchargement convocation & — & — & — & \checkmark \\
+        Dashboard personnalisé                & \checkmark     & \checkmark      & \checkmark        & \checkmark        \\
+        Gestion départements                  & \checkmark     & —               & —                 & —                 \\
+        Gestion salles (+ import Excel)       & \checkmark     & —               & —                 & —                 \\
+        Gestion utilisateurs (+ import Excel) & \checkmark     & —               & —                 & —                 \\
+        Configuration filières/niveaux        & \checkmark     & —               & —                 & —                 \\
+        Journal d'audit                       & \checkmark     & —               & —                 & —                 \\
+        Gestion projets                       & —              & \checkmark      & —                 & —                 \\
+        Gestion groupes étudiants             & —              & \checkmark      & —                 & —                 \\
+        Constitution jurys                    & —              & \checkmark      & —                 & —                 \\
+        Sessions de soutenance (cycle de vie) & —              & \checkmark      & —                 & —                 \\
+        Planification créneaux (DnD)          & —              & \checkmark      & —                 & —                 \\
+        Détection conflits                    & —              & \checkmark      & —                 & —                 \\
+        Consultation notes/moyennes           & —              & \checkmark      & —                 & —                 \\
+        Génération documents PDF              & —              & \checkmark      & —                 & —                 \\
+        Saisie indisponibilités               & —              & —               & \checkmark        & —                 \\
+        Saisie évaluations                    & —              & —               & \checkmark        & —                 \\
+        Consultation planning                 & —              & \checkmark      & \checkmark        & \checkmark        \\
+        Création/adhésion groupe              & —              & —               & —                 & \checkmark        \\
+        Téléverser documents de soutenance    & —              & —               & —                 & \checkmark        \\
+        Téléchargement convocation            & —              & —               & —                 & \checkmark        \\
         \bottomrule
     \end{tabularx}
     \caption{Répartition des fonctionnalités par acteur}
@@ -114,18 +114,18 @@ Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (li
 \subsection{Règles de gestion}
 \label{ch3:regles_gestion}
 
-Le moteur de conflits implémente les règles de gestion (RG) suivantes, maintenant l'intégrité du planning. 
+Le moteur de conflits implémente les règles de gestion (RG) suivantes, maintenant l'intégrité du planning.
 
 \begin{projectbox}{Règles de Gestion du Planning}
-\begin{description}
-    \item[RG1 (Enseignants)] Un enseignant ne peut être affecté à deux soutenances dont les horaires se chevauchent.
-    \item[RG2 (Salles)] Une salle ne peut accueillir qu'une seule soutenance pour un créneau donné.
-    \item[RG3 (Période)] Toutes les soutenances d'une session doivent être planifiées entre la \textit{startDate} et la \textit{endDate} de ladite session.
-    \item[RG4 (Encadrants)] Un encadrant ne doit pas être sollicité sur plusieurs projets le même jour pour éviter la surcharge.
-    \item[RG5 (Unicité)] Un projet ne peut être planifié qu'une seule fois par session.
-    \item[RG6 (Pause)] Un intervalle minimum (\textit{breakDuration}) doit être respecté entre deux soutenances dans une même salle.
-    \item[RG7 (Disponibilité)] Aucune soutenance ne peut être planifiée sur un créneau déclaré comme indisponible par un membre du jury.
-\end{description}
+    \begin{description}
+        \item[RG1 (Enseignants)] Un enseignant ne peut être affecté à deux soutenances dont les horaires se chevauchent.
+        \item[RG2 (Salles)] Une salle ne peut accueillir qu'une seule soutenance pour un créneau donné.
+        \item[RG3 (Période)] Toutes les soutenances d'une session doivent être planifiées entre la \textit{startDate} et la \textit{endDate} de ladite session.
+        \item[RG4 (Encadrants)] Un encadrant ne doit pas être sollicité sur plusieurs projets le même jour pour éviter la surcharge.
+        \item[RG5 (Unicité)] Un projet ne peut être planifié qu'une seule fois par session.
+        \item[RG6 (Pause)] Un intervalle minimum (\textit{breakDuration}) doit être respecté entre deux soutenances dans une même salle.
+        \item[RG7 (Disponibilité)] Aucune soutenance ne peut être planifiée sur un créneau déclaré comme indisponible par un membre du jury.
+    \end{description}
 \end{projectbox}
 
 Ces 7 règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le Defense Designer.
@@ -138,15 +138,15 @@ Ces 7 règles sont implémentées dans deux moteurs distincts mais fonctionnelle
     \begin{tabularx}{\textwidth}{lXccc}
         \toprule
 
-        \textbf{Règle} & \textbf{Description} & \textbf{Java} & \textbf{TypeScript} & \textbf{Sévérité} \\
+        \textbf{Règle} & \textbf{Description}     & \textbf{Java} & \textbf{TypeScript} & \textbf{Sévérité} \\
         \midrule
-        RG1 & Chevauchement enseignant & \checkmark & \checkmark & error \\
-        RG2 & Occupation de salle & \checkmark & \checkmark & error \\
-        RG3 & Bornes de période & \checkmark & \checkmark & error \\
-        RG4 & Surcharge encadrant & \checkmark & \checkmark & warning \\
-        RG5 & Unicité de projet & \checkmark & \checkmark & error \\
-        RG6 & Intervalle de pause & \checkmark & \checkmark & error \\
-        RG7 & Indisponibilité & \checkmark & \checkmark & error \\
+        RG1            & Chevauchement enseignant & \checkmark    & \checkmark          & error             \\
+        RG2            & Occupation de salle      & \checkmark    & \checkmark          & error             \\
+        RG3            & Bornes de période        & \checkmark    & \checkmark          & error             \\
+        RG4            & Surcharge encadrant      & \checkmark    & \checkmark          & warning           \\
+        RG5            & Unicité de projet        & \checkmark    & \checkmark          & error             \\
+        RG6            & Intervalle de pause      & \checkmark    & \checkmark          & error             \\
+        RG7            & Indisponibilité          & \checkmark    & \checkmark          & error             \\
         \bottomrule
     \end{tabularx}
     \caption{Correspondance entre les règles de gestion et leurs implémentations}
@@ -158,23 +158,23 @@ Lorsqu'une règle ne peut être satisfaite (par exemple, aucun créneau disponib
 \subsection{Conception UML}
 \label{ch3:conception_uml}
 
-La modélisation UML permet de formaliser les différentes visions du système : qui fait quoi (cas d'utilisation), comment les données sont structurées (classes), comment les composants interagissent (séquence), et comment les processus se déroulent (activité). Nous avons utilisé les diagrammes UML 2.5, implémentés via PlantUML pour faciliter la maintenance et la régénération automatique des figures.
+La modélisation UML permet de formaliser les différentes visions du système : qui fait quoi (cas d'utilisation), comment les données sont structurées (classes), comment les composants interagissent (séquence), et comment les processus se déroulent (activité). Nous avons utilisé les diagrammes UML 2.5 dans tous les diagrammes.
 
 \subsubsection{Diagrammes de cas d'utilisation}
 \label{ch3:uc}
 
-Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque acteur. Ils ont été construits à partir de l'analyse du processus existant avec le coordinateur et l'encadrant, puis validés lors des revues de conception.
+Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque acteur. Ils ont été construits à partir de l'analyse du processus existant, puis validés lors des revues de conception.
 
 \Cref{fig:uc_hierarchy} présente la hiérarchie générale des acteurs. L'acteur de base « Utilisateur » est spécialisé en quatre rôles distincts, chacun héritant de la capacité de s'authentifier. Cette hiérarchie simple reflète l'architecture RBAC du système, où chaque rôle correspond à un ensemble disjoint de permissions.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.6\textwidth]{uc_hierarchy}
+    \pumlsvg[0.8\textwidth]{uc_hierarchy}
     \caption{Hiérarchie générale des acteurs}
     \label{fig:uc_hierarchy}
 \end{figure}
 
-\Cref{fig:uc_admin} détaille les cas d'utilisation de l'Administrateur. Ce rôle est le seul à pouvoir configurer les structures académiques (départements, filières, salles), gérer les comptes utilisateurs (création, modification, suppression, import CSV) et consulter les journaux d'audit. Il configure également les paramètres globaux du système (templates de jurys, durée des soutenances, configuration email).
+\Cref{fig:uc_admin} détaille les cas d'utilisation de l'Administrateur. Ce rôle est le seul à pouvoir configurer les structures académiques (départements, filières, salles), gérer les comptes utilisateurs (création, modification, suppression, import massif) et consulter les journaux d'audit. 
 
 \begin{figure}[H]
     \centering
