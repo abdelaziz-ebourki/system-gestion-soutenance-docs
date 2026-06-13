@@ -1,10 +1,8 @@
 @startuml
 !include puml-theme-pfe.puml
 
-top to bottom direction
-
-skinparam nodesep 15
-skinparam ranksep 15
+skinparam nodesep 4
+skinparam ranksep 6
 
 skinparam packageStyle rectangle
 skinparam componentStyle uml2
@@ -12,218 +10,70 @@ skinparam componentStyle uml2
 ' ═══════════════════════════════════════════════
 ' FRONTEND LAYER
 ' ═══════════════════════════════════════════════
-package "Couche Frontend (React 19 + TypeScript 6)" as FE #white {
-
-  package "Module Auth" as FE_Auth {
-    component "Login" as F_Auth1
-    component "Activation" as F_Auth2
-    component "Reset Mot de Passe" as F_Auth3
-  }
-
-  package "Admin Dashboard" as FE_Admin {
-    component "Statistiques" as F_Admin1
-    component "Config Singletons" as F_Admin2
-    component "CRUD Dép/Salles/Users" as F_Admin3
-  }
-
-  package "Coordonnateur Dashboard" as FE_Coord {
-    component "Sessions Soutenance" as F_Coord1
-    component "Projets" as F_Coord2
-    component "Planification" as F_Coord3
-    component "Jurys" as F_Coord4
-    component "Groupes" as F_Coord5
-    component "Détection Conflits" as F_Coord6
-    component "Documents" as F_Coord7
-  }
-
-  package "Enseignant Dashboard" as FE_Teacher {
-    component "Évaluations" as F_Teacher1
-    component "Emploi du temps" as F_Teacher2
-    component "Indisponibilités" as F_Teacher3
-  }
-
-  package "Étudiant Dashboard" as FE_Student {
-    component "Mon Groupe" as F_Student1
-    component "Mes Documents" as F_Student2
-    component "Convocations" as F_Student3
-    component "Statistiques" as F_Student4
-  }
-
-  package "Composants Partagés" as FE_Shared {
-    component "shadcn/ui" as F_Shared1
-    component "DefenseCalendar" as F_Shared2
-    component "DraggableJurySlot" as F_Shared3
-    component "AvailabilityCalendar" as F_Shared4
-  }
-
-  package "Infrastructure" as FE_Infra {
-    component "API Client\nsrc/lib/api.ts\n(JWT Interceptor)" as F_Infra1
-    component "TanStack Query v5\n(Hooks State)" as F_Infra2
-    component "MSW\n(Mock Service Worker)" as F_Infra3
-  }
+package "Couche Frontend\n(React 19 + TypeScript 6)" as FE #white {
+  component "Module Auth\n(Login, Activation,\nReset Mdp)" as FE_Auth
+  component "Dashboard\nAdmin\n(Stats, Config,\nCRUD)" as FE_Admin
+  component "Dashboard\nCoordonnateur\n(Sessions, Jurys,\nPlanification,\nGroupes, Docs)" as FE_Coord
+  component "Dashboard\nEnseignant\n(Évaluations,\nEmploi du temps,\nIndisponibilités)" as FE_Teacher
+  component "Dashboard\nÉtudiant\n(Groupe, Documents,\nConvocations)" as FE_Student
+  component "Composants\nPartagés\n(shadcn/ui,\nCalendars)" as FE_Shared
+  component "Infrastructure\n(API Client JWT,\nTanStack Query,\nMSW)" as FE_Infra
 }
 
 ' ═══════════════════════════════════════════════
 ' BACKEND LAYER
 ' ═══════════════════════════════════════════════
-package "Couche Backend (Spring Boot 3.4.6 + Java 17)" as BE #white {
-
-  package "Sécurité" as BE_Sec {
-    component "Spring Security\n+ JWT Filter" as B_Sec
-  }
-
-  package "Module Auth" as BE_Auth {
-    component "AuthService" as B_Auth1
-    component "JWT Provider" as B_Auth2
-    component "ActivationTokenService" as B_Auth3
-  }
-
-  package "Module Admin" as BE_Admin {
-    component "Audit" as B_Admin1
-    component "Config Singletons" as B_Admin2
-    component "Sessions Soutenance" as B_Admin3
-    component "Départements" as B_Admin4
-    component "Facultés" as B_Admin5
-    component "Salles" as B_Admin6
-    component "Statistiques" as B_Admin7
-  }
-
-  package "Module Coordonnateur" as BE_Coord {
-    component "Détection Conflits" as B_Coord1
-    component "Planification Soutenance" as B_Coord2
-    component "Sessions Soutenance" as B_Coord3
-    component "Documents" as B_Coord4
-    component "Notes" as B_Coord5
-    component "Groupes" as B_Coord6
-    component "Jurys" as B_Coord7
-    component "Projets" as B_Coord8
-    component "Ordonnancement" as B_Coord9
-    component "Statistiques" as B_Coord10
-    component "Indisponibilités" as B_Coord11
-  }
-
-  package "Module Enseignant" as BE_Teacher {
-    component "Évaluations" as B_Teacher1
-    component "Emploi du temps" as B_Teacher2
-    component "Statistiques" as B_Teacher3
-    component "Indisponibilités" as B_Teacher4
-  }
-
-  package "Module Étudiant" as BE_Student {
-    component "Convocations" as B_Student1
-    component "Soutenance" as B_Student2
-    component "Documents" as B_Student3
-    component "Groupes" as B_Student4
-    component "Statistiques" as B_Student5
-  }
-
-  package "Module Notification" as BE_Notif {
-    component "NotificationService" as B_Notif
-  }
-
-  package "Module Commun" as BE_Common {
-    component "Audit AOP" as B_Common1
-    component "Config" as B_Common2
-    component "DTOs" as B_Common3
-    component "Exceptions" as B_Common4
-    component "Mappers" as B_Common5
-    component "Utilitaires" as B_Common6
-  }
-
-  package "Module Utilisateur" as BE_User {
-    component "Gestion Profil" as B_User
-  }
-
-  package "Module Seed" as BE_Seed {
-    component "Init Données Démo" as B_Seed
-  }
+package "Couche Backend\n(Spring Boot 3.4.6 + Java 17)" as BE #white {
+  component "Sécurité\n(Spring Security\n+ JWT)" as BE_Sec
+  component "Auth\n(AuthService,\nJWT Provider,\nActivationToken)" as BE_Auth
+  component "Admin\n(Audit, Config,\nDépartements,\nFacultés, Salles)" as BE_Admin
+  component "Coordonnateur\n(Planification,\nConflits, Jurys,\nGroupes, Projets,\nOrdonnancement)" as BE_Coord
+  component "Enseignant\n(Évaluations,\nEmploi du temps,\nIndisponibilités)" as BE_Teacher
+  component "Étudiant\n(Convocations,\nSoutenance,\nDocuments, Groupes)" as BE_Student
+  component "Notifications\n(NotificationService)" as BE_Notif
+  component "Commun\n(Audit AOP, Config,\nDTOs, Mappers,\nExceptions)" as BE_Common
+  component "Utilisateur\n(Gestion Profil)" as BE_User
+  component "Seed\n(Init Données Démo)" as BE_Seed
 }
 
 ' ═══════════════════════════════════════════════
 ' DATA LAYER
 ' ═══════════════════════════════════════════════
-database "H2 Database\n(Développement)" as DB_H2
-database "MySQL 8.0\n(Production)" as DB_MySQL
+database "H2\n(Dév)" as DB_H2
+database "MySQL 8.0\n(Prod)" as DB_MySQL
 
 ' ═══════════════════════════════════════════════
 ' EXTERNAL INTEGRATIONS
 ' ═══════════════════════════════════════════════
 rectangle "Intégrations Externes" as External #white {
-  component "Service Email\n(SMTP via Mailpit\nen dév)" as Ext_Email
-  component "Docker Compose\n(Orchestration)" as Ext_Docker
+  component "Service Email\n(SMTP)" as Ext_Email
+  component "Docker\nCompose" as Ext_Docker
 }
 
 ' ═══════════════════════════════════════════════
 ' TESTING LAYER
 ' ═══════════════════════════════════════════════
 package "Couche de Test" as Testing #white {
-  component "JUnit 5 + Mockito\n(86 classes de test)" as Test_BE
-  component "Vitest + React\nTesting Library\n(91 fichiers de test)" as Test_FE
-  component "Playwright\n(65 tests E2E)" as Test_E2E
-  component "JaCoCo\n(Couverture de code)" as Test_Coverage
-  component "Checkstyle / PMD\n/ SpotBugs\n(Analyse statique)" as Test_Static
+  component "JUnit 5 +\nMockito\n(86 classes)" as Test_BE
+  component "Vitest +\nRTL\n(91 fichiers)" as Test_FE
+  component "Playwright\n(65 E2E)" as Test_E2E
+  component "JaCoCo\n(Couverture)" as Test_Coverage
+  component "Checkstyle\n/ PMD / SpotBugs" as Test_Static
 }
 
 ' ═══════════════════════════════════════════════
-' DEPENDENCIES — Frontend internals
+' DEPENDENCIES
 ' ═══════════════════════════════════════════════
-FE_Auth ..> FE_Shared
-FE_Admin ..> FE_Shared
-FE_Coord ..> FE_Shared
-FE_Teacher ..> FE_Shared
-FE_Student ..> FE_Shared
+FE ..> BE : HTTP + JWT
 
-FE_Auth ..> FE_Infra
-FE_Admin ..> FE_Infra
-FE_Coord ..> FE_Infra
-FE_Teacher ..> FE_Infra
-FE_Student ..> FE_Infra
+BE --> DB_H2
+BE --> DB_MySQL
 
-' ═══════════════════════════════════════════════
-' DEPENDENCIES — Frontend → Backend (HTTP/REST)
-' ═══════════════════════════════════════════════
-F_Infra1 ..> B_Sec : HTTP + JWT
-
-' ═══════════════════════════════════════════════
-' DEPENDENCIES — Backend internals
-' ═══════════════════════════════════════════════
-BE_Auth --> BE_Sec
-BE_Admin --> BE_Common
-BE_Coord --> BE_Common
-BE_Teacher --> BE_Common
-BE_Student --> BE_Common
-BE_User --> BE_Common
-BE_Seed --> BE_Common
-BE_Coord --> BE_Notif
-BE_Student --> BE_Notif
-
-' ═══════════════════════════════════════════════
-' DEPENDENCIES — Backend → Data
-' ═══════════════════════════════════════════════
-BE_Auth --> DB_H2
-BE_Auth --> DB_MySQL
-BE_Admin --> DB_H2
-BE_Admin --> DB_MySQL
-BE_Coord --> DB_H2
-BE_Coord --> DB_MySQL
-BE_Teacher --> DB_H2
-BE_Teacher --> DB_MySQL
-BE_Student --> DB_H2
-BE_Student --> DB_MySQL
-BE_User --> DB_H2
-BE_User --> DB_MySQL
-
-' ═══════════════════════════════════════════════
-' DEPENDENCIES — External
-' ═══════════════════════════════════════════════
 BE_Notif ..> Ext_Email : SMTP
 BE_Auth ..> Ext_Email : SMTP
 Ext_Docker ..> DB_MySQL : Persistance
 Ext_Docker ..> Ext_Email
 
-' ═══════════════════════════════════════════════
-' DEPENDENCIES — Testing
-' ═══════════════════════════════════════════════
 Test_BE ..> BE
 Test_FE ..> FE
 Test_E2E ..> FE
