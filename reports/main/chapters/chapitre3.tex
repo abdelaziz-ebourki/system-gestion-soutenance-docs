@@ -92,7 +92,7 @@ La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère l
 
 L'\textbf{édition documentaire} produit 5 types de documents PDF (fiches d'évaluation, procès-verbaux, listes de présence, convocations jury, planning complet) générés côté serveur et ouverts dans un nouvel onglet du navigateur. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
 
-Enfin, la gestion des \textbf{groupes d'étudiants} permet aux étudiants de créer ou rejoindre un groupe pendant une fenêtre temporelle définie, et aux coordinateurs d'associer les groupes aux projets. Le module \textbf{documents étudiants} gère le téléversement de fichiers (rapport, présentation, archive) avec respect des délais et période de grâce de 2 jours.
+Enfin, la gestion des \textbf{groupes d'étudiants} permet aux étudiants de créer ou rejoindre un groupe pendant une fenêtre temporelle définie, et aux coordinateurs d'associer les groupes aux projets. Le module \textbf{documents étudiants} gère le téléversement de fichiers (rapport, présentation, archive) avec respect des délais et période configurables par le coordinateur.
 
 \subsubsection{Besoins non fonctionnels}
 \label{ch3:besoins_non_fonctionnels}
@@ -109,12 +109,12 @@ L'\textbf{ergonomie} s'appuie sur une interface moderne et responsive (Tailwind 
 
 La \textbf{maintenabilité} résulte d'une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. Les DTOs isolent les couches API et MapStruct gère le mapping objet, protégeant le modèle interne des variations de l'interface exposée.
 
-Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (lignes) et 70\% (branches) via JaCoCo, complétée par un linting automatisé avec ESLint (TypeScript) et Spotless/Checkstyle/PMD/SpotBugs (Java) intégré dans le cycle Maven.
+Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (lignes) et 70\% (branches) via JaCoCo, complétée par un linting automatisé avec ESLint (TypeScript), et Spotless, Checkstyle, PMD et SpotBugs (Java) intégré dans CI.
 
 \subsection{Règles de gestion}
 \label{ch3:regles_gestion}
 
-Le moteur de conflits implémente les règles de gestion (RG) suivantes, maintenant l'intégrité du planning. Ces règles ont été définies en collaboration avec le coordinateur de la filière et formalisées sous forme de contraintes vérifiables algorithmiquement.
+Le moteur de conflits implémente les règles de gestion (RG) suivantes, maintenant l'intégrité du planning. 
 
 \begin{projectbox}{Règles de Gestion du Planning}
 \begin{description}
@@ -135,7 +135,7 @@ Ces 7 règles sont implémentées dans deux moteurs distincts mais fonctionnelle
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{llccc}
+    \begin{tabularx}{\textwidth}{lXccc}
         \toprule
 
         \textbf{Règle} & \textbf{Description} & \textbf{Java} & \textbf{TypeScript} & \textbf{Sévérité} \\
@@ -148,7 +148,7 @@ Ces 7 règles sont implémentées dans deux moteurs distincts mais fonctionnelle
         RG6 & Intervalle de pause & \checkmark & \checkmark & error \\
         RG7 & Indisponibilité & \checkmark & \checkmark & error \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Correspondance entre les règles de gestion et leurs implémentations}
     \label{tab:rg_mapping}
 \end{table}
