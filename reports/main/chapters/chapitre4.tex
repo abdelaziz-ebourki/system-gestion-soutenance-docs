@@ -14,14 +14,14 @@ Ce chapitre détaille la mise en œuvre technique du système de gestion des sou
 \label{ch4:environnement}
 
 \subsubsection{Matériel et Logiciels}
-Le développement a été conduit dans un environnement hybride Windows et Linux, utilisant des outils favorisant la collaboration et la qualité du code. Le tableau~\ref{tab:outils_dev} résume l'ensemble des outils et versions utilisés tout au long du projet.
+Le développement a été conduit dans un environnement hybride Windows et Linux, utilisant des outils favorisant la collaboration et la qualité du code. \cref{tab:outils_dev} résume l'ensemble des outils et versions utilisés tout au long du projet.
 
 \begin{table}[H]
     \centering
     \small
     \begin{tabular}{lll}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Catégorie} & \textbf{Outil} & \textbf{Version} \\
         \midrule
         Langage backend & Java & 17 (LTS) \\
@@ -53,7 +53,7 @@ Le développement a été conduit dans un environnement hybride Windows et Linux
 \subsubsection{Workflow de développement}
 \label{ch4:workflow}
 
-Le projet suit un workflow de développement organisé en cycles courts. Chaque fonctionnalité est développée sur une branche dédiée (\texttt{feature/*}), testée localement, puis mergée sur la branche \texttt{main} via une pull request. Les hooks de pré-commit (Husky + lint-staged) exécutent automatiquement le linting et le formatage avant chaque commit, garantissant que le code poussé est toujours conforme aux standards de l'équipe.
+Le projet suit un workflow de développement organisé en cycles courts. Chaque fonctionnalité est développée sur une branche dédiée (\texttt{feature/*}), testée localement, puis mergée sur la branche \texttt{main} via une pull request. Les hooks de pré-commit (Husky + lint-staged) exécutent automatiquement le linting et le formatage avant chaque commit, veillant à ce que le code poussé soit toujours conforme aux standards de l'équipe.
 
 La stratégie de branching est simplifiée mais efficace : la branche \texttt{main} est toujours dans un état stable et déployable, les branches \texttt{feature/*} vivent le temps du développement d'une fonctionnalité, et les branches \texttt{fix/*} sont utilisées pour les corrections de bugs. Les messages de commit suivent les conventions sémantiques : \texttt{feat:} pour les nouvelles fonctionnalités, \texttt{fix:} pour les corrections, \texttt{chore:} pour la maintenance, \texttt{docs:} pour la documentation, et \texttt{test:} pour les ajouts de tests.
 
@@ -67,16 +67,15 @@ L'application suit une architecture web moderne et découplée (API REST + SPA),
 \subsubsection{Le Backend : API REST Spring Boot}
 \label{ch4:backend}
 
-Le backend est structuré selon un pattern en couches strict pour garantir la maintenabilité. Chaque couche a une responsabilité clairement définie et communique avec les couches adjacentes via des interfaces bien définies.
+Le backend est structuré selon un pattern en couches strict pour assurer la maintenabilité. Chaque couche a une responsabilité clairement définie et communique avec les couches adjacentes via des interfaces bien définies.
 
-La \textbf{couche Contrôleur} expose les endpoints REST et gère la validation des entrées via les annotations \texttt{@Valid} et les DTOs de requête. Les contrôleurs utilisent l'injection de dépendances pour accéder aux services métier, et retournent des réponses enveloppées dans \verb|ApiResponse<T>| pour assurer une cohérence format. Le paramètre \verb|@AuthenticationPrincipal User user| permet d'extraire l'utilisateur courant directement depuis le contexte de sécurité Spring, sans passer par le \texttt{SecurityContextHolder}.
+Les \textbf{endpoints REST} sont exposés par la couche Contrôleur, qui gère la validation des entrées via les annotations \texttt{@Valid} et les DTOs de requête. Les contrôleurs utilisent l'injection de dépendances pour accéder aux services métier et retournent des réponses enveloppées dans \verb|ApiResponse<T>|. Le paramètre \verb|@AuthenticationPrincipal User user| extrait l'utilisateur courant directement depuis le contexte de sécurité Spring, sans passer par le \texttt{SecurityContextHolder}.
 
-La \textbf{couche Service} contient la logique métier et les règles de gestion. Le \texttt{ConflictDetection\-Service}
- et le \texttt{ScheduleService} sont les services centraux du module de planification. Les services héritent de \texttt{BaseCrudService<T, ID, R>} qui fournit les opérations CRUD de base (findAll, findByIdOrThrow, save, deleteWithCheck), réduisant ainsi la duplication de code entre les modules.
+La \textbf{logique métier} réside dans la couche Service, où le \texttt{ConflictDetection\-Service} et le \texttt{ScheduleService} constituent les services centraux du module de planification. Tous héritent de \texttt{BaseCrudService<T, ID, R>} qui fournit les opérations CRUD de base (findAll, findByIdOrThrow, save, deleteWithCheck), réduisant la duplication de code entre modules.
 
-La \textbf{couche Repository} assure la persistance des données via Spring Data JPA avec des requêtes dérivées et des \texttt{@Query} personnalisées. Les interfaces de repository n'ont pas besoin d'implémentations concrètes : Spring Data génère automatiquement les requêtes à partir des noms de méthodes (par exemple, \texttt{findByEmail} génère une requête SELECT avec clause WHERE sur l'email).
+La \textbf{persistance des données} est assurée par la couche Repository via Spring Data JPA, avec des requêtes dérivées et des \texttt{@Query} personnalisées. Aucune implémentation concrète n'est nécessaire : Spring Data génère automatiquement les requêtes à partir des noms de méthodes (par exemple, \texttt{findByEmail} produit une requête SELECT avec clause WHERE sur l'email).
 
-La \textbf{couche Entité} modélise les objets du domaine avec les annotations JPA (\texttt{@Entity}, \texttt{@OneToMany}, \texttt{@ManyToOne}) et les relations entre tables. L'héritage des utilisateurs est implémenté via la stratégie JOINED, et les données flexibles (membres de jury, coefficients) sont stockées via \texttt{@ElementCollection}.
+Enfin, la \textbf{couche Entité} modélise les objets du domaine avec les annotations JPA (\texttt{@Entity}, \texttt{@OneToMany}, \texttt{@ManyToOne}). L'héritage des utilisateurs suit la stratégie JOINED, et les données flexibles (membres de jury, coefficients) sont stockées via \texttt{@ElementCollection}.
 
 Le projet est organisé en modules fonctionnels : \texttt{auth/} (authentification JWT), \texttt{admin/} (configuration des entités académiques), \texttt{coordinator/} (cœur métier avec 11 sous-modules), \texttt{teacher/} (évaluations et indisponibilités), \texttt{student/} (consultation et documents), \texttt{notification/} (email et notifications internes), \texttt{common/} (configuration Spring Security, OpenAPI, audit, mappers, exceptions).
 
@@ -140,10 +139,12 @@ L'interaction repose sur \textbf{@dnd-kit/core}, qui permet le glisser-déposer 
 
 Les modifications du planning sont stockées dans un état React local (\texttt{useState}) avec la clé \texttt{juryId} et ne sont synchronisées avec le serveur qu'au moment de la sauvegarde explicite. Cette approche d'\textbf{état local optimiste} réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
 
-L'algorithme d'\textbf{auto-génération} parcourt itérativement les salles, les jours et les créneaux pour proposer un planning initial. Pour chaque jury non planifié, l'algorithme cherche le premier créneau disponible en vérifiant les contraintes de capacité de salle et les conflits potentiels. Le \texttt{ScheduleService.autoGenerate} côté serveur implémente la même logique avec validation des contraintes de capacité, garantissant que le planning généré est valide avant persistance.
+L'algorithme d'\textbf{auto-génération} parcourt itérativement les salles, les jours et les créneaux pour proposer un planning initial. Pour chaque jury non planifié, l'algorithme cherche le premier créneau disponible en vérifiant les contraintes de capacité de salle et les conflits potentiels. Le \texttt{ScheduleService.autoGenerate} côté serveur implémente la même logique avec validation des contraintes de capacité, validant que le planning généré est conforme avant persistance.
 
-Le listing~\ref{lst:use-defense-schedule} montre le cœur de la logique de validation lors du drag-and-drop :
+\Cref{lst:use-defense-schedule} montre le cœur de la logique de validation lors du drag-and-drop :
 
+\begin{listing}[H]
+\centering
 \begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{typescript}
 const handleDragEnd = (event: DragEndEvent) => {
   const { active, over } = event;
@@ -183,14 +184,18 @@ const handleDragEnd = (event: DragEndEvent) => {
   }
 };
 \end{minted}
+\caption{Logique de validation lors du drag-and-drop (extrait)}
 \label{lst:use-defense-schedule}
+\end{listing}
 
 \subsubsection{Le Moteur de Détection de Conflits}
 \label{ch4:module_conflicts}
 
-L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement 8 vérifications lors de chaque enregistrement. Le listing~\ref{lst:conflict-service} montre la méthode centrale \texttt{runAllChecks} et l'une des vérifications les plus critiques :
+L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement 8 vérifications lors de chaque enregistrement. \cref{lst:conflict-service} montre la méthode centrale \texttt{runAllChecks} et l'une des vérifications les plus critiques :
 
-\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2, label={Service de détection de conflits (extrait)}, labelposition=none]{java}
+\begin{listing}[H]
+\centering
+\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{java}
 private List<ConflictDetailResponse> runAllChecks(
         Map<String, ConflictSlot> schedule, String defenseSessionId) {
     List<ConflictDetailResponse> conflicts = new ArrayList<>();
@@ -236,11 +241,15 @@ private List<ConflictDetailResponse> checkTeacherDoubleBooked(
     return conflicts;
 }
 \end{minted}
+\caption{Service de détection de conflits (extrait)}
 \label{lst:conflict-service}
+\end{listing}
 
-Le même moteur est dupliqué côté client en TypeScript (\texttt{conflict-engine.ts}). La fonction \texttt{validateSlotAssignment} implémente les mêmes 8 vérifications avec des messages d'erreur en français et des suggestions de résolution intelligentes. Le listing~\ref{lst:conflict-engine} montre la structure de la validation côté client :
+Le même moteur est dupliqué côté client en TypeScript (\texttt{conflict-engine.ts}). La fonction \texttt{validateSlotAssignment} implémente les mêmes 8 vérifications avec des messages d'erreur en français et des suggestions de résolution intelligentes. \cref{lst:conflict-engine} montre la structure de la validation côté client :
 
-\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2, label={Moteur de conflits TypeScript (extrait)}, labelposition=none]{typescript}
+\begin{listing}[H]
+\centering
+\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{typescript}
 export function validateSlotAssignment(
   projectId: string,
   slot: string,
@@ -277,7 +286,9 @@ export function validateSlotAssignment(
   // ... RG1, RG4, RG5, RG6, RG7, RG8
 }
 \end{minted}
+\caption{Moteur de conflits TypeScript (extrait)}
 \label{lst:conflict-engine}
+\end{listing}
 
 Le moteur client inclut également une fonction \texttt{getSmartSuggestions} qui analyse le contexte pour proposer des alternatives pertinentes (salles libres, créneaux disponibles) lorsqu'un conflit est détecté, améliorant ainsi l'expérience utilisateur. Cette fonction parcourt les salles disponibles pour la date et le créneau conflictuel, filtre par capacité, et retourne la première alternative trouvée accompagnée d'un message d'explication.
 
@@ -286,7 +297,7 @@ Le moteur client inclut également une fonction \texttt{getSmartSuggestions} qui
 
 Le module d'évaluation gère la saisie des notes par les membres du jury, le calcul des moyennes pondérées et le suivi de l'avancement des évaluations. La particularité du système réside dans la \textbf{pondération dynamique} : chaque session de soutenance définit des coefficients par rôle de jury (Président, Rapporteur, Examinateur -- chacun avec un coefficient configurable) stockés dans la table \texttt{defense\_session\_coefficients}.
 
-L'enseignant accède à la page d'évaluations (\texttt{/teacher/evaluations}) qui affiche la liste des soutenances auxquelles il est assigné en tant que membre de jury. Pour chaque soutenance, il peut saisir un score (sur 20) et un commentaire. Le statut de l'évaluation évolue de \texttt{PENDING} (en attente de saisie) à \texttt{SUBMITTED} (note soumise). Une fois la note soumise, elle ne peut plus être modifiée, garantissant l'intégrité du processus d'évaluation.
+L'enseignant accède à la page d'évaluations (\texttt{/teacher/evaluations}) qui affiche la liste des soutenances auxquelles il est assigné en tant que membre de jury. Pour chaque soutenance, il peut saisir un score (sur 20) et un commentaire. Le statut de l'évaluation évolue de \texttt{PENDING} (en attente de saisie) à \texttt{SUBMITTED} (note soumise). Une fois la note soumise, elle ne peut plus être modifiée, maintenant l'intégrité du processus d'évaluation.
 
 Le calcul de la moyenne pondérée est effectué par le service \texttt{CoordinatorGradeService} via la méthode \texttt{getWeightedAverage}, qui agrège les scores individuels de chaque membre et les pondère selon les coefficients de la session. Le listing suivant illustre ce calcul :
 
@@ -333,7 +344,7 @@ L'endpoint \texttt{POST /api/notifications/\{id\}/send-email} permet aux adminis
 
 La traçabilité des actions est assurée par un système d'audit basé sur la programmation orientée aspect (AOP). L'annotation \verb|@Audited(action="CREATE", entity="Department")| placée sur les méthodes de service déclenche automatiquement l'enregistrement d'une entrée dans la table \texttt{audit\_log} via l'aspect \texttt{AuditAspect}.
 
-L'aspect intercepte l'exécution de la méthode annotée, capture le résultat (succès ou échec), extrait l'identifiant de l'entité concernée (soit depuis les arguments de la méthode, soit depuis la valeur de retour via réflexion), et écrit un journal d'audit dans une transaction indépendante (\texttt{TransactionTemplate}) pour garantir l'enregistrement même en cas d'échec de la transaction métier.
+L'aspect intercepte l'exécution de la méthode annotée, capture le résultat (succès ou échec), extrait l'identifiant de l'entité concernée (soit depuis les arguments de la méthode, soit depuis la valeur de retour via réflexion), et écrit un journal d'audit dans une transaction indépendante (\texttt{TransactionTemplate}) pour assurer l'enregistrement même en cas d'échec de la transaction métier.
 
 Chaque entrée d'audit contient l'action effectuée (CREATE, UPDATE, DELETE), le type d'entité concernée, l'identifiant de l'entité, l'email de l'utilisateur ayant effectué l'action, les détails de l'opération et l'horodatage. Le coordinateur d'administration peut consulter ces journaux via la page \texttt{/admin/audit-logs}, qui offre une vue paginée et filtrable de l'ensemble des actions effectuées dans le système.
 
@@ -344,7 +355,7 @@ Le module d'administration gère la configuration structurelle du système à tr
 
 Les entités de référence (\texttt{Grade}, \texttt{Level}, \texttt{Major}, \texttt{JuryRoleTemplate}) sont gérées via des interfaces CRUD standard avec recherche et pagination. Le composant \texttt{ConfigEntityManager} est un composant réutilisable qui fournit automatiquement les dialogues de création, modification et suppression pour toute entité de référence, réduisant ainsi la duplication de code entre les différentes pages de configuration.
 
-Le \texttt{SetupGuard} implémente une logique de première utilisation : si \texttt{setupCompleted} est à \texttt{false}, l'utilisateur est redirigé vers la page de configuration (\texttt{/admin/config}) avant d'accéder à toute autre page d'administration. Cette mécanique garantit que les paramètres essentiels (nom de l'institution, durée des soutenances) sont configurés avant la première utilisation du système.
+Le \texttt{SetupGuard} implémente une logique de première utilisation : si \texttt{setupCompleted} est à \texttt{false}, l'utilisateur est redirigé vers la page de configuration (\texttt{/admin/config}) avant d'accéder à toute autre page d'administration. Cette mécanique veille à ce que les paramètres essentiels (nom de l'institution, durée des soutenances) sont configurés avant la première utilisation du système.
 
 \subsubsection{Fonctionnalités Étudiant et Enseignant}
 \label{ch4:features_student_teacher}
@@ -356,14 +367,14 @@ Le module enseignant complète les fonctionnalités de jury. La page d'indisponi
 \subsection{Interface utilisateur et navigation}
 \label{ch4:interface}
 
-L'interface utilisateur est organisée en sections distinctes accessibles via une sidebar adaptative, chaque section correspondant à un rôle spécifique. Le tableau~\ref{tab:pages_mapping} présente la cartographie complète des routes de l'application :
+L'interface utilisateur est organisée en sections distinctes accessibles via une sidebar adaptative, chaque section correspondant à un rôle spécifique. \cref{tab:pages_mapping} présente la cartographie complète des routes de l'application :
 
 \begin{table}[H]
     \centering
     \small
     \begin{tabular}{lll}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Chemin} & \textbf{Page / Composant} & \textbf{Accès} \\
         \midrule
         \texttt{/login} & Connexion & Public \\
@@ -417,7 +428,7 @@ Chaque route protégée est encapsulée dans un composant \texttt{ProtectedRoute
 \subsection{Bonnes pratiques adoptées}
 \label{ch4:bonnes_pratiques}
 
-Le développement du système a été guidé par des bonnes pratiques industry visant à garantir la qualité, la maintenabilité et la reproductibilité du code.
+Le développement du système a été guidé par des bonnes pratiques industry visant à préserver la qualité, la maintenabilité et la reproductibilité du code.
 
 \subsubsection{Tests automatisés}
 \label{ch4:tests}
@@ -437,7 +448,7 @@ Les messages de commit suivent les conventions sémantiques : préfixes \texttt{
 \subsubsection{Pipeline CI/CD}
 \label{ch4:cicd}
 
-Le pipeline GitHub Actions automatise la construction, les tests et la synchronisation entre les dépôts. Trois workflows distincts s'exécutent à chaque push sur \texttt{main} : le workflow de l'API compile le code Java avec Maven, exécute les tests unitaires et vérifie la couverture de code. Le workflow de l'UI lance le build Vite et les tests Vitest. Le workflow E2E synchronise les sources, démarre les deux serveurs, et exécute les tests Playwright. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt E2E, garantissant que les tests d'intégration s'exécutent toujours sur la dernière version du code.
+Le pipeline GitHub Actions automatise la construction, les tests et la synchronisation entre les dépôts. Trois workflows distincts s'exécutent à chaque push sur \texttt{main} : le workflow de l'API compile le code Java avec Maven, exécute les tests unitaires et vérifie la couverture de code. Le workflow de l'UI lance le build Vite et les tests Vitest. Le workflow E2E synchronise les sources, démarre les deux serveurs, et exécute les tests Playwright. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt E2E, s'assurant que les tests d'intégration s'exécutent toujours sur la dernière version du code.
 
 \subsection{Difficultés rencontrées et solutions}
 \label{ch4:difficultes}
@@ -446,7 +457,7 @@ Plusieurs difficultés techniques ont été rencontrées au cours du développem
 
 La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive (DnD) et la base de données. Le Defense Designer manipule un état local complexe (associations jury $\rightarrow$ créneau) qui doit être validé contre 8 règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final. Cette approche réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
 
-Une seconde difficulté a été la \textbf{duplication du moteur de conflits} entre Java et TypeScript. Pour garantir la cohérence, les deux implémentations suivent exactement la même séquence de vérifications et les mêmes structures de données (projet, salle, enseignant, indisponibilité). Les tests unitaires des deux moteurs valident les mêmes scénarios, et les messages d'erreur sont maintenus de manière cohérente entre les deux implémentations.
+Une seconde difficulté a été la \textbf{duplication du moteur de conflits} entre Java et TypeScript. Pour assurer la cohérence, les deux implémentations suivent exactement la même séquence de vérifications et les mêmes structures de données (projet, salle, enseignant, indisponibilité). Les tests unitaires des deux moteurs valident les mêmes scénarios, et les messages d'erreur sont maintenus de manière cohérente entre les deux implémentations.
 
 Une troisième difficulté a été la \textbf{conception du système de templates de jurys}. Les départements ont des besoins différents en termes de composition de jury (certains exigent un Président, un Rapporteur et un Examinateur, d'autres ajoutent un Co-encadrant). La solution a été d'implémenter des \texttt{JuryRoleTemplate} configurables par l'administrateur, chaque template définissant les rôles nécessaires, le nombre de membres par rôle et le coefficient associé. Cette flexibilité permet au système de s'adapter à différents contextes sans modification du code.
 

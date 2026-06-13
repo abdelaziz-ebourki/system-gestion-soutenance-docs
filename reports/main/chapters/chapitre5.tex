@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch5:intro}
 
-Ce chapitre présente la démarche de validation mise en œuvre pour garantir la fiabilité du système de gestion des soutenances. Dans un domaine où les données manipulées -- notes, jurys, plannings -- ont une incidence directe sur le parcours académique des étudiants, la qualité logicielle n'est pas un luxe mais une exigence fondamentale. Une erreur de planification peut priver un étudiant de sa soutenance, une erreur de calcul de moyenne peut modifier une décision de jury, et un bug de sécurité peut exposer des données confidentielles. C'est pourquoi nous avons adopté une stratégie de test pyramidale multi-couche, combinant des tests unitaires, d'intégration et des tests de bout en bout (E2E), permettant de détecter les régressions à différents niveaux de l'application avec un rapport coût-efficacité optimal.
+Ce chapitre présente la démarche de validation mise en œuvre pour préserver la fiabilité du système de gestion des soutenances. Dans un domaine où les données manipulées -- notes, jurys, plannings -- ont une incidence directe sur le parcours académique des étudiants, la qualité logicielle n'est pas un luxe mais une exigence fondamentale. Une erreur de planification peut priver un étudiant de sa soutenance, une erreur de calcul de moyenne peut modifier une décision de jury, et un bug de sécurité peut exposer des données confidentielles. C'est pourquoi nous avons adopté une stratégie de test pyramidale multi-couche, combinant des tests unitaires, d'intégration et des tests de bout en bout (E2E), permettant de détecter les régressions à différents niveaux de l'application avec un rapport coût-efficacité optimal.
 
 \subsection{Stratégie de test}
 \label{ch5:strategie}
@@ -37,14 +37,14 @@ Le frontend TypeScript utilise \textbf{Vitest (v4.1.7)} avec \textbf{React Testi
 
 L'architecture de mocking repose sur \textbf{MSW (Mock Service Worker) v3}, qui intercepte les appels réseau au niveau du service worker du navigateur simulé. Le serveur MSW est configuré dans le fichier de setup des mocks et démarre automatiquement avant chaque test via le setup global. Les handlers de mock fournissent des réponses simulées pour l'ensemble des endpoints API (auth, admin, coordinator, teacher, student). Le module registry expose des helpers de haut niveau : \texttt{mockJson} pour les réponses simples, \texttt{mockPaginated} pour les réponses paginées, \texttt{mockCrud} pour les opérations CRUD complètes, et \texttt{mockEcho} pour retourner le corps de la requête (utile pour tester les mutations).
 
-Le composant utilitaire \texttt{src/test/utils.tsx} fournit \texttt{renderWithProviders}, une fonction qui enveloppe tout composant testé dans les providers nécessaires : \texttt{QueryClientProvider} (TanStack Query), \texttt{MemoryRouter} (React Router), \texttt{AuthProvider} (contexte d'authentification) et \texttt{TooltipProvider} (shadcn/ui). Cette abstraction élimine la duplication de configuration entre les tests et garantit un environnement de test cohérent.
+Le composant utilitaire \texttt{src/test/utils.tsx} fournit \texttt{renderWithProviders}, une fonction qui enveloppe tout composant testé dans les providers nécessaires : \texttt{QueryClientProvider} (TanStack Query), \texttt{MemoryRouter} (React Router), \texttt{AuthProvider} (contexte d'authentification) et \texttt{TooltipProvider} (shadcn/ui). Cette abstraction élimine la duplication de configuration entre les tests et assure un environnement de test cohérent.
 
-Les tests couvrent cinq catégories de composants. Les hooks personnalisés sont testés via des composants « harness » qui les appellent dans un contexte React contrôlé. Les composants UI (DefenseCalendar, DraggableJurySlot, JurySidebar, AvailabilityCalendar, ProjectDialog) sont testés pour leur rendu, leurs interactions et leur état. La validation (conflict-engine.test.ts) est testée unitairement pour garantir la cohérence avec le moteur Java. Le routage (ProtectedRoute, SetupGuard) est testé pour les redirections selon les rôles. Enfin, chaque page de l'application dispose d'un test de rendu validant la présence des éléments clés.
+Les tests couvrent cinq catégories de composants. Les hooks personnalisés sont testés via des composants « harness » qui les appellent dans un contexte React contrôlé. Les composants UI (DefenseCalendar, DraggableJurySlot, JurySidebar, AvailabilityCalendar, ProjectDialog) sont testés pour leur rendu, leurs interactions et leur état. La validation (conflict-engine.test.ts) est testée unitairement pour valider la cohérence avec le moteur Java. Le routage (ProtectedRoute, SetupGuard) est testé pour les redirections selon les rôles. Enfin, chaque page de l'application dispose d'un test de rendu validant la présence des éléments clés.
 
 \subsubsection{Tests de bout en bout (E2E)}
 \label{ch5:e2e_tests}
 
-La validation finale du système est confiée à \textbf{Playwright (v1.52)}, qui simule des interactions réelles dans un navigateur Chromium. Contrairement aux tests unitaires et d'intégration qui tournent contre des mocks, les tests E2E s'exécutent contre l'API Spring Boot réelle et la base de données H2, garantissant une fidélité maximale aux comportements de production.
+La validation finale du système est confiée à \textbf{Playwright (v1.52)}, qui simule des interactions réelles dans un navigateur Chromium. Contrairement aux tests unitaires et d'intégration qui tournent contre des mocks, les tests E2E s'exécutent contre l'API Spring Boot réelle et la base de données H2, assurant une fidélité maximale aux comportements de production.
 
 L'architecture repose sur le pattern \textbf{setup-project} de Playwright. Le fichier \texttt{auth.setup.ts} s'exécute une seule fois avant tous les tests et authentifie les 4 rôles (admin, coordinateur, enseignant, étudiant) en remplissant le formulaire de connexion et en soumettant les credentials. Le contexte de navigateur résultant (cookies JWT, localStorage) est sérialisé dans des fichiers JSON (\texttt{.auth/admin.json}, etc.) et réutilisé via l'option \texttt{storageState} de chaque bloc \texttt{test.describe}. Cette approche élimine la phase de connexion pour chaque test, réduisant le temps d'exécution et la fragilité liée aux changements d'interface de connexion.
 
@@ -52,19 +52,19 @@ Les tests E2E sont organisés en 8 fichiers de test, chacun ciblant un rôle ou 
 
 La configuration Playwright utilise un worker unique (\texttt{workers: 1}) et le parallélisme désactivé (\texttt{fullyParallel: false}), car les tests s'exécutent contre une base de données H2 partagée dont l'état est modifié par chaque test. Les tentatives de rejeu sont désactivées en développement (0) et activées en CI (2). Les traces et captures d'écran ne sont conservées qu'en cas d'échec, pour faciliter le diagnostic sans encombrer l'espace disque.
 
-Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécution : les jobs \texttt{build-api} et \texttt{build-ui} construisent les artefacts en parallèle, puis le job \texttt{e2e} les télécharge, démarre les deux serveurs avec health-check loops, exécute les tests Playwright, et génère le rapport HTML. Ce pipeline s'exécute à chaque fusion sur la branche \texttt{main} et garantit que les tests d'intégration s'exécutent toujours sur la dernière version du code.
+Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécution : les jobs \texttt{build-api} et \texttt{build-ui} construisent les artefacts en parallèle, puis le job \texttt{e2e} les télécharge, démarre les deux serveurs avec health-check loops, exécute les tests Playwright, et génère le rapport HTML. Ce pipeline s'exécute à chaque fusion sur la branche \texttt{main} et s'assure que les tests d'intégration s'exécutent toujours sur la dernière version du code.
 
 \subsection{Scénarios de validation et résultats}
 \label{ch5:scenarios}
 
-Le tableau~\ref{tab:validation_results} présente dix scénarios de validation couvrant les fonctionnalités critiques du système, du niveau unitaire jusqu'au bout en bout. Chaque scénario décrit les étapes d'exécution, les résultats attendus et le verdict de validation.
+\Cref{tab:validation_results} présente dix scénarios de validation couvrant les fonctionnalités critiques du système, du niveau unitaire jusqu'au bout en bout. Chaque scénario décrit les étapes d'exécution, les résultats attendus et le verdict de validation.
 
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{llp{5cm}p{3cm}}
+    \begin{tabularx}{\textwidth}{llXX}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Niveau} & \textbf{Fonctionnalité} & \textbf{Scénario de test} & \textbf{Résultat} \\
         \midrule
         Unitaire & Détection conflits RG1--RG8 & Chevauchement enseignant, capacité salle, pause minimale, indisponibilité & \textbf{Validé (8/8)} \\
@@ -87,7 +87,7 @@ Le tableau~\ref{tab:validation_results} présente dix scénarios de validation c
         \addlinespace
         E2E & Flux Enseignant & Déclarer indisponibilité, soumettre évaluation, consulter planning & \textbf{Validé} \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Matrice de validation des fonctionnalités critiques}
     \label{tab:validation_results}
 \end{table}
@@ -95,14 +95,14 @@ Le tableau~\ref{tab:validation_results} présente dix scénarios de validation c
 \subsection{Métriques de qualité}
 \label{ch5:metriques}
 
-Le tableau~\ref{tab:metriques_qualite} résume l'ensemble des métriques de qualité mesurées lors du développement du système. Ces chiffres sont vérifiés automatiquement à chaque construction et exportés dans les rapports CI.
+\Cref{tab:metriques_qualite} résume l'ensemble des métriques de qualité mesurées lors du développement du système. Ces chiffres sont vérifiés automatiquement à chaque construction et exportés dans les rapports CI.
 
 \begin{table}[H]
     \centering
     \small
     \begin{tabular}{lrl}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Métrique} & \textbf{Valeur} & \textbf{Outil} \\
         \midrule
         Classes de test backend (JUnit 5) & 86 & Maven Surefire \\
@@ -126,7 +126,7 @@ Le tableau~\ref{tab:metriques_qualite} résume l'ensemble des métriques de qual
 
 Le système répond aux exigences fonctionnelles du cahier des charges. La détection automatique des conflits réduit drastiquement le temps de planification et élimine les erreurs humaines. L'intégration des tests dans le pipeline CI garantit la non-régression des fonctionnalités critiques lors de chaque modification du code. La pyramide de tests -- 86 tests unitaires Java, 91 tests frontend TypeScript, 65 tests E2E Playwright -- offre une couverture à chaque niveau de l'application.
 
-Cependant, certaines limites subsistent et méritent d'être documentées. La couverture E2E, bien que fonctionnelle, ne couvre pas encore l'intégralité des cas limites et des parcours utilisateurs complexes, notamment les scénarios de rattrapage et les flux d'erreur (serveur indisponible, token expiré). La génération de PDF repose sur le dialogue d'impression du navigateur, ce qui peut varier légèrement selon le système d'exploitation et la version du navigateur -- une évolution vers une génération côté serveur (via Puppeteer ou iText) est envisagée pour garantir un rendu identique.
+Cependant, certaines limites subsistent et méritent d'être documentées. La couverture E2E, bien que fonctionnelle, ne couvre pas encore l'intégralité des cas limites et des parcours utilisateurs complexes, notamment les scénarios de rattrapage et les flux d'erreur (serveur indisponible, token expiré). La génération de PDF repose sur le dialogue d'impression du navigateur, ce qui peut varier légèrement selon le système d'exploitation et la version du navigateur -- une évolution vers une génération côté serveur (via Puppeteer ou iText) est envisagée pour assurer un rendu identique.
 
 L'algorithme d'auto-génération du planning utilise une approche gloutone (greedy) qui assigne les jurys au premier créneau disponible, sans recherche d'optimum global. Pour un grand nombre de projets ($> 100$), cette approche peut produire un sous-optimisme dans l'occupation des salles. Des algorithmes d'optimisation plus sophistiqués (programmation par contraintes, recuit simulé) pourraient être envisagés dans une version future.
 
@@ -135,4 +135,4 @@ Le système ne supporte actuellement ni les mises à jour en temps réel (WebSoc
 \subsection{Conclusion}
 \label{ch5:conclusion}
 
-La stratégie de test multi-couche a permis d'aboutir à une application stable et fiable. La combinaison de 86 tests unitaires Java garantissant 85\% de couverture, 91 tests frontend TypeScript validant l'interface utilisateur, et environ 65 tests E2E Playwright couvrant les parcours principaux, assure que le système est prêt pour un déploiement en environnement académique. L'intégration des outils de qualité (JaCoCo, Checkstyle, PMD, SpotBugs, ESLint, Prettier) dans le pipeline Maven et les hooks Husky garantit la pérennité de la qualité du code au fil des évolutions futures.
+La stratégie de test multi-couche a permis d'aboutir à une application stable et fiable. Les 242 tests automatisés -- unitaires, d'intégration et de bout en bout -- couvrent l'ensemble des fonctionnalités critiques. L'intégration des outils de qualité (JaCoCo, Checkstyle, PMD, SpotBugs, ESLint, Prettier) dans le pipeline Maven et les hooks Husky assure la pérennité de la qualité du code au fil des évolutions futures.

@@ -1,10 +1,13 @@
 @startuml
 !include puml-theme-pfe.puml
 
+top to bottom direction
+
+skinparam nodesep 15
+skinparam ranksep 15
+
 skinparam packageStyle rectangle
 skinparam componentStyle uml2
-skinparam nodesep 40
-skinparam ranksep 30
 
 ' ═══════════════════════════════════════════════
 ' FRONTEND LAYER

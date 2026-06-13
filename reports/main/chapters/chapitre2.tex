@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch2:intro}
 
-Ce chapitre présente une analyse approfondie du système actuel d'organisation des soutenances au sein de la faculté, identifie ses lacunes et compare les solutions existantes sur le marché. Il détaille ensuite les choix technologiques retenus pour le développement de notre application en justifiant chaque décision par une analyse des alternatives envisagées. Enfin, l'architecture générale du système est présentée, incluant la stratégie de déploiement et l'organisation du code source.
+Ce chapitre présente une analyse approfondie du système actuel d'organisation des soutenances au sein de la faculté, identifie ses lacunes et compare les solutions existantes sur le marché. Il détaille ensuite les choix technologiques retenus pour le développement de notre application. Enfin, l'architecture générale du système est présentée, incluant la stratégie de déploiement et l'organisation du code source.
 
 \subsection{Analyse de l'existant}
 \label{ch2:existant}
@@ -16,9 +16,9 @@ Ce chapitre présente une analyse approfondie du système actuel d'organisation 
 \subsubsection{Description du système actuel}
 \label{ch2:systeme_actuel}
 
-L'organisation actuelle des soutenances repose sur une combinaison d'outils bureautiques génériques et de processus manuels qui, bien que fonctionnels pour un volume limité de soutenances, montrent rapidement leurs limites face à la croissance des effectifs. Le coordinateur utilise principalement des tableurs Excel pour le suivi des étudiants, des projets et des plannings préliminaires. La communication avec les enseignants et les étudiants se fait par courrier électronique, notamment pour la collecte des disponibilités et l'envoi des convocations. Les salles sont gérées via des services tiers, souvent sans visibilité directe sur les occupations en temps réel. Enfin, l'évaluation des étudiants repose sur une saisie manuelle des notes sur fiches imprimées, suivie d'une re-saisie numérique pour le calcul des moyennes.
+Comme déjà mentionné dans le chapitre précédent, l'organisation actuelle des soutenances repose sur une combinaison d'outils bureautiques génériques et de processus manuels qui, bien que fonctionnels pour un volume limité de soutenances, montrent rapidement leurs limites face à la croissance des effectifs. Le coordinateur utilise principalement des tableurs Excel pour le suivi des étudiants, des projets et des plannings préliminaires. La communication avec les enseignants -- et les encadrants professionnel pour les stages -- se fait par courrier électronique, notamment pour la collecte des disponibilités et l'envoi des convocations. Les salles sont gérées via des services tiers, souvent sans visibilité pertinente sur les occupations.
 
-Cette organisation, bien qu'ayant le mérite de ne nécessiter aucune infrastructure informatique dédiée et de permettre une certaine flexibilité d'adaptation, engendre des problèmes récurrents qui impactent directement la qualité de l'organisation des soutenances.
+Cette organisation, bien qu'ayant le mérite de ne nécessiter aucune infrastructure informatique dédiée et de permettre une certaine flexibilité d'adaptation, engendre des problèmes récurrents qui impactent directement l'efficacité de l'organisation des soutenances.
 
 \subsubsection{Processus actuel détaillé}
 \label{ch2:processus_actuel}
@@ -27,12 +27,12 @@ L'organisation d'une session de soutenances suit un cheminement complexe divisé
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.6\textwidth]{process_planification}
+    \pumlsvg[0.5\textwidth]{process_planification}
     \caption{Processus actuel -- Phase~1 : Planification}
     \label{fig:processus_actuel_phase_un}
 \end{figure}
 
-La \ref{fig:processus_actuel_phase_un} illustre la nature intrinsèquement itérative de la phase de planification. Elle repose sur une communication asynchrone par e-mail qui génère fréquemment des goulots d'étranglement : la centralisation manuelle des informations (étudiants, sujets, encadrants) et la négociation des créneaux imposent de multiples allers-retours avant d'aboutir à un planning acceptable. Le coordinateur doit collecter les disponibilités de chaque enseignant par e-mail, puis vérifier manuellement que les créneaux proposés ne créent pas de conflits. Cette vérification, réalisée sur des tableurs Excel, est particulièrement fastidieuse lorsque le nombre d'enseignants et de projets dépasse une dizaine.
+\Cref{fig:processus_actuel_phase_un} illustre la nature itérative de la phase de planification. Le processus commence par la création d'un planning initial, suivi de l'envoi des disponibilités aux enseignants par e-mail. La réception des réponses permet de vérifier la compatibilité des créneaux proposés. En cas d'incompatibilité, le coordinateur modifie le planning et relance un nouvel envoi d'e-mails. Cette boucle se poursuit jusqu'à l'obtention de confirmations compatibles, générant de multiples allers-retours qui constituent un goulot d'étranglement majeur. La phase se termine par l'affectation des jurys.
 
 \begin{figure}[H]
     \centering
@@ -41,64 +41,32 @@ La \ref{fig:processus_actuel_phase_un} illustre la nature intrinsèquement itér
     \label{fig:processus_actuel_phase_deux}
 \end{figure}
 
-La \ref{fig:processus_actuel_phase_deux} détaille la transition vers la phase d'exécution. Cette étape est critique car elle comporte une vérification manuelle des conflits (double affectation d'un enseignant ou d'une salle) avant la diffusion officielle du planning. Le cycle se termine par une collecte physique des notes sur des fiches imprimées, suivie d'une ressaisie numérique pour le calcul des moyennes, et un archivage souffrant d'un manque de centralisation numérique. Les procès-verbaux sont rédigés manuellement et signés physiquement, rendant la traçabilité des décisions particulièrement difficile.
+\Cref{fig:processus_actuel_phase_deux} détaille la phase d'exécution. Elle commence par l'affectation des jurys, suivie d'une vérification itérative des conflits (ex: occupation simultanée d'une même salle). Lorsqu'un conflit est détecté, une correction manuelle est effectuée et le planning est mis à jour avant de re-vérifier. Cette boucle se poursuit jusqu'à l'absence totale de conflits, après quoi le planning final est validé et diffusé officiellement.
 
-\subsubsection{Impact quantifié du système actuel}
-\label{ch2:impact_quantifie}
-
-Pour mesurer concrètement les limites du système actuel, nous avons estimé le temps consacré à chaque étape du processus lors d'une session type d'environ 50 soutenances. Ces estimations sont basées sur les retours d'expérience du coordinateur du département MIP.
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{p{4.5cm}p{2.5cm}p{5.5cm}}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Étape du processus} & \textbf{Durée estimée} & \textbf{Problème principal} \\
-        \midrule
-        Collecte des disponibilités enseignants & 2--3 semaines & Communication asynchrone par e-mail, relances multiples \\
-        Centralisation des données projets & 2--3 jours & Saisie manuelle dans Excel, risques d'erreurs de transcription \\
-        Vérification des conflits & 4--6 heures & Vérification manuelle croisée sur tableur, conflits non détectés \\
-        Affectation des salles & 1--2 heures & Absence de visibilité en temps réel sur les occupations \\
-        Rédaction des convocations & 1 jour & Mise en page manuelle pour chaque enseignant et étudiant \\
-        Saisie des notes & 1--2 jours par session & Resaisie manuelle à partir des fiches papier \\
-        Calcul des moyennes & 1--2 heures & Formules Excel sensibles aux erreurs de saisie \\
-        Rédaction des PV & 1--2 jours & Rédaction manuelle, signature physique \\
-        Archivage & 1 jour & Fichiers dispersés, pas de centralisation \\
-        \midrule
-        \textbf{Total estimé} & \textbf{$\approx$ 4--6 semaines} & \textbf{Charge principalement sur le coordinateur} \\
-        \bottomrule
-    \end{tabular}
-    \caption{Estimation du temps consacré par étape lors d'une session de 50 soutenances}
-    \label{tab:impact_temps}
-\end{table}
-
-Le tableau \ref{tab:impact_temps} met en évidence un constat alarmant : la phase de planification à elle seule représente environ 70\% du temps total consacré à l'organisation d'une session, avec une charge particulièrement lourde sur le coordinateur. Les erreurs de planification, souvent détectées uniquement le jour de la soutenance, provoquent des annulations de dernière minute qui nuisent à la réputation de la faculté et au moral des étudiants.
 
 \subsubsection{Comparaison processus actuel vs.\ processus souhaité}
 \label{ch2:comparaison_processus}
 
-Le tableau \ref{tab:comparaison_processus} confronte chaque étape du processus actuel à la solution que notre système propose pour y remédier.
+\Cref{tab:comparaison_processus} confronte chaque étape du processus actuel à la solution que notre application propose pour y remédier.
 
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{p{3.5cm}p{3.5cm}p{3cm}p{3.5cm}}
+    \begin{tabularx}{\textwidth}{XXXX}
         \toprule
-        \rowcolor{primary!10}
-        \textbf{Étape} & \textbf{Méthode actuelle} & \textbf{Problème} & \textbf{Solution proposée} \\
+
+        \textbf{Étape}          & \textbf{Méthode actuelle} & \textbf{Problème}     & \textbf{Solution proposée}         \\
         \midrule
-        Collecte disponibilités & E-mails individuels & Pas de centralisation & Calendrier interactif dans l'app \\
-        Suivi des projets & Fichiers Excel & Pas de versioning & Base de données centralisée \\
-        Vérification conflits & Vérification manuelle & Conflits non détectés & Moteur de détection automatique \\
-        Affectation jurys & Négociation par e-mail & Lenteur, erreurs & Constitution assistée par templates \\
-        Planification créneaux & Tableur Excel & Pas de visualisation & Defense Designer (glisser-déposer) \\
-        Génération convocations & Mise en page manuelle & Lenteur, incohérences & Génération automatique A4 \\
-        Saisie des notes & Fiches papier & Resaisie, erreurs & Saisie numérique par le jury \\
-        Calcul des moyennes & Formules Excel & Erreurs de saisie & Calcul automatique pondéré \\
-        Archivage & Fichiers dispersés & Perte de données & Stockage centralisé et traçable \\
+        Collecte disponibilités & E-mails individuels       & Pas de centralisation & Calendrier interactif dans l'app   \\
+        Suivi des projets       & Fichiers Excel            & Pas de versioning     & Base de données centralisée        \\
+        Vérification conflits   & Vérification manuelle     & Conflits non détectés & Moteur de détection automatique    \\
+        Affectation jurys       & Négociation par e-mail    & Lenteur, erreurs      & Constitution assistée              \\
+        Planification créneaux  & Tableur Excel             & Pas de visualisation  & Defense Designer (glisser-déposer) \\
+        Génération convocations & Mise en page manuelle     & Lenteur, incohérences & Génération automatique A4          \\
+        Saisie des notes        & Fiches papier             & Resaisie, erreurs     & Saisie numérique par le jury       \\
+        Archivage               & Fichiers dispersés        & Perte de données      & Stockage centralisé et traçable    \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Comparaison entre le processus actuel et le processus proposé}
     \label{tab:comparaison_processus}
 \end{table}
@@ -106,9 +74,9 @@ Le tableau \ref{tab:comparaison_processus} confronte chaque étape du processus 
 \subsubsection{Analyse critique}
 \label{ch2:analyse_critique}
 
-Le système actuel présente certains avantages dans des contextes de très petite taille : flexibilité d'adaptation à des cas particuliers, absence de dépendance technologique et charge de travail acceptable pour un volume très limité de soutenances. Cependant, les inconvénients deviennent prépondérants dès que le volume augmente. Les erreurs de planification sont fréquentes et souvent détectées tardivement, provoquant des annulations de dernière minute qui compromettent la crédibilité de l'organisation. La traçabilité des décisions est faible, rendant difficile l'identification des responsabilités en cas de problème. La charge du coordinateur est considérable en fin de semestre, au moment même où les exigences pédagogiques sont les plus élevées. Enfin, la ressaisie répétée des données multiplie les risques d'erreurs de transcription, notamment lors du calcul des moyennes pondérées.
+Le système actuel présente certains avantages dans des contextes de très petite taille : flexibilité d'adaptation à des cas particuliers, absence de dépendance technologique et charge de travail acceptable pour un volume très limité de soutenances. Cependant, les inconvénients deviennent prépondérants dès que le volume augmente. Les erreurs de planification sont fréquentes et souvent détectées tardivement, provoquant des annulations de dernière minute qui compromettent la crédibilité de l'organisation. La traçabilité des décisions est faible, rendant difficile l'identification des responsabilités en cas de problème. La charge du coordinateur est considérable en fin de semestre, au moment même où les exigences pédagogiques sont les plus élevées.
 
-Ces constats justifient pleinement le développement d'un système d'information dédié capable d'automatiser les tâches répétitives, de garantir l'intégrité des données et de réduire la charge de travail du coordinateur tout en améliorant la qualité du service rendu aux étudiants et aux enseignants.
+Ces constats justifient pleinement le développement d'un système informatique dédié capable d'automatiser ces tâches répétitives, d'assurer l'intégrité des données et de réduire la charge de travail du coordinateur tout en améliorant la qualité du service rendu aux étudiants et aux enseignants.
 
 \subsection{Étude des solutions similaires}
 \label{ch2:solutions_similaires}
@@ -121,9 +89,9 @@ Plusieurs solutions logicielles existent sur le marché ou sous forme de projets
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{lp{5.5cm}p{5.5cm}}
+    \begin{tabularx}{\textwidth}{lXX}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Solution}                                                        & \textbf{Description} & \textbf{Adéquation} \\
         \midrule
         \textbf{Apogée (Amue)}                                                   &
@@ -133,12 +101,8 @@ Plusieurs solutions logicielles existent sur le marché ou sous forme de projets
         \textbf{Aurion}                                                          &
         ERP académique couvrant scolarité, stages et PFE                         &
         Module soutenance limité, coût élevé, complexité d'intégration                                                        \\
-        \addlinespace
-        \textbf{Koha / Aleph}                                                    &
-        Systèmes bibliothèques universitaires                                    &
-        Hors sujet                                                                                                            \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Analyse des systèmes ERP académiques}
     \label{tab:erp}
 \end{table}
@@ -151,9 +115,9 @@ L'analyse des systèmes ERP académiques révèle une inadéquation fondamentale
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{lp{5.5cm}p{5.5cm}}
+    \begin{tabularx}{\textwidth}{lXX}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Solution}        & \textbf{Description}      & \textbf{Limites pour ce besoin}                       \\
         \midrule
         \textbf{Doodle}          & Sondages de disponibilité & Pas de gestion des jurys ni de génération PDF         \\
@@ -162,7 +126,7 @@ L'analyse des systèmes ERP académiques révèle une inadéquation fondamentale
         \addlinespace
         \textbf{Microsoft Teams} & Gestion de réunions       & Non adapté à la logique jury/soutenance               \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Analyse des outils de planification génériques}
     \label{tab:planification_generique}
 \end{table}
@@ -175,60 +139,40 @@ Les outils de planification génériques, bien que faciles à prendre en main, s
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{lp{5cm}p{6cm}}
+    \begin{tabularx}{\textwidth}{lXX}
         \toprule
-        \rowcolor{primary!10}
-        \textbf{Projet}          & \textbf{Lien GitHub}                                                                & \textbf{Limites identifiées}                                                            \\
+
+        \textbf{Projet}                  & \textbf{Lien GitHub}                                                             & \textbf{Limites identifiées}                                            \\
         \midrule
-        \textbf{appliSoutenance} & \href{https://github.com/cdegrel/appliSoutenance}{cdegrel/appliSoutenance}          & Focalisé sur la notation en séance ; ne gère pas la planification amont ni les salles   \\
+        \textbf{Thesis Management (TUM)} & \href{https://github.com/ls1intum/thesis-management}{ls1intum/thesis-management} &
+        Gestion de thèses complète (sujets, candidatures, évaluations) mais planification des soutenances limitée à la définition manuelle de créneaux, sans détection de conflits                    \\
         \addlinespace
-        \textbf{PFE-Management}  & \href{https://github.com/khaireddine24/PFE-Management-System}{khaireddine24/PFE-MS} & Gestion administrative de base ; absence de détection de conflits et de génération PDF  \\
-        \addlinespace
-        \textbf{Jury (HackUTD)}  & \href{https://github.com/hackutd/jury}{hackutd/jury}                                & Adapté aux hackathons ; incompatible avec les rôles académiques (Président, Rapporteur) \\
+        \textbf{UniTime}                 & \href{https://github.com/UniTime/unitime}{UniTime/unitime}                       &
+        Système mature de planification universitaire (335 étoiles, Apache 2.0) ; couvre emplois du temps et examens mais ne gère pas le cycle complet des soutenances PFE ni la composition de jurys \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Analyse de projets open source similaires}
     \label{tab:opensource}
 \end{table}
 
-Les projets open source trouvés sur GitHub présentent un intérêt pédagogique mais ne répondent pas à l'ensemble de nos besoins. appliSoutenance se concentre sur la phase de notation pendant la soutenance, sans couvrir la planification amont ni la gestion des salles. PFE-Management offre une gestion administrative de base des projets mais ne détecte pas les conflits d'horaires et ne génère pas de documents. Jury, conçu pour les hackathons, utilise un modèle de jury simplifié incompatible avec les rôles académiques français (Président, Rapporteur, Examinateur). Ces projets confirment que la communauté open source n'a pas encore produit de solution complète pour l'organisation des soutenances universitaires.
+L'analyse des projets open source les plus aboutis révèle des solutions partielles. Thesis Management, développé par le Technical University of Munich, offre une gestion complète du cycle de thèse -- sujets, candidatures, évaluations, notes -- avec une authentification Keycloak et une interface React/Mantine. Cependant, sa planification de soutenances se limite à la définition manuelle de créneaux par le superviseur, sans moteur de détection de conflits ni interface de planification interactive. UniTime, projet mature soutenu par la fondation Apereo (335 étoiles), excelle dans la planification d'emplois du temps et d'examens universitaires grâce à des algorithmes d'optimisation avancés. Néanmoins, il est conçu pour la planification de cours et d'examens, pas pour le cycle complet des soutenances incluant la composition de jurys, la génération de convocations et la collecte de notes. Ces projets, bien que techniquement solides, ne couvrent pas simultanément la planification interactive, la détection de conflits d'affectation, la génération de documents et l'adaptation au contexte universitaire marocain.
 
 \subsubsection{Synthèse et positionnement}
 \label{ch2:synthese}
 
-Le tableau \ref{tab:synthese_solutions} résume la couverture de chaque solution par rapport aux quatre critères essentiels identifiés.
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lcccc}
-        \toprule
-        \rowcolor{primary!10}
-        \textbf{Critère} & \textbf{Apogée} & \textbf{Doodle} & \textbf{PFE-MS} & \textbf{Notre système} \\
-        \midrule
-        Cycle complet (planif.\ → éval.) & Partiel & Non & Non & \checkmark \\
-        Gestion jurys + détection conflits & Non & Non & Non & \checkmark \\
-        Génération documents A4 & Non & Non & Non & \checkmark \\
-        Contexte marocain (CNE, filières) & Non & Non & Partiel & \checkmark \\
-        \bottomrule
-    \end{tabular}
-    \caption{Synthèse comparative des solutions}
-    \label{tab:synthese_solutions}
-\end{table}
-
-Comme le montre ce tableau, aucune solution existante ne réunit simultanément les quatre critères suivants : gestion complète du cycle de soutenance, composition et affectation de jurys avec détection de conflits, génération automatique de convocations et fiches d'évaluation, et adaptation au contexte marocain. Cette analyse confirme la pertinence du projet et justifie le développement d'une solution sur mesure.
+L'analyse croisée de ces trois catégories de solutions -- ERP académiques, outils génériques et projets open source -- met en évidence une lacune persistante. Les systèmes ERP comme Apogée et Aurion offrent une gestion administrative complète mais négligent la planification des soutenances. Les outils comme Doodle ou Google Calendar fournissent une interface de disponibilités mais ignorent la logique métier académique (jurys, salles, conflits). Enfin, les projets open source les plus aboutis, tels que Thesis Management ou UniTime, couvrent partiellement le domaine mais sans intégrer la planification interactive, la détection automatique de conflits et la génération de documents dans un même système. Aucune solution existante ne s'adapte au contexte spécifique d'une faculté marocaine avec ses structures de jurys (Président, Rapporteur, Examinateur), ses filières et son cycle complet de soutenance PFE. Cette analyse confirme la pertinence du projet et justifie le développement d'une solution sur mesure.
 
 \subsection{Choix technologiques}
 \label{ch2:choix_technologiques}
 
-Le choix des technologies est une étape cruciale qui conditionne la réussite du projet. Chaque décision a été prise en fonction des besoins spécifiques du système, des compétences de l'équipe et des contraintes du projet. Pour chaque choix, nous avons évalué les alternatives disponibles avant de justifier la sélection retenue.
+Le choix des technologies est une étape cruciale qui, plus ou moins, conditionne la réussite du projet. Chaque décision a été prise en fonction des besoins spécifiques du système, des compétences de l'équipe et des contraintes du projet. Pour chaque choix, nous avons évalué les alternatives disponibles avant de justifier la sélection retenue.
 
 \subsubsection{Frontend}
 \label{ch2:frontend}
 
-Trois frameworks JavaScript principaux ont été évalués pour le développement de l'interface utilisateur : React.js, Vue.js et Angular. Svelte a également été considéré mais écarté en raison de son écosystème encore trop immature pour un projet de cette envergure.
+Trois frameworks JavaScript principaux ont été évalués pour le développement de l'interface utilisateur : React.js, Vue.js et Angular.
 
-\textbf{Vue.js} offre une courbe d'apprentissage plus douce que React et une documentation excellentement structurée. Son système de réactivité basé sur les proxies est intuitif et son official store (Pinia) est léger et efficace. Cependant, son écosystème de composants tiers est moins riche que celui de React, et la taille de sa communauté -- bien que croissante -- reste significativement plus petite, ce qui limite la disponibilité de solutions prêtes à l'emploi pour des cas d'usage spécifiques comme le glisser-déposer complexe.
+\textbf{Vue.js} offre une courbe d'apprentissage plus douce que React et une documentation excellentement structurée. Son système de réactivité basé sur les proxies est intuitif et son official store (Pinia) est léger et efficace. Cependant, son écosystème de composants tiers est moins riche que celui de React, et la taille de sa communauté -- bien que croissante -- reste significativement plus petite, ce qui limite la disponibilité de solutions prêtes à l'emploi pour des cas d'usage spécifiques comme le glisser-déposer complexe (utiliser pour remplir les créneaux du planning).
 
 \textbf{Angular} propose une solution complète et opinionnée, avec un CLI puissant, un système de dépendances injection natif et une architecture en modules. Sa robustesse est éprouvée dans les grandes applications d'entreprise. Néanmoins, sa courbe d'apprentissage élevée, sa verbosité et la taille du bundle produit le rendent moins adapté à un projet de fin d'études où la vélocité de développement est un facteur déterminant.
 
@@ -241,11 +185,11 @@ L'interface est construite avec \textbf{Tailwind CSS 4} et \textbf{shadcn/ui}. T
 
 L'évaluation du backend a porté sur trois alternatives majeures : Node.js avec Express, Python avec Django, et Java avec Spring Boot.
 
-\textbf{Node.js/Express} permettrait d'utiliser un seul langage (JavaScript) sur toute la pile technique, facilitant ainsi la maintenance et la mobilité de l'équipe entre le frontend et le backend. Cependant, l'absence de typage statique natif (TypeScript atténue partiellement ce problème) et la nature single-threaded de l'événement loop posent des questions de fiabilité pour un système devant garantir l'intégrité des données de planification. De plus, l'écosystème npm, bien que vaste, souffre de problèmes de dépendances obsolètes et de fragilité des versions.
+\textbf{Node.js/Express} permettrait d'utiliser un seul langage (JavaScript) sur toute la pile technique, facilitant ainsi la maintenance et la mobilité de l'équipe entre le frontend et le backend. Cependant, l'absence de typage statique natif (TypeScript atténue partiellement ce problème) et la nature single-threaded de l'événement loop posent des questions de fiabilité pour un système devant préserver l'intégrité des données de planification. De plus, l'écosystème npm, bien que vaste, souffre de problèmes de dépendances obsolètes et de fragilité des versions.
 
 \textbf{Django} offre un ORM puissant, une administration automatique et une sécurité intégrée. Sa philosophie « batteries included » accélère le développement initial. Néanmoins, l'écosystème Python pour les applications web d'entreprise est moins mature que celui de Java, et la performance d'exécution est inférieure pour les charges de travail intensives en calcul (détection de conflits, optimisation de planning).
 
-\textbf{Spring Boot 3.4.6} (Java 17) a été choisi pour sa robustesse éprouvée dans les applications d'entreprise. Spring Security fournit un mécanisme d'authentification JWT natif avec un contrôle d'accès granulaire par rôles, sans nécessiter de bibliothèques tierces. Spring Data JPA simplifie considérablement l'accès aux données relationnelles tout en offrant la flexibilité des requêtes JPQL personnalisées. L'architecture MVC contraint les développeurs à une séparation claire des préoccupations (Contrôleurs, Services, Repositories), ce qui facilite la maintenabilité et la testabilité du code. Enfin, Java 17, version LTS (Long Term Support), garantit la stabilité à long terme du projet sans nécessiter de migration de version.
+\textbf{Spring Boot 3.4.6} (Java 17) a été choisi pour sa robustesse éprouvée dans les applications d'entreprise. Spring Security fournit un mécanisme d'authentification JWT natif avec un contrôle d'accès granulaire par rôles, sans nécessiter de bibliothèques tierces. Spring Data JPA simplifie considérablement l'accès aux données relationnelles tout en offrant la flexibilité des requêtes JPQL personnalisées. L'architecture MVC contraint les développeurs à une séparation claire des préoccupations (Contrôleurs, Services, Repositories), ce qui facilite la maintenabilité et la testabilité du code. Enfin, Java 17, version LTS (Long Term Support), assure la stabilité à long terme du projet sans nécessiter de migration de version.
 
 \subsubsection{Base de données}
 \label{ch2:base_donnees}
@@ -259,27 +203,27 @@ En phase de production, \textbf{MySQL} est le SGBD retenu. Son choix se justifie
 \subsubsection{Outils de développement}
 \label{ch2:outils_dev}
 
-\textbf{Git et GitHub} constituent le socle de la gestion de version et de la collaboration. Le projet est organisé en dépôts multiples (API, UI, E2E, Docs), chacun doté de son propre historique de commits et de sa configuration CI/CD. La stratégie de branching suit un modèle simplifié : une branche \texttt{main} stable, des branches de fonctionnalité (\texttt{feature/*}) pour le développement, et des branches de correction (\texttt{fix/*}) pour les correctifs. Les messages de commit respectent les conventions (préfixes \texttt{feat:}, \texttt{fix:}, \texttt{chore:}, etc.) et les issues GitHub servent de support au suivi des tâches et des bugs.
+\textbf{Git et GitHub} constituent le socle de la gestion de version et de la collaboration. Le projet est organisé en dépôts multiples (API, UI, E2E), chacun doté de son propre historique de commits et de sa configuration CI/CD. La stratégie de branching suit un modèle simplifié : une branche \texttt{main} stable, des branches de fonctionnalité (\texttt{feature/*}) pour le développement, et des branches de correction (\texttt{fix/*}) pour les correctifs. Les messages de commit respectent les conventions (préfixes \texttt{feat:}, \texttt{fix:}, \texttt{chore:}, etc.) et les issues GitHub servent de support au suivi des tâches et des bugs.
 
-\textbf{Visual Studio Code} est l'éditeur principal pour le frontend, avec des extensions dédiées au TypeScript, à Tailwind CSS et à React. \textbf{IntelliJ IDEA Ultimate} est utilisé pour le backend Java, offrant un support natif de Spring Boot, Maven et JPA. \textbf{Postman} permet de tester et documenter les endpoints REST, avec des environnements séparés pour le dev et les tests, et des collections partagées entre les membres de l'équipe. \textbf{Maven} gère les dépendances du projet backend, assure la cohérence des versions et intègre les plugins de qualité de code.
+\textbf{Visual Studio Code} est l'éditeur utilisé pour l'ensemble du développement, avec des extensions dédiées au TypeScript, Tailwind CSS et React pour le frontend, et au Java, Spring Boot et Maven pour le backend. \textbf{Postman} permet de tester et documenter les endpoints REST, avec des environnements séparés pour le dev et les tests, et des collections partagées entre les membres de l'équipe. \textbf{Maven} gère les dépendances du projet backend, assure la cohérence des versions et intègre les plugins de qualité de code.
 
-\textbf{Docker Compose} orchestre l'environnement de développement en conteneurisant l'API Spring Boot et le serveur Mailpit (serveur SMTP de test avec interface web sur le port 8025). Cette approche garantit un environnement reproductible sur toute machine, éliminant les problèmes de « ça fonctionne sur ma machine » et simplifiant la prise en main par un nouveau développeur.
+\textbf{Docker Compose} orchestre l'environnement de développement en conteneurisant l'API Spring Boot et le serveur Mailpit (serveur SMTP de test avec interface web sur le port 8025). Cette approche assure un environnement reproductible sur toute machine, éliminant les problèmes de « ça fonctionne sur ma machine » et simplifiant la prise en main par un nouveau développeur.
 
 \subsubsection{Outils de qualité de code}
 \label{ch2:qualite_code}
 
 La qualité du code est assurée par une chaîne d'outils intégrée au cycle de développement, combinant des outils de linting, de formatage et de validation statique.
 
-Côté frontend, \textbf{ESLint} analyse le code TypeScript en temps réel pour détecter les erreurs courantes (variables non utilisées, imports manquants, patterns dangereux). \textbf{Prettier} assure un formatage uniforme de l'ensemble du code source, éliminant les débats stylistiques au sein de l'équipe. \textbf{cspell} vérifie l'orthographe des noms de variables et des commentaires, utile dans un projet où l'interface est en français mais le code en anglais.
+Côté frontend, \textbf{ESLint} analyse le code TypeScript en temps réel pour détecter les erreurs courantes (variables non utilisées, imports manquants, patterns dangereux). \textbf{Prettier} assure un formatage uniforme de l'ensemble du code source, éliminant les débats stylistiques au sein de l'équipe. \textbf{cspell} vérifie l'orthographe du code (ie: noms des variables, noms des fonctions\dots) et des informations affichées aux utilisateurs.
 
 Côté backend, \textbf{Checkstyle} vérifie la conformité du code aux conventions de codage Java (nommage, indentation, longueur des lignes). \textbf{PMD} détecte les problèmes de qualité de code (code mort, duplication, complexité cyclomatique excessive). \textbf{SpotBugs} analyse le code bytecode pour identifier les bugs potentiels (null pointer, resource leak, thread safety). Ces trois outils sont intégrés au build Maven et exécutés automatiquement à chaque compilation.
 
-\textbf{Husky} et \textbf{lint-staged} implémentent des hooks de pré-commit qui exécutent le linting et le formatage sur les fichiers stageés avant chaque commit. Cette barrière de qualité garantit qu'aucun code non formaté ou contenant des erreurs de linting n'atteint le dépôt. Couplé à \textbf{Vitest} et \textbf{React Testing Library} pour les tests unitaires frontend, et à \textbf{JaCoCo} pour la couverture de code Java, cet ensemble d'outils constitue un filet de sécurité complet qui assure la maintenabilité du code à long terme.
+\textbf{Husky} et \textbf{lint-staged} implémentent des hooks de pré-commit qui exécutent le linting et le formatage sur les fichiers stageés avant chaque commit. Cette barrière de qualité veille à ce qu'aucun code non formaté ou contenant des erreurs de linting n'atteigne le dépôt. Couplé à \textbf{Vitest} et \textbf{React Testing Library} pour les tests unitaires frontend, et à \textbf{JaCoCo} pour la couverture de code Java, cet ensemble d'outils constitue un filet de sécurité complet qui assure la maintenabilité du code à long terme.
 
 \subsection{Architecture générale retenue}
 \label{ch2:architecture}
 
-L'application adopte une architecture web moderne en trois couches, favorisant la modularité et la séparation des préoccupations. La \ref{fig:component_architecture} présente la vue composants du système, détaillant les modules de chaque couche.
+L'application adopte une architecture web moderne en trois couches, favorisant la modularité et la séparation des préoccupations. \Cref{fig:component_architecture} présente la vue composants du système, détaillant les modules de chaque couche.
 
 \subsubsection{Philosophie API-first}
 \label{ch2:api_first}
@@ -291,11 +235,11 @@ Chaque endpoint suit les conventions REST : utilisation des verbes HTTP appropri
 \subsubsection{Organisation multi-dépôts}
 \label{ch2:multi_repo}
 
-Le projet est organisé en quatre dépôts Git distincts, chacunResponsable d'un périmètre technique spécifique. Cette séparation, bien que nécessitant une synchronisation via des workflows CI, offre des avantages significatifs en termes de clarté du code, d'indépendance des cycles de build et de responsabilité des contributions.
+Le projet est organisé en trois dépôts Git distincts, chacun responsable d'un périmètre technique spécifique. Cette séparation, bien que nécessitant une synchronisation via des workflows CI, offre des avantages significatifs en termes de clarté du code, d'indépendance des cycles de build et de responsabilité des contributions.
 
-Le dépôt \texttt{system-gestion-soutenance-api} contient le code Java/Spring Boot du serveur. Le dépôt \texttt{system-gestion-soutenance-ui} contient l'application React/TypeScript. Le dépôt \texttt{system-gestion-soutenance-e2e} contient les tests Playwright et reçoit les code sources synchronisés des deux premiers dépôts pour ses tests d'intégration. Le dépôt \texttt{system-gestion-soutenance-docs} contient la documentation du projet, les diagrammes PlantUML et le rapport LaTeX.
+Le dépôt \texttt{system-gestion-soutenance-api} contient le code Java/Spring Boot du serveur. Le dépôt \texttt{system-gestion-soutenance-ui} contient l'application React/TypeScript. Le dépôt \texttt{system-gestion-soutenance-e2e} contient les tests Playwright et reçoit les sources synchronisées des deux premiers dépôts pour ses tests d'intégration.
 
-Des workflows GitHub Actions assurent la synchronisation automatique : lors d'un push sur la branche \texttt{main} de l'API ou de l'UI, un script rsync copie les sources dans le dépôt E2E et pousse les modifications. Cette architecture garantit que les tests d'intégration s'exécutent toujours sur la dernière version du code, tout en maintenant une séparation claire des responsabilités.
+Des workflows GitHub Actions assurent la synchronisation automatique : lors d'un push sur la branche \texttt{main} de l'API ou de l'UI, un script rsync copie les sources dans le dépôt E2E et pousse les modifications. Cette architecture assure que les tests d'intégration s'exécutent toujours sur la dernière version du code, tout en maintenant une séparation claire des responsabilités.
 
 \subsubsection{Stratégie de déploiement}
 \label{ch2:deploiement}
@@ -314,4 +258,4 @@ Cette architecture de développement est conçue pour être lancée en une seule
 \subsection{Conclusion}
 \label{ch2:conclusion}
 
-Ce chapitre a dressé un état des lieux complet du système actuel d'organisation des soutenances, mettant en évidence ses limites opérationnelles par une analyse quantifiée du temps consacré à chaque étape. L'analyse des solutions existantes -- systèmes ERP, outils génériques et projets open source -- a confirmé l'absence d'un outil répondant simultanément à tous les besoins du contexte universitaire marocain. Les choix technologiques -- React 19, Spring Boot 3.4.6, MySQL, Docker -- ont été justifiés par une évaluation approfondie des alternatives, et la chaîne de qualité de code a été présentée comme garantie de maintenabilité. L'architecture en composants, l'approche API-first et l'organisation multi-dépôts constituent les fondations techniques sur lesquelles repose le système. Le chapitre suivant détaillera l'analyse des besoins fonctionnels et la conception complète du système.
+Ce chapitre a dressé un état des lieux complet du système actuel d'organisation des soutenances, mettant en évidence ses limites opérationnelles -- charge de planification concentrée sur le coordinateur, tâches répétitives de saisie, absence de détection automatique de conflits. L'analyse des solutions existantes -- systèmes ERP, outils génériques et projets open source -- a confirmé l'absence d'un outil répondant simultanément à tous les besoins du contexte universitaire marocain. Les choix technologiques -- React 19, Spring Boot 3.4.6, MySQL, Docker -- ont été justifiés par une évaluation approfondie des alternatives, et la chaîne de qualité de code a été présentée comme garantie de maintenabilité. L'architecture en composants, l'approche API-first et l'organisation multi-dépôts constituent les fondations techniques sur lesquelles repose le système. Le chapitre suivant détaillera l'analyse des besoins fonctionnels et la conception complète du système.

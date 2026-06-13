@@ -10,10 +10,5 @@ backward:Correction manuelle;
 repeat while (Conflits détectés ?) is (Oui)
 -> Non;
 :Validation du planning final;
-:Impression et diffusion;
-:Déroulement des soutenances;
-:Évaluation des étudiants;
-:Collecte des notes;
-:Archivage manuel;
 stop
 @enduml

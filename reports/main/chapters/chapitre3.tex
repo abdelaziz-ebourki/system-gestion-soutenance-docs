@@ -8,14 +8,14 @@
 \subsection{Introduction}
 \label{ch3:intro}
 
-Ce chapitre détaille la phase de conception du système de gestion des soutenances. Il définit les exigences fonctionnelles et non fonctionnelles, formalise les règles de gestion qui régissent la planification, et présente la modélisation UML du système. Cette étape est cruciale pour garantir que la solution technique répond précisément aux besoins du département. Dans un projet de développement logiciel, la qualité de la phase de conception détermine directement la maintenabilité et l'évolutivité du système résultant. C'est pourquoi nous avons adopté une démarche rigoureuse combinant analyse des besoins, modélisation UML et définition formelle des règles de gestion, afin de disposer d'un référentiel clair avant de passer à l'implémentation.
+Ce chapitre détaille la phase de conception du système de gestion des soutenances. Il définit les exigences fonctionnelles et non fonctionnelles, formalise les règles de gestion qui régissent la planification, et présente la modélisation UML du système. Cette étape est cruciale pour s'assurer que la solution technique répond précisément aux besoins du département. Dans un projet de développement logiciel, la qualité de la phase de conception détermine directement la maintenabilité et l'évolutivité du système résultant. C'est pourquoi nous avons adopté une démarche rigoureuse combinant analyse des besoins, modélisation UML et définition formelle des règles de gestion, afin de disposer d'un référentiel clair avant de passer à l'implémentation.
 
 \subsection{Présentation générale du projet}
 \label{ch3:presentation_generale}
 
 Le projet consiste en la réalisation d'une application web centralisée permettant l'organisation complète des sessions de soutenances. Contrairement à une simple gestion d'agenda, le système agit comme un moteur de planification intelligent capable d'orchestrer des sessions globales (normale, rattrapage) avec des paramètres configurables incluant la durée des soutenances, les pauses entre les passages, et les coefficients d'évaluation par rôle.
 
-Le système couvre l'ensemble du cycle de vie d'une soutenance : de la création des projets et la constitution des jurys, en passant par la planification interactive des créneaux via un éditeur visuel par glisser-déposer (\textit{Defense Designer}), jusqu'à la saisie des évaluations et la génération automatique des documents administratifs (convocations, procès-verbaux, fiches d'évaluation). Chaque étape est validée par un moteur de détection de conflits garantissant l'intégrité du planning.
+Le système couvre l'ensemble du cycle de vie d'une soutenance : de la création des projets et la constitution des jurys, en passant par la planification interactive des créneaux via un éditeur visuel par glisser-déposer (\textit{Defense Designer}), jusqu'à la saisie des évaluations et la génération automatique des documents administratifs (convocations, procès-verbaux, fiches d'évaluation). Chaque étape est validée par un moteur de détection de conflits préservant l'intégrité du planning.
 
 Le périmètre du projet a été défini en collaboration avec l'encadrant et le département d'accueil. Sont inclus dans le périmètre : la gestion des utilisateurs et des rôles, la configuration académique (filières, niveaux, salles), la gestion des projets et des groupes d'étudiants, la constitution des jurys, la planification interactive des créneaux, la détection automatique de conflits, la saisie des évaluations, la génération de documents et le système de notifications. Sont exclus du périmètre : la gestion financière, la publication des résultats finaux (bulletins), l'intégration avec le système d'information universitaire existant, et le développement d'une application mobile.
 
@@ -35,14 +35,14 @@ L'\textbf{Enseignant} est membre du corps professoral impliqué dans les soutena
 
 L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les informations relatives à sa soutenance (date, salle, jury), consulte la composition de son groupe de projet, et télécharge sa convocation officielle au format A4. Son périmètre d'action est le plus limité, ce qui est cohérent avec son rôle dans le processus de soutenance.
 
-Le tableau~\ref{tab:acteurs_use_cases} résume la répartition des fonctionnalités principales par acteur.
+\Cref{tab:acteurs_use_cases} résume la répartition des fonctionnalités principales par acteur.
 
 \begin{table}[H]
     \centering
     \scriptsize
-    \begin{tabular}{lp{2.4cm}p{2.4cm}p{2.4cm}p{2.4cm}}
+    \begin{tabularx}{\textwidth}{lXXXX}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Fonctionnalité} & \textbf{Admin} & \textbf{Coord.} & \textbf{Enseign.} & \textbf{Étudiant} \\
         \midrule
         Gestion départements & \checkmark & — & — & — \\
@@ -59,7 +59,7 @@ Le tableau~\ref{tab:acteurs_use_cases} résume la répartition des fonctionnalit
         Consultation groupe & — & — & — & \checkmark \\
         Téléchargement documents & — & — & — & \checkmark \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Répartition des fonctionnalités par acteur}
     \label{tab:acteurs_use_cases}
 \end{table}
@@ -67,45 +67,43 @@ Le tableau~\ref{tab:acteurs_use_cases} résume la répartition des fonctionnalit
 \subsubsection{Besoins fonctionnels}
 \label{ch3:besoins_fonctionnels}
 
-Les besoins sont organisés par modules métier, chacun correspondant à un sous-système cohérent de l'application. Chaque module a été identifié lors des entretiens avec le coordinateur et l'encadrant, puis priorisé en fonction de son impact sur le processus global de soutenance.
+Les besoins sont organisés par modules métier, chacun correspondant à un sous-système cohérent de l'application. Chaque module a été identifié lors de l'analyse du processus existant avec le coordinateur et l'encadrant, puis priorisé en fonction de son impact sur le processus global de soutenance.
 
-Le \textbf{module Gestion Identité} assure l'authentification sécurisée via JWT avec tokens d'accès et de rafraîchissement. Il gère la récupération de mot de passe avec lien à durée limitée (1 heure), l'activation de compte avec validation de la force du mot de passe (via la bibliothèque zxcvbn), et l'interface de connexion unifiée avec redirection automatique basée sur le rôle de l'utilisateur. Ce module constitue la porte d'entrée du système et doit garantir la confidentialité des données tout en offrant une expérience fluide.
+L'\textbf{authentification} est assurée par le module Gestion Identité via JWT avec tokens d'accès et de rafraîchissement. La récupération de mot de passe utilise un lien à durée limitée (1 heure), et l'activation de compte valide la force du mot de passe (bibliothèque zxcvbn). L'interface de connexion unifiée redirige automatiquement selon le rôle de l'utilisateur.
 
-Le \textbf{module Gestion Académique} couvre l'administration des filières (MIP, BCG, etc.), des niveaux (L3, M1, M2) et des grades académiques. Il inclut l'import massif des étudiants et des salles via fichiers CSV avec validation des données et gestion des erreurs ligne par ligne. L'interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour tout au long de l'année universitaire.
+L'\textbf{administration des filières} (MIP, BCG, etc.), des niveaux (L3, M1, M2) et des grades académiques relève du module Gestion Académique, qui inclut l'import massif des étudiants et des salles via fichiers CSV avec validation des données et gestion des erreurs ligne par ligne. Une interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour.
 
-Le \textbf{module Gestion des Projets et Jurys} gère la création et le suivi des projets avec des statuts (proposé, approuvé, rejeté). Il permet la constitution des jurys selon des templates configurables avec rôles normalisés (Président, Rapporteur, Examinateur), et assure le suivi de la charge des enseignants pour éviter les sur-affectations. Ce module est le point de départ du processus de planification, car les projets et jurys sont les entités qui seront ensuite placés dans le planning.
+La \textbf{constitution des jurys} est gérée par le module Gestion des Projets et Jurys, qui suit les projets selon des statuts (proposé, approuvé, rejeté) et permet de constituer des jurys selon des templates configurables avec rôles normalisés (Président, Rapporteur, Examinateur). Le suivi de la charge des enseignants évite les sur-affectations.
 
-Le \textbf{module Planification (Defense Designer)} est l'élément le plus innovant du système. Il fournit une interface interactive de type canevas permettant au coordinateur de planifier les soutenances par glisser-déposer. Les jurys sont listés dans une barre latérale et peuvent être déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération permet de peupler automatiquement le planning en optimisant l'occupation des salles.
+Le \textbf{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
 
-Le \textbf{module Moteur de Conflits} assure la validation systématique de 8 règles de gestion lors de chaque modification du planning (voir \ref{ch3:regles_gestion}). Le moteur est dupliqué côté client pour un retour instantané lors des interactions et exécuté côté serveur pour garantir l'intégrité lors de la sauvegarde. Cette architecture double-validation est un choix architectural majeur qui combine réactivité et fiabilité.
+En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 8 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliqué côté client pour un retour instantané et exécuté côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
-Le \textbf{module Évaluation} gère la saisie des notes par rôle de jury avec des coefficients dynamiques configurés par session. Le calcul automatique de la moyenne pondérée élimine les erreurs de calcul manuel. Le suivi de l'avancement des évaluations avec indication visuelle du statut (en attente, complétée) permet au coordinateur d'identifier rapidement les évaluations en retard.
+La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère les coefficients dynamiques par session et effectue le calcul automatique de la moyenne pondérée. Le suivi de l'avancement, avec indication visuelle du statut (en attente, complétée), permet au coordinateur d'identifier rapidement les évaluations en retard.
 
-Le \textbf{module Édition Documentaire} génère 5 types de documents (convocation jury, convocation étudiant, fiche d'évaluation, liste de présence, procès-verbal) via des vues React optimisées pour l'impression A4 utilisant la stratégie \texttt{@media print}. Cette approche client-side évite la complexité d'une génération PDF serveur tout en produisant des documents de qualité professionnelle.
-
-Le \textbf{module Notifications et Audit} fournit un système de notifications internes avec différents niveaux (success, warning, error) et la journalisation des actions critiques avec piste d'audit complète pour la traçabilité. Chaque action significative (création, modification, suppression) est enregistrée avec l'identifiant de l'utilisateur, l'horodatage et les détails de l'opération.
+Enfin, l'\textbf{édition documentaire} produit 5 types de documents (convocation jury, convocation étudiant, fiche d'évaluation, liste de présence, procès-verbal) via des vues React optimisées pour l'impression A4 (\texttt{@media print}). Cette approche client-side évite la complexité d'une génération PDF serveur tout en produisant des documents de qualité professionnelle. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
 
 \subsubsection{Besoins non fonctionnels}
 \label{ch3:besoins_non_fonctionnels}
 
-Les besoins non fonctionnels définissent les qualités transverses du système, souvent aussi critiques que les fonctionnalités elles-mêmes pour garantir l'adoption et la satisfaction des utilisateurs.
+Les besoins non fonctionnels définissent les qualités transverses du système, souvent aussi critiques que les fonctionnalités elles-mêmes pour assurer l'adoption et la satisfaction des utilisateurs.
 
-La \textbf{réactivité} est un besoin fondamental pour le Defense Designer. Le retour sur conflit lors du drag-and-drop doit être instantané (latence $< 100$ms) grâce à la validation locale via le moteur de conflits TypeScript. L'interface utilisateur ne doit pas présenter de blocage perceptible lors des interactions, ce qui impose de maintenir l'état du planning dans la mémoire du navigateur et de ne jamais effectuer d'appels réseau pendant les opérations de glisser-déposer.
+La \textbf{réactivité} constitue un besoin fondamental pour le Defense Designer : le retour sur conflit lors du drag-and-drop doit être instantané (latence $< 100$ms) grâce à la validation locale via le moteur de conflits TypeScript. L'état du planning est maintenu dans la mémoire du navigateur, sans aucun appel réseau pendant les opérations de glisser-déposer.
 
-La \textbf{sécurité} repose sur le chiffrement des mots de passe via BCrypt, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Les tokens ont une durée de validité limitée (2 heures) et sont stockés dans le \texttt{localStorage} du navigateur. Une attention particulière a été portée à la protection contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale.
+La \textbf{sécurité} repose sur le chiffrement des mots de passe via BCrypt, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Les tokens, d'une durée de validité de 2 heures, sont stockés dans le \texttt{localStorage} du navigateur. Des protections contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale ont été renforcées.
 
-La \textbf{disponibilité} est assurée par une architecture stateless du backend, permettant un déploiement horizontal scalable. L'API REST ne maintient pas d'état de session côté serveur, chaque requête étant autonome via le token JWT. Cette conception facilite également les tests et le débogage, car chaque requête contient toute l'information nécessaire à son traitement.
+Côté \textbf{disponibilité}, une architecture stateless du backend permet un déploiement horizontal scalable. L'API REST ne maintient pas d'état de session côté serveur : chaque requête est autonome via le token JWT, ce qui facilite tests et débogage.
 
-L'\textbf{ergonomie} vise une interface moderne et responsive basée sur Tailwind CSS 4 et shadcn/ui. La navigation est contextualisée par rôle avec une sidebar adaptative qui ne présente que les fonctionnalités accessibles à l'utilisateur connecté. Le thème clair/sombre avec persistance du choix améliore le confort d'utilisation lors de sessions de travail prolongées.
+L'\textbf{ergonomie} s'appuie sur une interface moderne et responsive (Tailwind CSS 4, shadcn/ui). La navigation est contextualisée par rôle avec une sidebar adaptative, et le thème clair/sombre avec persistance du choix améliore le confort lors de sessions prolongées.
 
-La \textbf{maintenabilité} est garantie par une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. L'utilisation de DTOs pour l'isolation des couches API et de MapStruct pour le mapping objet protège le modèle interne des variations de l'interface exposée.
+La \textbf{maintenabilité} résulte d'une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. Les DTOs isolent les couches API et MapStruct gère le mapping objet, protégeant le modèle interne des variations de l'interface exposée.
 
-La \textbf{qualité} est mesurée par une couverture de code minimale de 85\% (lignes) et 70\% (branches) via JaCoCo côté Java. Le linting automatisé avec ESLint (TypeScript) et Spotless/Checkstyle/PMD/SpotBugs (Java) intégré dans le cycle Maven assure la conformité du code aux conventions de l'équipe.
+Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (lignes) et 70\% (branches) via JaCoCo, complétée par un linting automatisé avec ESLint (TypeScript) et Spotless/Checkstyle/PMD/SpotBugs (Java) intégré dans le cycle Maven.
 
 \subsection{Règles de gestion}
 \label{ch3:regles_gestion}
 
-Le moteur de conflits implémente les règles de gestion (RG) suivantes, garantissant l'intégrité du planning. Ces règles ont été définies en collaboration avec le coordinateur du département MIP et formalisées sous forme de contraintes vérifiables algorithmiquement.
+Le moteur de conflits implémente les règles de gestion (RG) suivantes, maintenant l'intégrité du planning. Ces règles ont été définies en collaboration avec le coordinateur de la filière et formalisées sous forme de contraintes vérifiables algorithmiquement.
 
 \begin{projectbox}{Règles de Gestion du Planning}
 \begin{description}
@@ -122,14 +120,14 @@ Le moteur de conflits implémente les règles de gestion (RG) suivantes, garanti
 
 Ces règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le Defense Designer.
 
-Le tableau~\ref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement.
+\Cref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement.
 
 \begin{table}[H]
     \centering
     \small
     \begin{tabular}{llccc}
         \toprule
-        \rowcolor{primary!10}
+
         \textbf{Règle} & \textbf{Description} & \textbf{Java} & \textbf{TypeScript} & \textbf{Sévérité} \\
         \midrule
         RG1 & Chevauchement enseignant & \checkmark & \checkmark & error \\
@@ -146,7 +144,7 @@ Le tableau~\ref{tab:rg_mapping} associe chaque règle à son ou ses implémentat
     \label{tab:rg_mapping}
 \end{table}
 
-Lorsqu'une règle ne peut être satisfaite (par exemple, aucun créneau disponible pour un jury donné), le système ne propose pas de mécanisme d'override automatique. Le coordinateur doit soit modifier les paramètres de la session (dates, salles), soit reconfigurer la composition du jury, soit déclarer une indisponibilité compensatoire. Cette approche conservative garantit l'intégrité du planning au prix d'une flexibilité réduite, un choix délibéré compte tenu du caractère critique des contraintes académiques.
+Lorsqu'une règle ne peut être satisfaite (par exemple, aucun créneau disponible pour un jury donné), le système ne propose pas de mécanisme d'override automatique. Le coordinateur doit soit modifier les paramètres de la session (dates, salles), soit reconfigurer la composition du jury, soit déclarer une indisponibilité compensatoire. Cette approche conservative préserve l'intégrité du planning au prix d'une flexibilité réduite, un choix délibéré compte tenu du caractère critique des contraintes académiques.
 
 \subsection{Conception UML}
 \label{ch3:conception_uml}
@@ -156,9 +154,9 @@ La modélisation UML permet de formaliser les différentes visions du système :
 \subsubsection{Diagrammes de cas d'utilisation}
 \label{ch3:uc}
 
-Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque acteur. Ils ont été construits à partir des entretiens avec le coordinateur et l'encadrant, puis validés lors des revues de conception.
+Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque acteur. Ils ont été construits à partir de l'analyse du processus existant avec le coordinateur et l'encadrant, puis validés lors des revues de conception.
 
-Le diagramme de la \ref{fig:uc_hierarchy} présente la hiérarchie générale des acteurs. L'acteur de base « Utilisateur » est spécialisé en quatre rôles distincts, chacun héritant de la capacité de s'authentifier. Cette hiérarchie simple reflète l'architecture RBAC du système, où chaque rôle correspond à un ensemble disjoint de permissions.
+\Cref{fig:uc_hierarchy} présente la hiérarchie générale des acteurs. L'acteur de base « Utilisateur » est spécialisé en quatre rôles distincts, chacun héritant de la capacité de s'authentifier. Cette hiérarchie simple reflète l'architecture RBAC du système, où chaque rôle correspond à un ensemble disjoint de permissions.
 
 \begin{figure}[H]
     \centering
@@ -167,7 +165,7 @@ Le diagramme de la \ref{fig:uc_hierarchy} présente la hiérarchie générale de
     \label{fig:uc_hierarchy}
 \end{figure}
 
-Le diagramme de la \ref{fig:uc_admin} détaille les cas d'utilisation de l'Administrateur. Ce rôle est le seul à pouvoir configurer les structures académiques (départements, filières, salles), gérer les comptes utilisateurs (création, modification, suppression, import CSV) et consulter les journaux d'audit. Il configure également les paramètres globaux du système (templates de jurys, durée des soutenances, configuration email).
+\Cref{fig:uc_admin} détaille les cas d'utilisation de l'Administrateur. Ce rôle est le seul à pouvoir configurer les structures académiques (départements, filières, salles), gérer les comptes utilisateurs (création, modification, suppression, import CSV) et consulter les journaux d'audit. Il configure également les paramètres globaux du système (templates de jurys, durée des soutenances, configuration email).
 
 \begin{figure}[H]
     \centering
@@ -176,7 +174,7 @@ Le diagramme de la \ref{fig:uc_admin} détaille les cas d'utilisation de l'Admin
     \label{fig:uc_admin}
 \end{figure}
 
-Le diagramme de la \ref{fig:uc_coordination} détaille les cas d'utilisation du Coordinateur, l'acteur le plus sollicité par le système. Il gère le cycle complet : des projets et groupes d'étudiants, à la constitution des jurys, en passant par la planification interactive via le Defense Designer, la validation du planning, et la génération des documents. Les relations « include » et « extend » modélisent les dépendances entre cas d'utilisation (par exemple, « Affecter un jury » inclut « Vérifier les conflits »).
+\Cref{fig:uc_coordination} détaille les cas d'utilisation du Coordinateur, l'acteur le plus sollicité par le système. Il gère le cycle complet : des projets et groupes d'étudiants, à la constitution des jurys, en passant par la planification interactive via le Defense Designer, la validation du planning, et la génération des documents. Les relations « include » et « extend » modélisent les dépendances entre cas d'utilisation (par exemple, « Affecter un jury » inclut « Vérifier les conflits »).
 
 \begin{figure}[H]
     \centering
@@ -185,7 +183,7 @@ Le diagramme de la \ref{fig:uc_coordination} détaille les cas d'utilisation du 
     \label{fig:uc_coordination}
 \end{figure}
 
-Le diagramme de la \ref{fig:uc_jury} présente les cas d'utilisation de l'Enseignant en tant que membre de jury. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, saisit les notes et observations pour les étudiants qui lui sont assignés, et accède à ses convocations. Le cas « Saisir les évaluations » inclut la consultation des informations de l'étudiant, garantissant que le jury dispose du contexte nécessaire avant de noter.
+\Cref{fig:uc_jury} présente les cas d'utilisation de l'Enseignant en tant que membre de jury. Il consulte son planning personnel, déclare ses indisponibilités via un calendrier interactif, saisit les notes et observations pour les étudiants qui lui sont assignés, et accède à ses convocations. Le cas « Saisir les évaluations » inclut la consultation des informations de l'étudiant, afin que le jury dispose du contexte nécessaire avant de noter.
 
 \begin{figure}[H]
     \centering
@@ -194,7 +192,7 @@ Le diagramme de la \ref{fig:uc_jury} présente les cas d'utilisation de l'Enseig
     \label{fig:uc_jury}
 \end{figure}
 
-Le diagramme de la \ref{fig:uc_student} présente les cas d'utilisation de l'Étudiant. Son périmètre est le plus restreint : il consulte les informations relatives à sa soutenance (date, salle, jury), télécharge sa convocation, et gère son groupe de projet (création, recherche de coéquipiers). Le cas « Télécharger la convocation » inclut la consultation des informations de soutenance, car la convocation doit contenir la date, l'heure, la salle et la composition du jury.
+\Cref{fig:uc_student} présente les cas d'utilisation de l'Étudiant. Son périmètre est le plus restreint : il consulte les informations relatives à sa soutenance (date, salle, jury), télécharge sa convocation, et gère son groupe de projet (création, recherche de coéquipiers). Le cas « Télécharger la convocation » inclut la consultation des informations de soutenance, car la convocation doit contenir la date, l'heure, la salle et la composition du jury.
 
 \begin{figure}[H]
     \centering
@@ -222,7 +220,7 @@ Plusieurs choix de conception méritent d'être soulignés. La classe \texttt{Ju
 
 Les diagrammes de séquence modélisent les interactions entre les composants du système pour des cas d'utilisation critiques. Nous en présentons trois qui illustrent les flux les plus complexes.
 
-Le diagramme de la \ref{fig:seq_planning} modélise le flux de planification interactive via le Defense Designer. Ce processus repose sur un cycle de validation itératif où le frontend et le backend collaborent pour garantir l'absence de conflits :
+\Cref{fig:seq_planning} modélise le flux de planification interactive via le Defense Designer. Ce processus repose sur un cycle de validation itératif où le frontend et le backend collaborent pour préserver l'absence de conflits :
 
 \begin{enumerate}
     \item L'utilisateur fait glisser un jury depuis la barre latérale vers une cellule du calendrier.
@@ -240,7 +238,7 @@ Le diagramme de la \ref{fig:seq_planning} modélise le flux de planification int
     \label{fig:seq_planning}
 \end{figure}
 
-Le diagramme de la \ref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les credentials (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT contenant l'identifiant utilisateur et son rôle. Le frontend stocke le token dans le \texttt{localStorage} et redirige l'utilisateur vers la page correspondant à son rôle.
+\Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les credentials (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT contenant l'identifiant utilisateur et son rôle. Le frontend stocke le token dans le \texttt{localStorage} et redirige l'utilisateur vers la page correspondant à son rôle.
 
 \begin{figure}[H]
     \centering
@@ -249,7 +247,7 @@ Le diagramme de la \ref{fig:seq_auth} modélise le flux d'authentification. L'ut
     \label{fig:seq_auth}
 \end{figure}
 
-Le diagramme de la \ref{fig:seq_evaluation} modélise le flux de soumission d'une évaluation. L'enseignant saisit le score et le commentaire pour un étudiant, le frontend envoie une requête POST à l'endpoint d'évaluation, le serveur valide la note (plage 0--20), enregistre l'évaluation, met à jour le statut (PENDING $\rightarrow$ SUBMITTED), et retourne la confirmation. Le moteur de notation calculera ensuite la moyenne pondérée une fois toutes les évaluations d'un jury soumises.
+\Cref{fig:seq_evaluation} modélise le flux de soumission d'une évaluation. L'enseignant saisit le score et le commentaire pour un étudiant, le frontend envoie une requête POST à l'endpoint d'évaluation, le serveur valide la note (plage 0--20), enregistre l'évaluation, met à jour le statut (PENDING $\rightarrow$ SUBMITTED), et retourne la confirmation. Le moteur de notation calculera ensuite la moyenne pondérée une fois toutes les évaluations d'un jury soumises.
 
 \begin{figure}[H]
     \centering
@@ -261,7 +259,7 @@ Le diagramme de la \ref{fig:seq_evaluation} modélise le flux de soumission d'un
 \subsubsection{Diagrammes d'activité et de machine d'états}
 \label{ch3:activite}
 
-L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \ref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les 8 règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat au frontend.
+L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \cref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les 8 règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat au frontend.
 
 \begin{figure}[H]
     \centering
@@ -270,7 +268,7 @@ L'algorithme de détection des conflits, moteur central du système, est modéli
     \label{fig:act_conflict}
 \end{figure}
 
-Le diagramme de la \ref{fig:act_evaluation} modélise le processus d'évaluation d'une soutenance, de la saisie des notes par les membres du jury jusqu'à la clôture de la session. Les notes sont saisies individuellement par chaque membre, puis le système calcule automatiquement la moyenne pondérée en appliquant les coefficients configurés pour la session. Une fois toutes les évaluations soumises, une décision est proposée (Admis, Admis avec corrections, Ajouré) et le procès-verbal peut être généré.
+\Cref{fig:act_evaluation} modélise le processus d'évaluation d'une soutenance, de la saisie des notes par les membres du jury jusqu'à la clôture de la session. Les notes sont saisies individuellement par chaque membre, puis le système calcule automatiquement la moyenne pondérée en appliquant les coefficients configurés pour la session. Une fois toutes les évaluations soumises, une décision est proposée (Admis, Admis avec corrections, Ajouré) et le procès-verbal peut être généré.
 
 \begin{figure}[H]
     \centering
@@ -279,7 +277,7 @@ Le diagramme de la \ref{fig:act_evaluation} modélise le processus d'évaluation
     \label{fig:act_evaluation}
 \end{figure}
 
-Le diagramme de la \ref{fig:state_soutenance} modélise le cycle de vie complet d'une soutenance via une machine à états. La soutenance traverse successivement les états : CREEE, PLANIFIEE, JURY\_AFFECTE, CONVOQUEE, EN\_COURS, EVALUEE, et CLOTUREE. L'état ANNULE reachable depuis PLANIFIEE, CONVOQUEE et EVALUEE permet de gérer les annulations à différents stades du processus. Cette modélisation garantit que chaque soutenance suit un parcours validé et que les transitions non autorisées sont bloquées par le système.
+\Cref{fig:state_soutenance} modélise le cycle de vie complet d'une soutenance via une machine à états. La soutenance traverse successivement les états : CREEE, PLANIFIEE, JURY\_AFFECTE, CONVOQUEE, EN\_COURS, EVALUEE, et CLOTUREE. L'état ANNULE reachable depuis PLANIFIEE, CONVOQUEE et EVALUEE permet de gérer les annulations à différents stades du processus. Cette modélisation assure que chaque soutenance suit un parcours validé et que les transitions non autorisées sont bloquées par le système.
 
 \begin{figure}[H]
     \centering
@@ -335,7 +333,7 @@ Les entités de configuration (GeneralSettings, DefenseSettings, EmailConfig, Do
 \subsection{Normes et standards respectés}
 \label{ch3:normes}
 
-Le développement du système suit des normes et standards industry pour garantir la qualité, la maintenabilité et la cohérence du code source.
+Le développement du système suit des normes et standards industry pour préserver la qualité, la maintenabilité et la cohérence du code source.
 
 Côté Java, le code respecte les conventions de nommage Java (camelCase pour les méthodes et variables, PascalCase pour les classes), les directives de codage Google (limitation à 100 caractères par ligne, gestion des imports non utilisés), et les bonnes pratiques Spring (injection de dépendances par constructeur, annotations de validation sur les DTOs). Les noms de tables et de colonnes suivent la convention snake\_case en base de données, reflétée par les annotations \texttt{@Table} et \texttt{@Column}.
 
@@ -346,4 +344,4 @@ Les messages de commit suivent les conventions Git : préfixes sémantiques (\te
 \subsection{Conclusion}
 \label{ch3:conclusion}
 
-Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des 8 règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité, machine à états) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry garantit la maintenabilité du système à long terme.
+Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des 8 règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité, machine à états) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry assure la maintenabilité du système à long terme.
