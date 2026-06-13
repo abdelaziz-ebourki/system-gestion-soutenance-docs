@@ -23,8 +23,7 @@ SecService -> SecService : Vérifier mot de passe (hachage)
 alt Succès
     SecService -> SecService : Générer Token JWT
     SecService --> Back : Token JWT + Infos
-    Back --> Front : 200 OK (JWT, Rôle, Infos)
-    Front -> Front : Stocker Token
+    Back --> Front : 200 OK (Set-Cookie: jwt_token=..., Infos)
     Front --> User : Afficher Tableau de bord
 else Échec
     SecService --> Back : Error

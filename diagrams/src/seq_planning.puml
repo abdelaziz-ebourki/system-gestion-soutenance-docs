@@ -6,7 +6,7 @@ boundary "Defense Designer (React)" as Front
 control "Conflict Engine (TS)" as LocalEngine
 entity "Schedule Controller (API)" as API
 entity "Conflict Service (Java)" as BackendEngine
-database "MySQL" as DB
+database "Base de données" as DB
 
 Coord -> Front : Glisser-déposer un Jury sur un créneau
 activate Front

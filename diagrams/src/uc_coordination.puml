@@ -40,7 +40,6 @@ Coord --> Sessions
 Coord --> Planner
 Coord --> AutoGen
 Coord --> Publish
-Coord --> Conflicts
 Coord --> Grades
 Coord --> GenFiches
 Coord --> GenPres

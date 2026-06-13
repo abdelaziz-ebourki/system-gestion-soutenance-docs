@@ -1,249 +1,288 @@
 @startuml
 !include puml-theme-pfe.puml
+top to bottom direction
 
 ' --- Enums ---
-
 enum RoleEnum {
-    ADMINISTRATEUR
-    COORDINATEUR
-    ENSEIGNANT
-    ETUDIANT
+    ADMIN
+    COORDINATOR
+    TEACHER
+    STUDENT
 }
 
 enum DefenseSessionStatus {
     DRAFT
     ACTIVE
-    CLOSED
+    SCHEDULED
+    COMPLETED
+    ARCHIVED
 }
 
 enum DefenseType {
-    RATTRAPAGE
-    NORMAL
-}
-
-enum DefenseStatus {
-    PLANNED
-    SCHEDULED
-    JURY_ASSIGNED
-    CONVOCATION_SENT
-    IN_PROGRESS
-    FINISHED
-    EVALUATED
-    CLOSED
-    CANCELLED
-}
-
-enum DecisionEnum {
-    ADMIS
-    AJOURNE
-}
-
-enum NotificationStatus {
-    EN_ATTENTE
-    ENVOYEE
-    ECHEC
-}
-
-enum ProjectType {
     PFE
     MEMOIRE
-    STAGE
+    THESE
 }
 
-' --- Abstract User ---
+enum ProjectStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
 
+enum EvaluationStatus {
+    PENDING
+    SUBMITTED
+}
+
+enum EvaluationAttendanceStatus {
+    PRESENT
+    ABSENT
+    DEFAILLANT
+}
+
+enum NotificationType {
+    SUCCESS
+    WARNING
+    ERROR
+    INFO
+    REMINDER
+}
+
+User -[hidden]up- EvaluationStatus 
+
+' --- User Hierarchy ---
+together {
 abstract class User {
     + Long id
-    + String nom
-    + String prenom
     + String email
     + String password
     + RoleEnum role
-    + Boolean actif
+    + String firstName
+    + String lastName
+    + Boolean isActive
+    + String verificationToken
+    + String resetToken
+    + LocalDateTime resetTokenExpires
     + seConnecter()
     + seDeconnecter()
     + modifierProfil()
+} 
+
+class Teacher {
+    + TeacherRank teacherRank
+    + Department department
 }
 
-' --- Entity Classes ---
-
-class DefenseSession {
-    + Long id
-    + String libelle
-    + LocalDate dateDebut
-    + LocalDate dateFin
-    + Integer breakDuration
-    + Map<String, Integer> evaluationCoefficients
-    + DefenseSessionStatus statut
-    + DefenseType defenseType
+class Student {
+    + String cne
+    + String codeApogee
+    + Major major
+    + Level level
 }
 
-class Defense {
-    + Long id
-    + LocalDate datePassage
-    + LocalTime heureDebut
-    + Integer dureeMinutes
-    + DefenseStatus statut
+class Coordinator {
 }
 
-class Project {
-    + Long id
-    + String titre
-    + String description
-    + ProjectType type
-}
+User <|-- Teacher
+User <|-- Student
+User <|-- Coordinator
 
-class Room {
-    + Long id
-    + String nom
-    + String batiment
-    + Integer capacite
-}
+' --- Core Entities ---
 
-class Evaluation {
-    + Long id
-    + Double note
-    + String observations
-    + Boolean validee
-}
-
-class Unavailability {
-    + Long id
-    + LocalDate dateDebut
-    + LocalDate dateFin
-    + LocalTime heureDebut
-    + LocalTime heureFin
-    + String motif
-}
-
-class Notification {
-    + Long id
-    + String sujet
-    + String contenu
-    + NotificationStatus statut
-    + LocalDateTime dateEnvoi
-}
-
-class StudentDocument {
-    + Long id
-    + String type
-    + String cheminFichier
-    + Boolean envoyee
-    + LocalDateTime dateGeneration
-}
-
-class StudentGroup {
+class Faculty {
     + Long id
     + String name
-    + String academicYear
+    + String code
+    + Teacher dean
+    + String logoUrl
 }
 
 class Department {
     + Long id
-    + String nom
+    + String name
+    + String code
+    + Teacher head
+    + Faculty faculty
 }
 
 class Major {
     + Long id
-    + String nom
+    + String name
+    + Department department
 }
 
 class Level {
     + Long id
-    + String nom
+    + String name
 }
 
-class Grade {
+class TeacherRank {
     + Long id
-    + String nom
+    + String name
 }
 
-class GeneralSettings {
+class DefenseSession {
     + Long id
-    + Integer defaultDefenseDuration
-    + Integer defaultBreakDuration
+    + String name
+    + DefenseType defenseType
+    + DefenseSessionStatus status
+    + Integer maxGroupSize
+    + Integer defenseDuration
+    + Integer breakDuration
+    + LocalDate submissionDeadline
+    + Map<String, Integer> evaluationCoefficients
+    + JuryRoleTemplate juryRoleTemplate
+    + LocalDate startDate
+    + LocalDate endDate
+    + Boolean isFrozen
+    + Long approvedBy
+    + LocalDateTime approvedAt
 }
 
-class DefenseSettings {
+class Defense {
     + Long id
-    + Integer minJuryMembers
-    + Integer maxDefenseDuration
+    + LocalDate date
+    + LocalTime time
+    + Room room
+    + List<JuryMember> members
 }
 
-class DocumentConfig {
+class Project {
     + Long id
-    + String headerTemplate
-    + String footerTemplate
+    + String title
+    + String description
+    + DefenseType defenseType
+    + ProjectStatus status
+    + Teacher supervisor
 }
 
-class EmailConfig {
+class Room {
     + Long id
-    + String smtpHost
-    + Integer smtpPort
-    + String username
+    + String name
+    + Integer capacity
+    + Department department
 }
 
-class AuditLog {
+class Evaluation {
     + Long id
-    + String action
-    + String entityType
-    + Long entityId
+    + Long teacherId
+    + Long defenseSessionId
+    + Defense defense
+    + String role
+    + Double score
+    + String comment
+    + EvaluationStatus status
+    + LocalDateTime submittedAt
+    + EvaluationAttendanceStatus attendanceStatus
+}
+
+class Unavailability {
+    + Long id
+    + Long teacherId
+    + String date
+    + List<String> slots
+}
+
+class AppNotification {
+    + Long id
+    + NotificationType type
+    + String title
+    + String message
     + LocalDateTime timestamp
+    + Boolean read
+    + String actionLink
+    + String actor
 }
 
-class ActivationToken {
-    + String token
-    + LocalDateTime expiryDate
-    + Boolean used
+class StudentDocument {
+    + Long id
+    + Long studentId
+    + String name
+    + String type
+    + String deadline
+    + String status
+    + LocalDateTime submittedAt
+    + String filePath
 }
 
-class ResetToken {
-    + String token
-    + LocalDateTime expiryDate
-    + Boolean used
+class StudentGroup {
+    + Long id
+    + String groupName
+    + Project project
+    + List<Student> students
+    + Long sessionId
+    + Long leaderId
 }
 
 class JuryRoleTemplate {
     + Long id
     + String name
+    + DefenseType defenseType
+    + List<TemplateRole> roles
+}
+
+class TemplateRole <<Embeddable>> {
+    + String name
+    + Integer count
+    + Integer coefficient
+}
+
+class AuditLog {
+    + Long id
+    + String action
+    + String entity
+    + Long entityId
+    + String performedByEmail
+    + String details
+    + LocalDateTime timestamp
+}
 }
 
 ' --- Relationships ---
 
-User "1" -- "0..*" Project : encadre >
-User "1" -- "0..*" Unavailability : déclare >
-User "1" -- "0..*" Notification : reçoit >
-User "1" -- "0..*" AuditLog : effectue >
+Faculty "1" -- "0..*" Department : contient >
+Faculty "1" -- "1" Teacher : décanat (dean) >
+Department "1" -- "0..*" Major : propose >
+Department "1" -- "1" Teacher : direction (head) >
+Department "1" -- "0..*" Room : gère >
+Teacher "0..*" -- "1" TeacherRank : grade >
+Teacher "0..*" -- "1" Department : affecté à >
+Teacher "1" -- "0..*" Project : encadre (supervisor) >
 
-DefenseSession "1" *-- "0..*" Defense : contient >
-DefenseSession "1" *-- "0..*" StudentGroup : contient >
-
-Defense "1" -- "1" Room : se déroule dans >
-Defense "1" -- "1" Project : porte sur >
+Student "0..*" -- "1" Major : spécialité >
+Student "0..*" -- "1" Level : niveau >
+Project "0..*" -- "0..*" Student : membres >
+Project "1" -- "0..1" Defense : planification >
+Defense "0..*" -- "1" Room : lieu >
 Defense "1" -- "0..*" Evaluation : reçoit >
-Defense "1" -- "0..*" StudentDocument : génère >
 
-Evaluation "1" -- "1" User : saisie par >
+DefenseSession "1" -- "0..*" Defense : regroupe >
+DefenseSession "1" -- "0..*" StudentGroup : contient >
+DefenseSession "0..*" -- "1" JuryRoleTemplate : utilise >
 
-StudentGroup "1" -- "1" Level : niveau >
-StudentGroup "1" -- "1" Major : filière >
+StudentGroup "0..*" -- "1" Project : associé à >
+StudentGroup "0..*" -- "0..*" Student : membres >
 
-Major "1" -- "1" Department : appartient à >
+User "1" -- "0..*" AppNotification : reçoit >
+User "1" -- "0..*" Unavailability : déclare >
+User "1" -- "0..*" AuditLog : effectue >
+Student "1" -- "0..*" StudentDocument : téléverse >
+
+JuryRoleTemplate "1" *-- "0..*" TemplateRole : définit >
 
 ' --- Layout Hints ---
 
 RoleEnum -[hidden]right- DefenseSessionStatus
 DefenseSessionStatus -[hidden]right- DefenseType
-DefenseType -[hidden]right- DefenseStatus
-DefenseStatus -[hidden]right- DecisionEnum
-DecisionEnum -[hidden]right- NotificationStatus
-NotificationStatus -[hidden]right- ProjectType
+DefenseType -[hidden]right- ProjectStatus
+ProjectStatus -[hidden]right- EvaluationStatus
+EvaluationStatus -[hidden]right- NotificationType
 
-RoleEnum -[hidden]down- User
-
+User -[hidden]down- DefenseSession
 DefenseSession -[hidden]right- Defense
 Defense -[hidden]right- Project
-Defense -[hidden]down- Evaluation
+Project -[hidden]down- Evaluation
 Evaluation -[hidden]right- StudentDocument
 StudentGroup -[hidden]right- Department
 

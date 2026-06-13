@@ -15,7 +15,7 @@ rectangle "Module Administration" {
     usecase "Configurer les niveaux" as Levels
     usecase "Consulter journaux d'audit" as Audit
 
-    usecase "Importer en masse\n(Excel)" as Import
+    usecase "Importer en masse" as Import
     usecase "Actions par lots\n(suppression, réaffectation)" as Batch
 
     Import ..> Students : <<include>>

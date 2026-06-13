@@ -61,7 +61,7 @@ L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les infor
         Génération documents PDF              & —              & \checkmark      & —                 & —                 \\
         Saisie indisponibilités               & —              & —               & \checkmark        & —                 \\
         Saisie évaluations                    & —              & —               & \checkmark        & —                 \\
-        Consultation rapports                    & —              & —               & \checkmark        & —                 \\
+        Consultation rapports                 & —              & —               & \checkmark        & —                 \\
         Consultation planning                 & —              & \checkmark      & \checkmark        & \checkmark        \\
         Création/adhésion groupe              & —              & —               & —                 & \checkmark        \\
         Téléverser documents de soutenance    & —              & —               & —                 & \checkmark        \\
@@ -102,7 +102,7 @@ Les besoins non fonctionnels définissent les qualités transverses du système,
 
 La \textbf{réactivité} constitue un besoin fondamental pour le Defense Designer : le retour sur conflit lors du drag-and-drop doit être instantané (latence $< 100$ms) grâce à la validation locale via le moteur de conflits TypeScript. L'état du planning est maintenu dans la mémoire du navigateur, sans aucun appel réseau pendant les opérations de glisser-déposer.
 
-La \textbf{sécurité} repose sur le chiffrement des mots de passe via BCrypt, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Les tokens, d'une durée de validité de 2 heures, sont stockés dans le \texttt{localStorage} du navigateur. Des protections contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale ont été renforcées.
+La \textbf{sécurité} repose sur le chiffrement des mots de passe via BCrypt, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Pour prévenir les attaques de type XSS (\textit{Cross-Site Scripting}), les tokens sont transmis et stockés via des cookies \texttt{httpOnly}, les rendant inaccessibles aux scripts JavaScript du navigateur. Des protections contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale ont été renforcées.
 
 Côté \textbf{disponibilité}, une architecture stateless du backend permet un déploiement horizontal scalable. L'API REST ne maintient pas d'état de session côté serveur : chaque requête est autonome via le token JWT, ce qui facilite tests et débogage.
 
@@ -179,7 +179,7 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
     \label{fig:uc_hierarchy}
 \end{figure}
 
-\Cref{fig:uc_admin} détaille les cas d'utilisation de l'Administrateur. Ce rôle est le seul à pouvoir configurer les structures académiques (départements, filières, salles), gérer les comptes utilisateurs (création, modification, suppression, import massif) et consulter les journaux d'audit. 
+\Cref{fig:uc_admin} détaille les cas d'utilisation de l'Administrateur. Ce rôle est le seul à pouvoir configurer les structures académiques (départements, filières, salles), gérer les comptes utilisateurs (création, modification, suppression, import massif) et consulter les journaux d'audit.
 
 \begin{figure}[H]
     \centering
@@ -218,13 +218,13 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
 \subsubsection{Diagramme de classes}
 \label{ch3:classes}
 
-Le diagramme de classes traduit la structure des données persistées. On y observe une hiérarchie d'utilisateurs basée sur l'héritage JOINED (\texttt{User} avec spécialisation par rôle via le discriminant \texttt{dtype}), et les relations centrales entre les entités métier.
+Le diagramme de classes traduit la structure des données du système. On y observe une hiérarchie d'utilisateurs basée sur la spécialisation, permettant de distinguer les responsabilités de chaque rôle tout en centralisant les informations communes.
 
-Plusieurs choix de conception méritent d'être soulignés. La classe \texttt{JuryMember} est une entité \texttt{@Embeddable} stockée dans une table d'association \texttt{defense\_members}, plutôt qu'une entité JPA à part entière. Ce choix simplifie la gestion des jurys en évitant une table supplémentaire tout en permettant de stocker le rôle du membre (Président, Rapporteur, Examinateur) et la référence vers l'enseignant. La classe \texttt{Evaluation} stocke le \texttt{teacherId} sous forme de \texttt{Long} plutôt que d'une relation \texttt{@ManyToOne}, ce qui permet de conserver les évaluations même en cas de modification de la composition du jury. La table d'association \texttt{defense\_session\_coefficients} (\texttt{@ElementCollection}) permet de pondérer dynamiquement les notes selon le rôle du membre du jury au sein de chaque session, offrant ainsi une flexibilité maximale dans la configuration de la notation.
+Plusieurs choix de conception structurels ont été adoptés pour répondre aux besoins du métier. La composition du jury est modélisée comme une relation enrichie entre une soutenance et un enseignant, permettant d'associer un rôle spécifique (Président, Rapporteur, Examinateur) à chaque membre sans complexifier la structure des entités. Afin de garantir l'intégrité historique des données, les évaluations sont liées aux enseignants de manière à ce que les notes et observations soient préservées même en cas de modification ultérieure de la composition du jury. Enfin, la flexibilité de la notation est assurée par un système de pondération dynamique associé à chaque session, permettant d'ajuster les coefficients de calcul des notes selon le rôle du membre du jury.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[\textwidth]{class_global}
+    \pumlsvg[0.7\textwidth]{class_global}
     \caption{Diagramme de classes global du système}
     \label{fig:class_global}
 \end{figure}
@@ -252,11 +252,11 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
     \label{fig:seq_planning}
 \end{figure}
 
-\Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les credentials (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT contenant l'identifiant utilisateur et son rôle. Le frontend stocke le token dans le \texttt{localStorage} et redirige l'utilisateur vers la page correspondant à son rôle.
+\Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les credentials (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT via un cookie \texttt{httpOnly} sécurisé. Le navigateur gère alors automatiquement l'envoi de ce cookie lors des requêtes suivantes, et le frontend redirige l'utilisateur vers la page correspondant à son rôle.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.8\textwidth]{seq_auth}
+    \pumlsvg[\textwidth]{seq_auth}
     \caption{Séquence d'authentification via JWT}
     \label{fig:seq_auth}
 \end{figure}

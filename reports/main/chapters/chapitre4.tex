@@ -124,7 +124,7 @@ public LoginResponse login(LoginRequest request) {
 }
 \end{minted}
 
-Le token JWT est stocké dans le \texttt{localStorage} du navigateur sous la clé \texttt{"token"} et transmis dans le header \texttt{Authorization: Bearer <token>} de chaque requête API via un intercepteur central (\texttt{src/lib/api-core.ts}). Un cookie HttpOnly (\texttt{jwt\_token}, SameSite=Lax, durée 2 heures) est également défini lors de la connexion, offrant une seconde voie d'authentification pour les navigateurs qui bloquent le \texttt{localStorage}. Le contrôle d'accès est renforcé côté serveur par Spring Security avec des annotations \texttt{@PreAuthorize} basées sur les rôles (\texttt{ROLE\_ADMIN}, \texttt{ROLE\_COORDINATOR}, \texttt{ROLE\_TEACHER}, \texttt{ROLE\_STUDENT}).
+Le token JWT est transmis et stocké via un cookie \texttt{httpOnly} (\texttt{jwt\_token}, SameSite=Lax, durée 2 heures) défini par le serveur lors de la connexion via l'en-tête \texttt{Set-Cookie}. Cette approche renforce la sécurité en rendant le token inaccessible aux scripts JavaScript, protégeant ainsi le système contre les attaques XSS. Le contrôle d'accès est renforcé côté serveur par Spring Security avec des annotations \texttt{@PreAuthorize} basées sur les rôles (\texttt{ROLE\_ADMIN}, \texttt{ROLE\_COORDINATOR}, \texttt{ROLE\_TEACHER}, \texttt{ROLE\_STUDENT}).
 
 Le module gère également la réinitialisation du mot de passe : l'utilisateur demande un lien de réinitialisation via \texttt{/api/auth/forgot-password}, le système génère un token UUID avec une durée de validité de 1 heure, envoie un email contenant le lien (via Mailpit en développement ou un serveur SMTP en production), et l'utilisateur définit un nouveau mot de passe via \texttt{/api/auth/reset-password}. La validation de la force du mot de passe utilise la bibliothèque zxcvbn, qui évalue la résistance aux attaques par force brute en temps réel.
 
@@ -423,7 +423,7 @@ L'interface utilisateur est organisée en sections distinctes accessibles via un
     \label{tab:pages_mapping}
 \end{table}
 
-Chaque route protégée est encapsulée dans un composant \texttt{ProtectedRoute} qui vérifie le rôle de l'utilisateur depuis le token JWT stocké localement. En cas de non-autorisation, l'utilisateur est redirigé vers la page de connexion. Les routes d'administration (hors configuration) sont en outre protégées par \texttt{SetupGuard}, qui vérifie que la configuration initiale du système a été effectuée. Les routes d'impression (\texttt{/print/*}) sont les seules routes authentifiées en dehors du layout \texttt{DashboardLayout}, car elles nécessitent un rendu sans sidebar ni barre de navigation pour produire des documents propres à l'impression.
+Chaque route protégée est encapsulée dans un composant \texttt{ProtectedRoute} qui vérifie l'état d'authentification de l'utilisateur via le contexte global de l'application. En cas de non-autorisation, l'utilisateur est redirigé vers la page de connexion. Les routes d'administration (hors configuration) sont en outre protégées par \texttt{SetupGuard}, qui vérifie que la configuration initiale du système a été effectuée. Les routes d'impression (\texttt{/print/*}) sont les seules routes authentifiées en dehors du layout \texttt{DashboardLayout}, car elles nécessitent un rendu sans sidebar ni barre de navigation pour produire des documents propres à l'impression.
 
 \subsection{Bonnes pratiques adoptées}
 \label{ch4:bonnes_pratiques}

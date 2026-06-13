@@ -22,7 +22,6 @@ Student --> Dashboard
 Student --> CreateGroup
 Student --> JoinGroup
 Student --> ViewGroup
-Student --> DefenseDetails
 Student --> DownloadConv
 Student --> UploadDocs
 Student --> Result
