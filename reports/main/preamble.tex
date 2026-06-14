@@ -64,6 +64,17 @@
     \includesvg[width=#1, inkscapelatex=false]{../../diagrams/svg/#2.svg}
 }
 
+% --- Screenshot Box ---
+\newcommand{\screenshotbox}[2][\textwidth]{
+    \begin{tcolorbox}[
+            enhanced, sharp corners, boxrule=0.5pt,
+            colframe=primary, colback=white,
+            left=1pt, right=1pt, top=1pt, bottom=1pt
+        ]
+        \centering\includegraphics[width=#1]{#2}
+    \end{tcolorbox}
+}
+
 % --- Project Boxes (Modern Rounded Style) ---
 \newtcolorbox{projectbox}[1]{
     enhanced,

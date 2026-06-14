@@ -104,7 +104,7 @@ La sécurité repose sur un mécanisme \textit{stateless} utilisant les \textbf{
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/screenshots/login}
+    \screenshotbox[0.8\textwidth]{figures/screenshots/login}
     \caption{Page de connexion -- authentification par email et mot de passe}
     \label{fig:login}
 \end{figure}
@@ -113,7 +113,7 @@ Après soumission du formulaire d'inscription, le système envoie un email de co
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/screenshots/verify-account}
+    \screenshotbox[0.8\textwidth]{figures/screenshots/verify-account}
     \caption{Vérification de l'email après inscription}
     \label{fig:verify-account}
 \end{figure}
@@ -122,7 +122,7 @@ En cas d'oubli du mot de passe, l'utilisateur peut demander un lien de réinitia
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/screenshots/forgot-password}
+    \screenshotbox[0.8\textwidth]{figures/screenshots/forgot-password}
     \caption{Formulaire de réinitialisation du mot de passe}
     \label{fig:forgot-password}
 \end{figure}
@@ -131,14 +131,14 @@ Le système gère les erreurs de manière personnalisée. Les routes inexistante
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/screenshots/error-404}
+    \screenshotbox[0.8\textwidth]{figures/screenshots/error-404}
     \caption{Page d'erreur personnalisée (route inexistante)}
     \label{fig:error-404}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/screenshots/error-boundary}
+    \screenshotbox[0.8\textwidth]{figures/screenshots/error-boundary}
     \caption{Catcher global d'erreurs côté client}
     \label{fig:error-boundary}
 \end{figure}
@@ -164,7 +164,7 @@ L'algorithme d'\textbf{auto-génération} parcourt itérativement les salles, le
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/defense-designer}
+    \screenshotbox[\textwidth]{figures/screenshots/defense-designer}
     \caption{\textit{Defense Designer} -- interface de planification interactive par glisser-déposer}
     \label{fig:defense-designer}
 \end{figure}
@@ -176,7 +176,7 @@ L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/conflict-dashboard}
+    \screenshotbox[\textwidth]{figures/screenshots/conflict-dashboard}
     \caption{Tableau de bord des conflits -- détection en temps réel des violations de contraintes}
     \label{fig:conflict-dashboard}
 \end{figure}
@@ -196,7 +196,7 @@ Le calcul de la moyenne pondérée est effectué par le service \texttt{Coordina
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/grades}
+    \screenshotbox[\textwidth]{figures/screenshots/grades}
     \caption{Page des notes -- scores individuels et moyenne pondérée par soutenance}
     \label{fig:grades}
 \end{figure}
@@ -214,7 +214,7 @@ La génération de documents PDF est entièrement traitée côté serveur. Le \t
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/generated-convocation}
+    \screenshotbox[\textwidth]{figures/screenshots/generated-convocation}
     \caption{Convocation jury générée au format PDF}
     \label{fig:generated-convocation}
 \end{figure}
@@ -230,7 +230,7 @@ L'endpoint \texttt{POST /api/notifications/\{id\}/send-email} permet aux adminis
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/notifications}
+    \screenshotbox[\textwidth]{figures/screenshots/notifications}
     \caption{Panneau de notifications -- alertes en temps réel}
     \label{fig:notifications}
 \end{figure}
@@ -246,7 +246,7 @@ Chaque entrée d'audit contient l'action effectuée (\texttt{CREATE}, \texttt{UP
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-audit}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-audit}
     \caption{Journal d'audit -- suivi des actions administratives}
     \label{fig:admin-audit}
 \end{figure}
@@ -262,7 +262,7 @@ Le \texttt{SetupGuard} implémente une logique de première utilisation : si \te
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-config}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-config}
     \caption{Page de configuration générale -- paramètres de l'administration}
     \label{fig:admin-config}
 \end{figure}
@@ -271,7 +271,7 @@ L'interface d'administration s'articule autour d'un tableau de bord offrant une 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-dashboard}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-dashboard}
     \caption{Tableau de bord administrateur -- vue d'ensemble}
     \label{fig:admin-dashboard}
 \end{figure}
@@ -280,7 +280,7 @@ La gestion des départements permet de créer, modifier et supprimer les départ
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-departments}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-departments}
     \caption{Gestion des départements}
     \label{fig:admin-departments}
 \end{figure}
@@ -289,7 +289,7 @@ La gestion des salles définit les espaces physiques disponibles pour les souten
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-rooms}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-rooms}
     \caption{Gestion des salles}
     \label{fig:admin-rooms}
 \end{figure}
@@ -298,7 +298,7 @@ La gestion des étudiants offre une vue paginée avec recherche instantanée, pe
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-students}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-students}
     \caption{Gestion des étudiants}
     \label{fig:admin-students}
 \end{figure}
@@ -307,7 +307,7 @@ La gestion des enseignants suit le même modèle, avec en plus la possibilité d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-teachers}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-teachers}
     \caption{Gestion des enseignants}
     \label{fig:admin-teachers}
 \end{figure}
@@ -316,7 +316,7 @@ Enfin, la gestion des coordinateurs permet d'affecter un coordinateur à un dép
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/admin-coordinators}
+    \screenshotbox[\textwidth]{figures/screenshots/admin-coordinators}
     \caption{Gestion des coordinateurs}
     \label{fig:admin-coordinators}
 \end{figure}
@@ -328,7 +328,7 @@ Le coordinateur dispose d'un tableau de bord centralisé offrant une vue d'ensem
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/coord-dashboard}
+    \screenshotbox[\textwidth]{figures/screenshots/coord-dashboard}
     \caption{Tableau de bord coordinateur -- vue d'ensemble}
     \label{fig:coord-dashboard}
 \end{figure}
@@ -337,7 +337,7 @@ La page des sessions de soutenance (\texttt{/coordinator/sessions}) permet de cr
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/coord-sessions}
+    \screenshotbox[\textwidth]{figures/screenshots/coord-sessions}
     \caption{Sessions de soutenance -- création et activation}
     \label{fig:coord-sessions}
 \end{figure}
@@ -346,7 +346,7 @@ La gestion des projets (\texttt{/coordinator/projects}) offre une vue paginée d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/coord-projects}
+    \screenshotbox[\textwidth]{figures/screenshots/coord-projects}
     \caption{Gestion des projets -- vue paginée avec filtres}
     \label{fig:coord-projects}
 \end{figure}
@@ -355,7 +355,7 @@ La composition des jurys (\texttt{/coordinator/juries}) permet d'affecter les me
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/coord-juries}
+    \screenshotbox[\textwidth]{figures/screenshots/coord-juries}
     \caption{Composition des jurys -- affectation des membres}
     \label{fig:coord-juries}
 \end{figure}
@@ -364,7 +364,7 @@ La page des documents (\texttt{/coordinator/documents}) centralise l'accès aux 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/coord-documents}
+    \screenshotbox[\textwidth]{figures/screenshots/coord-documents}
     \caption{Gestion des documents -- téléchargement et envoi}
     \label{fig:coord-documents}
 \end{figure}
@@ -376,7 +376,7 @@ Le tableau de bord enseignant (\texttt{/teacher/dashboard}) résume les soutenan
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/teacher-dashboard}
+    \screenshotbox[\textwidth]{figures/screenshots/teacher-dashboard}
     \caption{Tableau de bord enseignant -- vue d'ensemble}
     \label{fig:teacher-dashboard}
 \end{figure}
@@ -385,7 +385,7 @@ La page de planning (\texttt{/teacher/schedule}) affiche le planning personnel d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/teacher-schedule}
+    \screenshotbox[\textwidth]{figures/screenshots/teacher-schedule}
     \caption{Planning enseignant -- soutenances assignées}
     \label{fig:teacher-schedule}
 \end{figure}
@@ -394,7 +394,7 @@ La page d'évaluations (\texttt{/teacher/evaluations}) liste les soutenances à 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/teacher-evaluations}
+    \screenshotbox[\textwidth]{figures/screenshots/teacher-evaluations}
     \caption{Évaluations à saisir -- statut et notes}
     \label{fig:teacher-evaluations}
 \end{figure}
@@ -403,7 +403,7 @@ Le module d'indisponibilités (\texttt{/teacher/unavailability}) fournit un cale
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/teacher-unavailability}
+    \screenshotbox[\textwidth]{figures/screenshots/teacher-unavailability}
     \caption{Gestion des indisponibilités -- calendrier interactif}
     \label{fig:teacher-unavailability}
 \end{figure}
@@ -415,7 +415,7 @@ Le tableau de bord étudiant (\texttt{/student/dashboard}) affiche les informati
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/student-dashboard}
+    \screenshotbox[\textwidth]{figures/screenshots/student-dashboard}
     \caption{Tableau de bord étudiant -- vue d'ensemble}
     \label{fig:student-dashboard}
 \end{figure}
@@ -424,7 +424,7 @@ La page du groupe (\texttt{/student/group}) permet de créer un groupe de projet
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/student-group}
+    \screenshotbox[\textwidth]{figures/screenshots/student-group}
     \caption{Groupe de projet -- création et adhésion}
     \label{fig:student-group}
 \end{figure}
@@ -433,7 +433,7 @@ La page des documents (\texttt{/student/documents}) affiche la liste des documen
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/screenshots/student-documents}
+    \screenshotbox[\textwidth]{figures/screenshots/student-documents}
     \caption{Documents de l'étudiant -- statut et téléchargement}
     \label{fig:student-documents}
 \end{figure}
