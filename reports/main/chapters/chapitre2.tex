@@ -218,7 +218,7 @@ Côté frontend, \textbf{ESLint} analyse le code TypeScript en temps réel pour 
 
 Côté backend, \textbf{Checkstyle} vérifie la conformité du code aux conventions de codage Java (nommage, indentation, longueur des lignes). \textbf{PMD} détecte les problèmes de qualité de code (code mort, duplication, complexité cyclomatique excessive). \textbf{SpotBugs} analyse le code bytecode pour identifier les bugs potentiels (null pointer, resource leak, thread safety). Ces trois outils sont intégrés au build Maven et exécutés automatiquement à chaque compilation.
 
-\textbf{Husky} et \textbf{lint-staged} implémentent des hooks de pré-commit qui exécutent le linting et le formatage sur les fichiers stageés avant chaque commit. Cette barrière de qualité veille à ce qu'aucun code non formaté ou contenant des erreurs de linting n'atteigne le dépôt. Couplé à \textbf{Vitest} et \textbf{React Testing Library} pour les tests unitaires frontend, et à \textbf{JaCoCo} pour la couverture de code Java, cet ensemble d'outils constitue un filet de sécurité complet qui assure la maintenabilité du code à long terme.
+\textbf{Husky} et \textbf{lint-staged} implémentent des hooks de pré-commit qui exécutent le linting et le formatage sur les fichiers indexés avant chaque commit. Cette barrière de qualité veille à ce qu'aucun code non formaté ou contenant des erreurs de linting n'atteigne le dépôt. Couplé à \textbf{Vitest} et \textbf{React Testing Library} pour les tests unitaires frontend, et à \textbf{JaCoCo} pour la couverture de code Java, cet ensemble d'outils constitue un filet de sécurité complet qui assure la maintenabilité du code à long terme.
 
 \subsection{Architecture générale retenue}
 \label{ch2:architecture}
