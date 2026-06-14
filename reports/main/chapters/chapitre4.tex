@@ -191,7 +191,7 @@ const handleDragEnd = (event: DragEndEvent) => {
 \subsubsection{Le Moteur de Détection de Conflits}
 \label{ch4:module_conflicts}
 
-L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement 8 vérifications lors de chaque enregistrement. \cref{lst:conflict-service} montre la méthode centrale \texttt{runAllChecks} et l'une des vérifications les plus critiques :
+L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement six vérifications lors de chaque enregistrement. \cref{lst:conflict-service} montre la méthode centrale \texttt{runAllChecks} et l'une des vérifications les plus critiques :
 
 \begin{listing}[H]
 \centering
@@ -200,14 +200,12 @@ private List<ConflictDetailResponse> runAllChecks(
         Map<String, ConflictSlot> schedule, String defenseSessionId) {
     List<ConflictDetailResponse> conflicts = new ArrayList<>();
 
-    conflicts.addAll(checkProjectAlreadyScheduled(schedule)); // RG6
+    conflicts.addAll(checkProjectAlreadyScheduled(schedule)); // RG5
     conflicts.addAll(checkSlotOccupied(schedule));            // RG2
-    conflicts.addAll(checkRoomCapacity(schedule));            // RG3
-    conflicts.addAll(checkDateOutOfBounds(schedule, defenseSessionId)); // RG4
+    conflicts.addAll(checkDateOutOfBounds(schedule, defenseSessionId)); // RG3
     conflicts.addAll(checkTeacherDoubleBooked(schedule));     // RG1
-    conflicts.addAll(checkSupervisorConflict(schedule));      // RG5
-    conflicts.addAll(checkBreakInterval(schedule, defenseSessionId)); // RG7
-    conflicts.addAll(checkTeacherUnavailable(schedule));      // RG8
+    conflicts.addAll(checkSupervisorConflict(schedule));      // RG4
+    conflicts.addAll(checkTeacherUnavailable(schedule));      // RG6
 
     return conflicts;
 }
@@ -245,7 +243,7 @@ private List<ConflictDetailResponse> checkTeacherDoubleBooked(
 \label{lst:conflict-service}
 \end{listing}
 
-Le même moteur est dupliqué côté client en TypeScript (\texttt{conflict-engine.ts}). La fonction \texttt{validateSlotAssignment} implémente les mêmes 8 vérifications avec des messages d'erreur en français et des suggestions de résolution intelligentes. \cref{lst:conflict-engine} montre la structure de la validation côté client :
+Le même moteur est dupliqué côté client en TypeScript (\texttt{conflict-engine.ts}). La fonction \texttt{validateSlotAssignment} implémente les mêmes 6 vérifications avec des messages d'erreur en français et des suggestions de résolution intelligentes. \cref{lst:conflict-engine} montre la structure de la validation côté client :
 
 \begin{listing}[H]
 \centering
@@ -269,21 +267,7 @@ export function validateSlotAssignment(
     });
   }
 
-  // RG3 — Capacité de salle
-  const room = context.rooms[roomId];
-  const project = context.projects[projectId];
-  if (room && project && project.studentIds.length > room.capacity) {
-    issues.push({
-      type: "room_capacity", severity: "error",
-      message: `La salle "${room.name}" a une capacité de ${room.capacity}
-                mais le projet a ${project.studentIds.length} étudiants.`,
-      slot,
-      suggestedResolution: getSmartSuggestions(
-        projectId, date, roomId, time, context, "room_capacity"
-      ) || `Utilisez une salle avec capacite >= ${project.studentIds.length}`,
-    });
-  }
-  // ... RG1, RG4, RG5, RG6, RG7, RG8
+  // RG1, RG3, RG4, RG5, RG6
 }
 \end{minted}
 \caption{Moteur de conflits TypeScript (extrait)}
@@ -362,7 +346,7 @@ Le \texttt{SetupGuard} implémente une logique de première utilisation : si \te
 
 Le module étudiant offre trois fonctionnalités principales. La page \texttt{/student/group} permet de créer un groupe de projet, de rejoindre un groupe existant via un code d'invitation, et de consulter la composition actuelle du groupe. La page \texttt{/student/documents} affiche la liste des documents requis (convocation, fiche d'évaluation, etc.) avec leur statut (manquant, soumis, accepté) et permet de télécharger les convocations. Le hook \texttt{useStudentGroup} gère la logique de création et de jonction de groupe avec validation côté client.
 
-Le module enseignant complète les fonctionnalités de jury. La page d'indisponibilités fournit un calendrier interactif permettant de déclarer les créneaux d'indisponibilité sur les prochaines semaines. Les indisponibilités sont enregistrées via l'endpoint dédié et prise en compte par le moteur de conflits (RG8). La page de planning personnel affiche le planning de l'enseignant, filtré pour ne montrer que les soutenances auxquelles il est assigné en tant que membre de jury.
+Le module enseignant complète les fonctionnalités de jury. La page d'indisponibilités fournit un calendrier interactif permettant de déclarer les créneaux d'indisponibilité sur les prochaines semaines. Les indisponibilités sont enregistrées via l'endpoint dédié et prise en compte par le moteur de conflits (RG6). La page de planning personnel affiche le planning de l'enseignant, filtré pour ne montrer que les soutenances auxquelles il est assigné en tant que membre de jury.
 
 \subsection{Interface utilisateur et navigation}
 \label{ch4:interface}
@@ -455,7 +439,7 @@ Le pipeline GitHub Actions automatise la construction, les tests et la synchroni
 
 Plusieurs difficultés techniques ont été rencontrées au cours du développement, nécessitant des solutions adaptées.
 
-La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive (DnD) et la base de données. Le Defense Designer manipule un état local complexe (associations jury $\rightarrow$ créneau) qui doit être validé contre 8 règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final. Cette approche réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
+La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive (DnD) et la base de données. Le Defense Designer manipule un état local complexe (associations jury $\rightarrow$ créneau) qui doit être validé contre six règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final. Cette approche réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
 
 Une seconde difficulté a été la \textbf{duplication du moteur de conflits} entre Java et TypeScript. Pour assurer la cohérence, les deux implémentations suivent exactement la même séquence de vérifications et les mêmes structures de données (projet, salle, enseignant, indisponibilité). Les tests unitaires des deux moteurs valident les mêmes scénarios, et les messages d'erreur sont maintenus de manière cohérente entre les deux implémentations.
 

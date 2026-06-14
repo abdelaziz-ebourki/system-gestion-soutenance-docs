@@ -13,7 +13,7 @@ activate Front
 
 Front -> LocalEngine : validateSlotAssignment(projectId, slot, context)
 activate LocalEngine
-LocalEngine -> LocalEngine : Exécuter les 8 vérifications (Local)
+LocalEngine -> LocalEngine : Exécuter les six vérifications (Local)
 LocalEngine --> Front : Résultat (isValid, issues)
 deactivate LocalEngine
 

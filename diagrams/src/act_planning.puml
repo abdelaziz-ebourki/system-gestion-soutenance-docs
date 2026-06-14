@@ -7,7 +7,7 @@ start
 
 repeat
     :Planification d'une soutenance individuelle\n(Étudiant, Salle, Date, Créneau);
-    :Validation automatique des contraintes (RG1, RG2, RG3);
+    :Validation automatique des contraintes (RG1, RG2, RG3, RG5, RG6);
     if (Conflits détectés ?) then (Oui)
         :Afficher alertes de conflit;
         :Ajuster les paramètres du créneau;
@@ -18,7 +18,7 @@ repeat
 repeat while (D'autres soutenances à planifier ?) is (Oui)
 
 :Affectation des jurys par;
-:Vérification RG4 et RG5;
+:Vérification RG4 (conflit encadrant);
 
 if (Planning Complet ?) then (Oui)
     :Validation finale et verrouillage;

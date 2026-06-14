@@ -87,7 +87,7 @@ Les \textbf{sessions de soutenance} sont gérées via un cycle de vie complet : 
 
 Le \textbf{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
 
-En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 7 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliqué côté client pour un retour instantané et exécuté côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
+En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 6 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliqué côté client pour un retour instantané et exécuté côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
 La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère les coefficients dynamiques par session et effectue le calcul automatique de la moyenne pondérée. Le membre du jury peut consulter le rapport du projet assigné pour préparer son évaluation, puis saisir les notes. Le coordinateur peut consulter les notes moyennes pondérées par projet, avec le détail des scores par membre du jury.
 
@@ -124,12 +124,11 @@ Le moteur de conflits implémente les règles de gestion (RG) suivantes, mainten
         \item[RG3 (Période)] Toutes les soutenances d'une session doivent être planifiées entre la \textit{startDate} et la \textit{endDate} de ladite session.
         \item[RG4 (Encadrants)] Un encadrant ne doit pas être sollicité sur plusieurs projets le même jour pour éviter la surcharge.
         \item[RG5 (Unicité)] Un projet ne peut être planifié qu'une seule fois par session.
-        \item[RG6 (Pause)] Un intervalle minimum (\textit{breakDuration}) doit être respecté entre deux soutenances dans une même salle.
-        \item[RG7 (Disponibilité)] Aucune soutenance ne peut être planifiée sur un créneau déclaré comme indisponible par un membre du jury.
+        \item[RG6 (Disponibilité)] Aucune soutenance ne peut être planifiée sur un créneau déclaré comme indisponible par un membre du jury.
     \end{description}
 \end{projectbox}
 
-Ces 7 règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le Defense Designer.
+Ces 6 règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le Defense Designer.
 
 \Cref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement.
 
@@ -146,8 +145,7 @@ Ces 7 règles sont implémentées dans deux moteurs distincts mais fonctionnelle
         RG3            & Bornes de période        & \checkmark    & \checkmark          & error             \\
         RG4            & Surcharge encadrant      & \checkmark    & \checkmark          & warning           \\
         RG5            & Unicité de projet        & \checkmark    & \checkmark          & error             \\
-        RG6            & Intervalle de pause      & \checkmark    & \checkmark          & error             \\
-        RG7            & Indisponibilité          & \checkmark    & \checkmark          & error             \\
+        RG6            & Indisponibilité          & \checkmark    & \checkmark          & error             \\
         \bottomrule
     \end{tabularx}
     \caption{Correspondance entre les règles de gestion et leurs implémentations}
@@ -239,7 +237,7 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
 \begin{enumerate}
     \item L'utilisateur fait glisser un jury depuis la barre latérale vers une cellule du calendrier.
     \item Le hook \texttt{useDefenseSchedule} construit le contexte (\texttt{ConflictContext}) à partir des données locales.
-    \item Le moteur TypeScript (\texttt{validateSlotAssignment}) exécute les 8 vérifications.
+    \item Le moteur TypeScript (\texttt{validateSlotAssignment}) exécute les six vérifications.
     \item En cas d'erreur, un toast est affiché avec une suggestion de résolution ; le dépôt est annulé.
     \item En cas de succès, l'état local (\texttt{schedule}) est mis à jour immédiatement (\textit{optimistic update}).
     \item Lors de la sauvegarde, les données sont envoyées au serveur qui ré-exécute les vérifications via \texttt{ConflictDetectionService} avant persistance.
@@ -265,7 +263,7 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.8\textwidth]{seq_evaluation}
+    \pumlsvg[\textwidth]{seq_evaluation}
     \caption{Séquence de soumission d'une évaluation}
     \label{fig:seq_evaluation}
 \end{figure}
@@ -273,12 +271,12 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
 \subsubsection{Diagrammes d'activité et de machine d'états}
 \label{ch3:activite}
 
-L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \cref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les 8 règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat au frontend.
+L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \cref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les six règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat à l'interface.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.7\textwidth]{act_conflict_logic}
-    \caption{Logique de validation des 8 règles de gestion (RG1-RG8)}
+    \pumlsvg[\textwidth]{act_conflict_logic}
+    \caption{Logique de validation des 6 règles de gestion (RG1-RG6)}
     \label{fig:act_conflict}
 \end{figure}
 
@@ -286,7 +284,7 @@ L'algorithme de détection des conflits, moteur central du système, est modéli
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.7\textwidth]{act_evaluation}
+    \pumlsvg[0.5\textwidth]{act_evaluation}
     \caption{Processus d'évaluation et de notation d'une soutenance}
     \label{fig:act_evaluation}
 \end{figure}
@@ -309,7 +307,7 @@ Le système adopte une architecture découplée pour maximiser la maintenabilit�
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.9\textwidth]{component_architecture}
+    \pumlsvg[\textwidth]{component_architecture}
     \caption{Architecture en composants du système}
     \label{fig:component_architecture}
 \end{figure}
@@ -367,4 +365,4 @@ Les messages de commit suivent les conventions Git : préfixes sémantiques (\te
 \subsection{Conclusion}
 \label{ch3:conclusion}
 
-Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des 8 règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité, machine à états) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry assure la maintenabilité du système à long terme.
+Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des six règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité, machine à états) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry assure la maintenabilité du système à long terme.
