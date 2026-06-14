@@ -20,7 +20,7 @@ La stratégie repose sur la validation progressive de chaque couche du système,
 
 Le backend Java contient \textbf{82 classes de test} réparties dans le répertoire de tests du backend, calqué sur la structure du code source. Chaque module fonctionnel dispose de son propre ensemble de tests : \texttt{auth/}, \texttt{admin/}, \texttt{coordinator/}, \texttt{teacher/}, \texttt{student/}, \texttt{notification/} et \texttt{common/}.
 
-Les tests sont réalisés avec \textbf{JUnit 5} et \textbf{Mockito}, et se concentrent sur deux axes complémentaires. Les tests unitaires des services isolent chaque service métier avec mock des dépendances (repositories, autres services), permettant de valider la logique de calcul, les règles de gestion et la gestion des erreurs sans aucune interaction avec la base de données. Les tests d'intégration des contrôleurs, réalisés via \texttt{@WebMvcTest}, testent les endpoints REST avec le contexte Spring complet, validant la conformité des contrâts (statuts HTTP, format JSON), la sérialisation des DTOs, la gestion des erreurs (exceptions métier, validation échouée) et la sécurité (accès refusé pour les rôles non autorisés).
+Les tests sont réalisés avec \textbf{JUnit 5} et \textbf{Mockito}, et se concentrent sur deux axes complémentaires. Les tests unitaires des services isolent chaque service métier avec mock des dépendances (repositories, autres services), permettant de valider la logique de calcul, les règles de gestion et la gestion des erreurs sans aucune interaction avec la base de données. Les tests d'intégration des contrôleurs, réalisés via \texttt{@WebMvcTest}, testent les endpoints REST avec le contexte Spring complet, validant la conformité des contrats (statuts HTTP, format JSON), la sérialisation des DTOs, la gestion des erreurs (exceptions métier, validation échouée) et la sécurité (accès refusé pour les rôles non autorisés).
 
 Parmi les classes de test notables, \texttt{ConflictDetectionServiceTest} constitue la suite la plus importante. Elle valide exhaustivement chacune des six règles de gestion (RG1--RG6) avec des jeux de données spécifiques couvrant les cas nominaux (pas de conflit), les cas limites (conflit exact à la frontière d'un créneau), et les cas d'erreur (conflit multiple). Chaque test suit le pattern Arrange--Act--Assert : préparation des données de test (projets, salles, enseignants, indisponibilités), exécution de la méthode de vérification, et vérification du résultat (liste de conflits vide ou non vide selon le cas testé).
 
@@ -75,11 +75,11 @@ Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécutio
         \addlinespace
         Intégration & API Planification & Save schedule, load schedule, auto-generate, conflict detection serveur & \textbf{Validé} \\
         \addlinespace
-        UI & Defense Designer & Drag jury vers cellule, validation locale message d'erreur, message de succès, sauvegarde & \textbf{Validé} \\
+        UI & \textit{Defense Designer} & Drag jury vers cellule, validation locale message d'erreur, message de succès, sauvegarde & \textbf{Validé} \\
         \addlinespace
         Coord. & Impression documents & Génération PDF côté serveur (Thymeleaf + OpenHTMLToPDF), 5 types de documents & \textbf{Validé} \\
         \addlinespace
-        UI & ProtectedRoute & Redirection student vers /login si accès /admin, message de session expirée & \textbf{Validé} \\
+        UI & \texttt{ProtectedRoute} & Redirection student vers /login si accès /admin, message de session expirée & \textbf{Validé} \\
         \addlinespace
         E2E & Flux Admin & Créer/modifier/supprimer département, créer étudiant, créer salle & \textbf{Validé} \\
         \addlinespace
@@ -100,7 +100,7 @@ Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécutio
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{lrl}
+    \begin{tabularx}{\textwidth}{lXX}
         \toprule
 
         \textbf{Métrique} & \textbf{Valeur} & \textbf{Outil} \\
@@ -114,9 +114,9 @@ Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécutio
         Endpoints API & $\approx$ 80 & Swagger UI \\
         Composants React (src/components) & 39+ & Comptage manuel \\
         Pages de l'application (routes) & 33 & Route mapping \\
-        Hooks TanStack Query & 25+ & Fichiers use-*-queries.ts \\
+        Hooks TanStack Query & 25+ & Fichiers \texttt{use-*-queries.ts} \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \caption{Métriques de qualité du système}
     \label{tab:metriques_qualite}
 \end{table}

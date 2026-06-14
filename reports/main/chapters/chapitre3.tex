@@ -85,7 +85,7 @@ La \textbf{constitution des jurys} est gérée par le module Gestion des Projets
 
 Les \textbf{sessions de soutenance} sont gérées via un cycle de vie complet : Brouillon $\rightarrow$ Active $\rightarrow$ Planifiée $\rightarrow$ Terminée $\rightarrow$ Archivée. Chaque session paramètre la durée des soutenances, les pauses, les dates bornes et les coefficients d'évaluation par rôle de jury.
 
-Le \textbf{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
+Le \textit{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
 
 En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 6 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliqué côté client pour un retour instantané et exécuté côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
@@ -100,17 +100,17 @@ Enfin, la gestion des \textbf{groupes d'étudiants} permet aux étudiants de cr�
 
 Les besoins non fonctionnels définissent les qualités transverses du système, souvent aussi critiques que les fonctionnalités elles-mêmes pour assurer l'adoption et la satisfaction des utilisateurs.
 
-La \textbf{réactivité} constitue un besoin fondamental pour le Defense Designer : le retour sur conflit lors du drag-and-drop doit être instantané (latence $< 100$ms) grâce à la validation locale via le moteur de conflits TypeScript. L'état du planning est maintenu dans la mémoire du navigateur, sans aucun appel réseau pendant les opérations de glisser-déposer.
+La \textbf{réactivité} constitue un besoin fondamental pour le \textit{Defense Designer} : le retour sur conflit lors du glisser-déposer doit être instantané (latence $< 100$ms) grâce à la validation locale via le moteur de conflits TypeScript. L'état du planning est maintenu dans la mémoire du navigateur, sans aucun appel réseau pendant les opérations de glisser-déposer.
 
-La \textbf{sécurité} repose sur le chiffrement des mots de passe via BCrypt, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Pour prévenir les attaques de type XSS (\textit{Cross-Site Scripting}), les tokens sont transmis et stockés via des cookies \texttt{httpOnly}, les rendant inaccessibles aux scripts JavaScript du navigateur. Des protections contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale ont été renforcées.
+La \textbf{sécurité} repose sur le chiffrement des mots de passe via \texttt{BCrypt}, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Pour prévenir les attaques de type XSS (\textit{Cross-Site Scripting}), les tokens sont transmis et stockés via des cookies \texttt{httpOnly}, les rendant inaccessibles aux scripts JavaScript du navigateur. Des protections contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale ont été renforcées.
 
-Côté \textbf{disponibilité}, une architecture stateless du backend permet un déploiement horizontal scalable. L'API REST ne maintient pas d'état de session côté serveur : chaque requête est autonome via le token JWT, ce qui facilite tests et débogage.
+Côté \textbf{disponibilité}, une architecture \textit{stateless} du backend permet un déploiement horizontal scalable. L'API REST ne maintient pas d'état de session côté serveur : chaque requête est autonome via le token JWT, ce qui facilite tests et débogage.
 
-L'\textbf{ergonomie} s'appuie sur une interface moderne et responsive (Tailwind CSS 4, shadcn/ui). La navigation est contextualisée par rôle avec une sidebar adaptative, et le thème clair/sombre avec persistance du choix améliore le confort lors de sessions prolongées.
+L'\textbf{ergonomie} s'appuie sur une interface moderne et responsive (\texttt{Tailwind CSS 4}, \texttt{shadcn/ui}). La navigation est contextualisée par rôle avec une sidebar adaptative, et le thème clair/sombre avec persistance du choix améliore le confort lors de sessions prolongées.
 
-La \textbf{maintenabilité} résulte d'une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. Les DTOs isolent les couches API et MapStruct gère le mapping objet, protégeant le modèle interne des variations de l'interface exposée.
+La \textbf{maintenabilité} résulte d'une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. Les \texttt{DTOs} isolent les couches API et \texttt{MapStruct} gère le mapping objet, protégeant le modèle interne des variations de l'interface exposée.
 
-Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (lignes) et 70\% (branches) via JaCoCo, complétée par un linting automatisé avec ESLint (TypeScript), et Spotless, Checkstyle, PMD et SpotBugs (Java) intégré dans CI.
+Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (lignes) et 70\% (branches) via \texttt{JaCoCo}, complétée par un linting automatisé avec \texttt{ESLint} (TypeScript), et \texttt{Spotless}, \texttt{Checkstyle}, \texttt{PMD} et \texttt{SpotBugs} (Java) intégré dans CI.
 
 \subsection{Règles de gestion}
 \label{ch3:regles_gestion}
@@ -121,14 +121,14 @@ Le moteur de conflits implémente les règles de gestion (RG) suivantes, mainten
     \begin{description}
         \item[RG1 (Enseignants)] Un enseignant ne peut être affecté à deux soutenances dont les horaires se chevauchent.
         \item[RG2 (Salles)] Une salle ne peut accueillir qu'une seule soutenance pour un créneau donné.
-        \item[RG3 (Période)] Toutes les soutenances d'une session doivent être planifiées entre la \textit{startDate} et la \textit{endDate} de ladite session.
+        \item[RG3 (Période)] Toutes les soutenances d'une session doivent être planifiées entre la \texttt{startDate} et la \texttt{endDate} de ladite session.
         \item[RG4 (Encadrants)] Un encadrant ne doit pas être sollicité sur plusieurs projets le même jour pour éviter la surcharge.
         \item[RG5 (Unicité)] Un projet ne peut être planifié qu'une seule fois par session.
         \item[RG6 (Disponibilité)] Aucune soutenance ne peut être planifiée sur un créneau déclaré comme indisponible par un membre du jury.
     \end{description}
 \end{projectbox}
 
-Ces 6 règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le Defense Designer.
+Ces 6 règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le \textit{Defense Designer}.
 
 \Cref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement.
 
@@ -186,12 +186,12 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
     \label{fig:uc_admin}
 \end{figure}
 
-\Cref{fig:uc_coordination} détaille les cas d'utilisation du Coordinateur, l'acteur le plus sollicité par le système. Il gère le cycle complet : des projets et groupes d'étudiants, à la constitution des jurys, en passant par la planification interactive via le Defense Designer, la validation du planning, et la génération des documents. Les relations « include » et « extend » modélisent les dépendances entre cas d'utilisation (par exemple, « Affecter un jury » inclut « Vérifier les conflits »).
+\Cref{fig:uc_coordination} détaille les cas d'utilisation du Coordinateur, l'acteur le plus sollicité par le système. Il gère le cycle complet : des projets et groupes d'étudiants, à la constitution des jurys, en passant par la planification interactive via le \textit{Defense Designer}, la validation du planning, et la génération des documents. Les relations « include » et « extend » modélisent les dépendances entre cas d'utilisation (par exemple, « Affecter un jury » inclut « Vérifier les conflits »).
 
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{uc_coordination}
-    \caption{Cas d'utilisation : Coordination et Defense Designer}
+    \caption{Cas d'utilisation : Coordination et \textit{Defense Designer}}
     \label{fig:uc_coordination}
 \end{figure}
 
@@ -232,7 +232,7 @@ Plusieurs choix de conception structurels ont été adoptés pour répondre aux 
 
 Les diagrammes de séquence modélisent les interactions entre les composants du système pour des cas d'utilisation critiques. Nous en présentons trois qui illustrent les flux les plus complexes.
 
-\Cref{fig:seq_planning} modélise le flux de planification interactive via le Defense Designer. Ce processus repose sur un cycle de validation itératif où le frontend et le backend collaborent pour préserver l'absence de conflits :
+\Cref{fig:seq_planning} modélise le flux de planification interactive via le \textit{Defense Designer}. Ce processus repose sur un cycle de validation itératif où le frontend et le backend collaborent pour préserver l'absence de conflits :
 
 \begin{enumerate}
     \item L'utilisateur fait glisser un jury depuis la barre latérale vers une cellule du calendrier.
@@ -246,11 +246,11 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{seq_planning}
-    \caption{Séquence de planification interactive via le Defense Designer}
+    \caption{Séquence de planification interactive via le \textit{Defense Designer}}
     \label{fig:seq_planning}
 \end{figure}
 
-\Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les credentials (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT via un cookie \texttt{httpOnly} sécurisé. Le navigateur gère alors automatiquement l'envoi de ce cookie lors des requêtes suivantes, et le frontend redirige l'utilisateur vers la page correspondant à son rôle.
+\Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les identifiants (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT via un cookie \texttt{httpOnly} sécurisé. Le navigateur gère alors automatiquement l'envoi de ce cookie lors des requêtes suivantes, et le frontend redirige l'utilisateur vers la page correspondant à son rôle.
 
 \begin{figure}[H]
     \centering
@@ -319,7 +319,7 @@ Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$
 \end{itemize}
 
 \subsubsection{Frontend (SPA)}
-L'interface est conçue comme une application monopage (\textit{Single Page Application}) utilisant React 19 avec TypeScript 6 en mode strict. L'état asynchrone est géré par \textbf{TanStack Query v5}, qui assure la synchronisation avec l'API, la mise en cache et le rechargement automatique. Le \textit{Defense Designer} implémente un état local optimiste pour une fluidité maximale lors du drag-and-drop, grâce à la bibliothèque \textbf{@dnd-kit/core}. Chaque page est chargée via \texttt{React.lazy()} pour optimiser le temps de chargement initial, et les routes sont protégées par des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur avant d'autoriser l'accès.
+L'interface est conçue comme une application monopage (\textit{Single Page Application}) utilisant React 19 avec TypeScript 6 en mode strict. L'état asynchrone est géré par \texttt{TanStack Query v5}, qui assure la synchronisation avec l'API, la mise en cache et le rechargement automatique. Le \textit{Defense Designer} implémente un état local optimiste pour une fluidité maximale lors du glisser-déposer, grâce à la bibliothèque \texttt{@dnd-kit/core}. Chaque page est chargée via \texttt{React.lazy()} pour optimiser le temps de chargement initial, et les routes sont protégées par des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur avant d'autoriser l'accès.
 
 \subsubsection{Sécurité et contrôle d'accès}
 Le flux de sécurité repose sur trois mécanismes complémentaires. L'authentification utilise des tokens JWT signés avec une clé HMAC-SHA, contenant l'identifiant utilisateur et son rôle. Le filtre \texttt{JwtAuthFilter} intercepte chaque requête, extrait le token du header \texttt{Authorization} ou du cookie \texttt{jwt\_token}, le valide, et configure le contexte de sécurité Spring. Le contrôle d'autorisation est implémenté via les annotations \texttt{@PreAuthorize} sur les contrôleurs, qui restreignent l'accès aux endpoints en fonction du rôle de l'utilisateur courant. Enfin, la configuration CORS autorise les origines du frontend en développement (\texttt{localhost:5173}) et en production.
@@ -327,9 +327,9 @@ Le flux de sécurité repose sur trois mécanismes complémentaires. L'authentif
 \subsection{Modélisation de la base de données}
 \label{ch3:mld}
 
-Le Modèle Logique de Données (MLD) traduit les classes JPA en tables relationnelles. La base de données H2 en développement utilise le même schéma que MySQL en production, garantissant la compatibilité entre les environnements.
+Le Modèle Logique de Données (MLD) traduit les classes JPA en tables relationnelles. La base de données \texttt{H2} en développement utilise le même schéma que \texttt{MySQL} en production, garantissant la compatibilité entre les environnements.
 
-L'héritage des utilisateurs est implémenté via la stratégie JOINED : la table \texttt{users} contient les attributs communs (email, password, role, firstName, lastName, isActive), tandis que les tables \texttt{teachers}, \texttt{students} et \texttt{coordinators} stockent les attributs spécifiques. Cette stratégie, plus coûteuse en jointures que la stratégie SINGLE\_TABLE, a été choisie pour sa clarté sémantique et sa facilité d'évolution.
+L'héritage des utilisateurs est implémenté via la stratégie \texttt{JOINED} : la table \texttt{users} contient les attributs communs (email, password, role, firstName, lastName, isActive), tandis que les tables \texttt{teachers}, \texttt{students} et \texttt{coordinators} stockent les attributs spécifiques. Cette stratégie, plus coûteuse en jointures que la stratégie \texttt{SINGLE\_TABLE}, a été choisie pour sa clarté sémantique et sa facilité d'évolution.
 
 Les données flexibles sont gérées via les annotations \texttt{@ElementCollection} : les membres d'un jury (\texttt{defense\_members}), les créneaux d'indisponibilité (\texttt{unavailability\_slots}), les coefficients d'évaluation par session (\texttt{defense\_session\_coefficients}), et les rôles d'un template de jury (\texttt{template\_roles}). Cette approche, bien que moins performante que des tables séparées pour les données volumineuses, est adaptée au volume de données attendu dans un contexte universitaire.
 
@@ -345,15 +345,15 @@ Les entités de configuration (\texttt{DefenseSettings}) utilisent un pattern si
 \subsection{Normes et standards respectés}
 \label{ch3:normes}
 
-Le développement du système suit des normes et standards industry pour préserver la qualité, la maintenabilité et la cohérence du code source.
+Le développement du système suit des normes et standards industriels pour préserver la qualité, la maintenabilité et la cohérence du code source.
 
 Côté Java, le code respecte les conventions de nommage Java (camelCase pour les méthodes et variables, PascalCase pour les classes), les directives de codage Google (limitation à 100 caractères par ligne, gestion des imports non utilisés), et les bonnes pratiques Spring (injection de dépendances par constructeur, annotations de validation sur les DTOs). Les noms de tables et de colonnes suivent la convention snake\_case en base de données, reflétée par les annotations \texttt{@Table} et \texttt{@Column}.
 
-Côté TypeScript, le code suit les conventions Airbnb (formatage Prettier, règles ESLint strictes), le typage strict est activé (\texttt{strict: true} dans le \texttt{tsconfig.json}), et les noms de fichiers utilisent le kebab-case (\texttt{conflict-engine.ts}, \texttt{use-defense-schedule.ts}). Les composants React suivent le pattern fonctionnel avec hooks, sans/classes.
+Côté TypeScript, le code suit les conventions Airbnb (formatage \texttt{Prettier}, règles \texttt{ESLint} strictes), le typage strict est activé (\texttt{strict: true} dans le \texttt{tsconfig.json}), et les noms de fichiers utilisent le kebab-case (\texttt{conflict-engine.ts}, \texttt{use-defense-schedule.ts}). Les composants React suivent le pattern fonctionnel avec hooks, sans classes.
 
-Les messages de commit suivent les conventions Git : préfixes sémantiques (\texttt{feat:}, \texttt{fix:}, \texttt{chore:}, \texttt{docs:}), description en anglais, imperative mood. Les issues GitHub documentent les fonctionnalités et les corrections, avec des labels de priorité et de catégorie.
+Les messages de commit suivent les conventions Git : préfixes sémantiques (\texttt{feat:}, \texttt{fix:}, \texttt{chore:}, \texttt{docs:}), description en mode impératif. Les issues GitHub documentent les fonctionnalités et les corrections, avec des labels de priorité et de catégorie.
 
 \subsection{Conclusion}
 \label{ch3:conclusion}
 
-Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des six règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry assure la maintenabilité du système à long terme.
+Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des six règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industriels assure la maintenabilité du système à long terme.
