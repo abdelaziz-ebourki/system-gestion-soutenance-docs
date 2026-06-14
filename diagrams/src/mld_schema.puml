@@ -22,6 +22,7 @@ entity "student" as student << (T, #c2ccd7) >> {
   * id : BIGINT (PK, FK→users)
   --
   cne : VARCHAR
+  code_apogee : VARCHAR (U)
   major_id : BIGINT (FK→major)
   level_id : BIGINT (FK→level)
 }
@@ -29,7 +30,6 @@ entity "student" as student << (T, #c2ccd7) >> {
 entity "teacher" as teacher << (T, #c2ccd7) >> {
   * id : BIGINT (PK, FK→users)
   --
-  grade_id : BIGINT (FK→grade)
   department_id : BIGINT (FK→department)
 }
 
@@ -49,6 +49,9 @@ entity "defense_session" as defsession << (T, #c2ccd7) >> {
   submission_deadline : DATE
   start_date : DATE
   end_date : DATE
+  is_frozen : BOOLEAN
+  approved_by : BIGINT
+  approved_at : TIMESTAMP
   jury_role_template_id : BIGINT (FK→jury_role_template)
 }
 
@@ -121,6 +124,7 @@ entity "evaluation" as eval << (T, #c2ccd7) >> {
   comment : TEXT
   status : ENUM(PENDING,SUBMITTED)
   submitted_at : TIMESTAMP
+  attendance_status : ENUM(PRESENT,ABSENT,DEFAILLANT)
   defense_id : BIGINT (FK→defense)
 }
 
@@ -160,12 +164,6 @@ entity "student_document" as sdoc << (T, #c2ccd7) >> {
   file_path : VARCHAR
 }
 
-entity "grade" as grade << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  name : VARCHAR
-}
-
 entity "level" as level << (T, #c2ccd7) >> {
   * id : BIGINT (PK)
   --
@@ -194,36 +192,6 @@ entity "faculty" as faculty << (T, #c2ccd7) >> {
   code : VARCHAR
   dean_id : BIGINT (FK→teacher)
   logo_url : VARCHAR
-}
-
-entity "general_settings" as gsettings << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  institution_name : VARCHAR
-  institution_logo_url : VARCHAR
-  timezone : VARCHAR
-  date_format : VARCHAR
-  setup_completed : BOOLEAN
-}
-
-entity "email_config" as econfig << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  host : VARCHAR
-  port : INT
-  username : VARCHAR
-  password : VARCHAR
-  sender_name : VARCHAR
-  sender_email : VARCHAR
-  encryption : VARCHAR
-}
-
-entity "document_config" as dconfig << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  max_file_size_mb : INT
-  allowed_extensions : VARCHAR
-  version_limit : INT
 }
 
 entity "defense_settings" as defsettings << (T, #c2ccd7) >> {
@@ -270,7 +238,6 @@ users ||--o| coordinator
 student }o--|| major
 student }o--|| level
 
-teacher }o--|| grade
 teacher }o--|| dept
 
 dept }o--|| faculty

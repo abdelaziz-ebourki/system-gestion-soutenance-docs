@@ -27,7 +27,7 @@ Les inclus dans le périmètre du projet : la gestion des utilisateurs et des r�
 
 Le système repose sur une gestion stricte des accès basée sur les rôles (\textit{Role-Based Access Control — RBAC}). Quatre acteurs principaux sont identifiés, chacun disposant d'un périmètre fonctionnel spécifique. Le choix de quatre rôles uniquement, sans possibilité de superposition, simplifie considérablement la logique de contrôle d'accès tout en couvrant l'ensemble des besoins identifiés.
 
-L'\textbf{Administrateur} est responsable de la configuration structurelle de l'établissement. Il gère les départements, filières, niveaux et salles. Il est également en charge de la création des comptes utilisateurs (import massif via fichiers Excel) et de la configuration des templates de jurys et des paramètres de défense. Ce rôle est le seul à pouvoir accéder aux journaux d'audit.
+L'\textbf{Administrateur} est responsable de la configuration structurelle de l'établissement. Il gère les départements, filières, niveaux et salles. Il est également en charge de la création des comptes utilisateurs (import massif via fichiers Excel) et de la configuration des paramètres de défense. Ce rôle est le seul à pouvoir accéder aux journaux d'audit.
 
 Le \textbf{Coordinateur} est l'acteur central du système. Il gère l'ensemble du cycle de planification : import et validation des projets, constitution des jurys selon les templates de rôles, utilisation du \textit{Defense Designer} pour la planification interactive des créneaux, consultation du tableau de bord des conflits, et suivi des évaluations. Il peut également publier le planning final et générer les documents administratifs. Ce rôle nécessite une vue d'ensemble de toutes les soutenances et une compréhension des contraintes de chaque acteur.
 
@@ -333,7 +333,7 @@ L'héritage des utilisateurs est implémenté via la stratégie JOINED : la tabl
 
 Les données flexibles sont gérées via les annotations \texttt{@ElementCollection} : les membres d'un jury (\texttt{defense\_members}), les créneaux d'indisponibilité (\texttt{unavailability\_slots}), les coefficients d'évaluation par session (\texttt{defense\_session\_coefficients}), et les rôles d'un template de jury (\texttt{template\_roles}). Cette approche, bien que moins performante que des tables séparées pour les données volumineuses, est adaptée au volume de données attendu dans un contexte universitaire.
 
-Les entités de configuration (GeneralSettings, DefenseSettings, EmailConfig, DocumentConfig) utilisent un pattern singleton avec un identifiant fixe (\texttt{id=1L}), simplifiant la gestion des paramètres globaux par le système.
+Les entités de configuration (\texttt{DefenseSettings}) utilisent un pattern singleton avec un identifiant fixe (\texttt{id=1L}), simplifiant la gestion des paramètres globaux par le système.
 
 \begin{figure}[H]
     \centering

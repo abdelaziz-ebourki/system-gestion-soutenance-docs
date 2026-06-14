@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch5:intro}
 
-Ce chapitre présente la démarche de validation mise en œuvre pour préserver la fiabilité du système de gestion des soutenances. Dans un domaine où les données manipulées -- notes, jurys, plannings -- ont une incidence directe sur le parcours académique des étudiants, la qualité logicielle n'est pas un luxe mais une exigence fondamentale. Une erreur de planification peut priver un étudiant de sa soutenance, une erreur de calcul de moyenne peut modifier une décision de jury, et un bug de sécurité peut exposer des données confidentielles. C'est pourquoi nous avons adopté une stratégie de test pyramidale multi-couche, combinant des tests unitaires, d'intégration et des tests de bout en bout (E2E), permettant de détecter les régressions à différents niveaux de l'application avec un rapport coût-efficacité optimal.
+Ce chapitre présente la démarche de validation mise en œuvre pour préserver la fiabilité du système de gestion des soutenances. Dans un domaine où les données manipulées -- notes, jurys, plannings -- ont une incidence directe sur le parcours académique des étudiants, la qualité logicielle n'est pas un luxe mais une exigence fondamentale. Une erreur de planification peut priver un étudiant de sa soutenance, une erreur de calcul de moyenne peut modifier une décision de jury, et un bug de sécurité peut exposer des données confidentielles. C'est pour cette raison que nous avons adopté une stratégie de test pyramidale multi-couche, combinant des tests unitaires, d'intégration et des tests de bout en bout (E2E), permettant de détecter les régressions à différents niveaux de l'application avec un rapport coût-efficacité optimal.
 
 \subsection{Stratégie de test}
 \label{ch5:strategie}
@@ -77,7 +77,7 @@ Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécutio
         \addlinespace
         UI & Defense Designer & Drag jury vers cellule, validation locale message d'erreur, message de succès, sauvegarde & \textbf{Validé} \\
         \addlinespace
-        UI & Impression documents & Rendu A4 convocation via @media print, 5 types de documents & \textbf{Validé} \\
+        Coord. & Impression documents & Génération PDF côté serveur (Thymeleaf + OpenHTMLToPDF), 5 types de documents & \textbf{Validé} \\
         \addlinespace
         UI & ProtectedRoute & Redirection student vers /login si accès /admin, message de session expirée & \textbf{Validé} \\
         \addlinespace
