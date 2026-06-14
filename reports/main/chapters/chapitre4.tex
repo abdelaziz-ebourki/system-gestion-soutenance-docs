@@ -86,7 +86,7 @@ L'interface utilisateur est une application monopage avec les caractéristiques 
 
 La \textbf{gestion d'état asynchrone} est assurée par \texttt{TanStack Query v5} pour la synchronisation avec l'API, la mise en cache et le rechargement automatique des données. Chaque module dispose de ses propres hooks de requête (par ex.~\texttt{use-admin-queries}, \texttt{use-coordinator-queries}) qui encapsulent les appels API et gèrent automatiquement le cache, les rechargements et les invalidations. Le \texttt{QueryClient} est configuré avec un \texttt{staleTime} de 30~secondes et un nombre de retry limité à 1, pour éviter les rechargements excessifs tout en autorisant une récupération rapide après une erreur réseau.
 
-Le \textbf{routage} utilise React Router v7 avec des routes imbriquées. Les routes publiques (\texttt{/login}, \texttt{/forgot-password}, \texttt{/print/*}) sont en dehors du layout authentifié. Les routes protégées sont regroupées par rôle sous \texttt{<DashboardLayout>} avec des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur. Les routes d'administration (hors configuration) sont en outre protégées par \texttt{SetupGuard}.
+Le \textbf{routage} utilise React Router v7 avec des routes imbriquées. Les routes publiques (\texttt{/login}, \texttt{/forgot-password}, \texttt{/print/*}) sont en dehors du layout authentifié. Les routes protégées sont regroupées par rôle sous \texttt{<DashboardLayout>} avec des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur.
 
 Le \textbf{design system} repose sur Tailwind CSS~4 avec des variables CSS, shadcn/ui pour les composants de base (boutons, modales, tableaux), et des abstractions applicatives dans le répertoire \texttt{src/components/ui/}. Chaque composant UI est un wrapper personnalisé qui encapsule les composants Radix UI sous-jacents avec les styles Tailwind de l'application.
 
@@ -254,11 +254,9 @@ Chaque entrée d'audit contient l'action effectuée (\texttt{CREATE}, \texttt{UP
 \subsubsection{Module de Configuration Administrative}
 \label{ch4:module_config}
 
-Le module d'administration gère la configuration structurelle du système à travers l'entité singleton \texttt{DefenseSettings} (identifiant fixe \texttt{id=1L}) et plusieurs entités de référence. \texttt{DefenseSettings} paramètre les horaires de début/fin, la durée des soutenances, l'intervalle de pause et les périodes de création de groupes.
+Le module d'administration gère la configuration structurelle du système à travers plusieurs entités de référence. Un singleton \texttt{DefenseSettings} fournit les paramètres globaux par défaut (horaires, durées) utilisés par le moteur de planification ainsi que les bornes de création des groupes, tandis que les réglages spécifiques à chaque session sont définis par le coordinateur.
 
 Les entités de référence (\texttt{Level}, \texttt{Major}, \texttt{JuryRoleTemplate}) sont gérées via des interfaces CRUD standard avec recherche et pagination. Le composant \texttt{ConfigEntityManager} est un composant réutilisable qui fournit automatiquement les dialogues de création, modification et suppression pour toute entité de référence, réduisant ainsi la duplication de code entre les différentes pages de configuration.
-
-Le \texttt{SetupGuard} implémente une logique de première utilisation : si \texttt{setupCompleted} est à \texttt{false}, l'utilisateur est redirigé vers la page de configuration (\texttt{/admin/config}) avant d'accéder à toute autre page d'administration. Cette mécanique veille à ce que les paramètres essentiels (nom de l'institution, durée des soutenances) sont configurés avant la première utilisation du système.
 
 \begin{figure}[H]
     \centering
@@ -497,7 +495,7 @@ L'interface utilisateur est organisée en sections distinctes accessibles via un
     \label{tab:pages_mapping}
 \end{table}
 
-Chaque route protégée est encapsulée dans un composant \texttt{ProtectedRoute} qui vérifie l'état d'authentification de l'utilisateur via le contexte global de l'application. En cas de non-autorisation, l'utilisateur est redirigé vers la page de connexion. Les routes d'administration (hors configuration) sont en outre protégées par \texttt{SetupGuard}, qui vérifie que la configuration initiale du système a été effectuée. Les routes d'impression (\texttt{/print/*}) sont les seules routes authentifiées en dehors du layout \texttt{DashboardLayout}, car elles nécessitent un rendu sans sidebar ni barre de navigation pour produire des documents propres à l'impression.
+Chaque route protégée est encapsulée dans un composant \texttt{ProtectedRoute} qui vérifie l'état d'authentification de l'utilisateur via le contexte global de l'application. En cas de non-autorisation, l'utilisateur est redirigé vers la page de connexion. Les routes d'impression (\texttt{/print/*}) sont les seules routes authentifiées en dehors du layout \texttt{DashboardLayout}, car elles nécessitent un rendu sans sidebar ni barre de navigation pour produire des documents propres à l'impression.
 
 \subsection{Bonnes pratiques adoptées}
 \label{ch4:bonnes_pratiques}
