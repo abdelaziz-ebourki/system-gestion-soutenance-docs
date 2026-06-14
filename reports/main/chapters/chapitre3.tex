@@ -238,7 +238,7 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
     \item L'utilisateur fait glisser un jury depuis la barre latérale vers une cellule du calendrier.
     \item Le hook \texttt{useDefenseSchedule} construit le contexte (\texttt{ConflictContext}) à partir des données locales.
     \item Le moteur TypeScript (\texttt{validateSlotAssignment}) exécute les six vérifications.
-    \item En cas d'erreur, un toast est affiché avec une suggestion de résolution ; le dépôt est annulé.
+    \item En cas d'erreur, un message est affiché avec une suggestion de résolution ; le dépôt est annulé.
     \item En cas de succès, l'état local (\texttt{schedule}) est mis à jour immédiatement (\textit{optimistic update}).
     \item Lors de la sauvegarde, les données sont envoyées au serveur qui ré-exécute les vérifications via \texttt{ConflictDetectionService} avant persistance.
 \end{enumerate}
