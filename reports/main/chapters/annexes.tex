@@ -10,11 +10,10 @@
 \section{Glossaire technique}
 \label{annex:glossaire}
 
-\begin{longtable}{lp{0.78\textwidth}}
+\begin{tabularx}{\textwidth}{lX}
     \toprule
     \textbf{Terme} & \textbf{Définition} \\
     \midrule
-    \endhead
 
     JWT & \textit{JSON Web Token} -- standard ouvert (RFC 7519) pour l'échange sécurisé d'informations entre parties sous forme d'objet JSON signé numériquement. Dans ce système, les JWT sont stockés dans un cookie \texttt{httpOnly} pour l'authentification stateless. \\
     RBAC & \textit{Role-Based Access Control} -- modèle de contrôle d'accès où les permissions sont assignées à des rôles plutôt qu'à des utilisateurs individuels. Le système utilise quatre rôles : administrateur, coordinateur, enseignant, étudiant. \\
@@ -37,7 +36,7 @@
     PlantUML & Outil de modélisation UML basé sur du texte, permettant de générer automatiquement des diagrammes à partir de descriptions semi-formelles. \\
 
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 % ── Annexe B : Endpoints API ─────────────────────────────────────────────────
 \section{Liste complète des endpoints API}
@@ -47,39 +46,36 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
 
 \subsection{Authentification}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     POST  & /auth/login              & Authentifier un utilisateur (cookie JWT) \\
     POST  & /auth/logout             & Déconnexion (effacement du cookie) \\
     POST  & /auth/forgot-password    & Demander un lien de réinitialisation \\
     POST  & /auth/reset-password     & Réinitialiser le mot de passe via un token \\
     POST  & /auth/verify-account     & Vérifier le compte via le token d'activation \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Profil utilisateur}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET    & /me                     & Obtenir le profil de l'utilisateur courant \\
     PATCH  & /me                     & Modifier le prénom et/ou le nom \\
     PUT    & /me/password            & Changer le mot de passe \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Administration -- Gestion des utilisateurs}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET     & /admin/users                & Lister les utilisateurs (paginé, filtrable par rôle) \\
     POST    & /admin/users                & Créer un utilisateur \\
     POST    & /admin/users/bulk           & Création massive d'utilisateurs \\
@@ -87,15 +83,14 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     DELETE  & /admin/users/\{id\}          & Supprimer un utilisateur \\
     GET     & /coordinator/users          & Lister les utilisateurs (par rôle STUDENT/TEACHER) \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Administration -- Configuration académique}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET     & /admin/faculties              & Lister les facultés \\
     POST    & /admin/faculties              & Créer une faculté \\
     PUT     & /admin/faculties/\{id\}        & Modifier une faculté \\
@@ -130,15 +125,14 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     PUT     & /admin/config/settings        & Modifier les paramètres (complet) \\
     PATCH   & /admin/config/settings        & Modifier les paramètres (partiel) \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Administration -- Salles, Statistiques, Audit}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET     & /admin/rooms                  & Lister les salles \\
     POST    & /admin/rooms                  & Créer une salle \\
     POST    & /admin/rooms/bulk             & Création massive de salles \\
@@ -150,15 +144,14 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     GET     & /admin/audit-logs             & Journal d'audit (paginé) \\
     POST    & /admin/audit-logs             & Créer une entrée d'audit manuellement \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Coordinateur -- Sessions de soutenance}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET     & /coordinator/defense-sessions                  & Lister les sessions \\
     POST    & /coordinator/defense-sessions                  & Créer une session \\
     PUT     & /coordinator/defense-sessions/\{id\}            & Modifier une session \\
@@ -169,15 +162,14 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     PATCH   & /coordinator/defense-sessions/\{id\}/approve    & Approuver la session (ADMIN) \\
     PATCH   & /coordinator/defense-sessions/\{id\}/revoke-approval & Retirer l'approbation \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Coordinateur -- Projets, Groupes, Jurys}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET     & /coordinator/projects              & Lister les projets \\
     POST    & /coordinator/projects              & Créer un projet \\
     POST    & /coordinator/projects/bulk         & Import massive de projets \\
@@ -195,15 +187,14 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     PUT     & /coordinator/juries/\{id\}          & Modifier un jury \\
     DELETE  & /coordinator/juries/\{id\}          & Supprimer un jury \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Coordinateur -- Planning et Conflits}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET     & /coordinator/schedules                 & Obtenir le planning courant \\
     POST    & /coordinator/schedules                 & Sauvegarder le planning \\
     POST    & /coordinator/schedules/generation      & Auto-génération du planning \\
@@ -215,26 +206,24 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     GET     & /coordinator/unavailability            & Consulter les indisponibilités \\
     GET     & /coordinator/stats                     & Statistiques du coordinateur \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Coordinateur -- Défenses}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     POST    & /coordinator/defenses/\{id\}/cancel    & Annuler une soutenance planifiée \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Coordinateur -- Documents}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     POST  & /coordinator/documents/evaluation-sheets      & Données de la fiche d'évaluation \\
     POST  & /coordinator/documents/evaluation-sheets/pdf  & Télécharger la fiche d'évaluation PDF \\
     POST  & /coordinator/documents/attendance-lists       & Données de la liste de présence \\
@@ -246,15 +235,14 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     POST  & /coordinator/documents/proces-verbal          & Données du procès-verbal \\
     POST  & /coordinator/documents/proces-verbal/pdf      & Télécharger le PV PDF \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Enseignant}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET   & /teacher/evaluations               & Lister les évaluations assignées \\
     POST  & /teacher/evaluations/\{id\}         & Soumettre une évaluation (score + commentaire) \\
     \midrule
@@ -265,15 +253,14 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     \midrule
     GET   & /teacher/stats                     & Statistiques personnelles \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Étudiant}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET     & /student/groups                 & Obtenir l'espace groupe \\
     POST    & /student/groups                 & Créer un groupe \\
     POST    & /student/groups/\{id\}/members   & Rejoindre un groupe \\
@@ -288,21 +275,20 @@ L'API REST expose 124 endpoints organisés par module. Le préfixe commun est \t
     \midrule
     GET     & /student/stats                  & Statistiques personnelles \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 \subsection{Notifications}
 
-\begin{longtable}{llp{0.5\textwidth}}
+\begin{tabularx}{\textwidth}{llX}
     \toprule
     \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
     \midrule
-    \endhead
     GET    & /notifications                  & Lister les notifications (paginé) \\
     PATCH  & /notifications/\{id\}/read       & Marquer une notification comme lue \\
     PATCH  & /notifications/read-all          & Marquer toutes les notifications comme lues \\
     POST   & /notifications/\{id\}/send-email & Envoyer un email associé à une notification \\
     \bottomrule
-\end{longtable}
+\end{tabularx}
 
 % ── Annexe C : Manuel d'utilisation rapide ────────────────────────────────────
 \section{Manuel d'utilisation rapide}

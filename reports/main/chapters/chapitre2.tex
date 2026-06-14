@@ -237,7 +237,7 @@ Chaque endpoint suit les conventions REST : utilisation des verbes HTTP appropri
 
 Le projet est organisé en trois dépôts Git distincts, chacun responsable d'un périmètre technique spécifique. Cette séparation, bien que nécessitant une synchronisation via des workflows CI, offre des avantages significatifs en termes de clarté du code, d'indépendance des cycles de build et de responsabilité des contributions.
 
-Le dépôt \texttt{system-gestion-soutenance-api} contient le code Java/Spring Boot du serveur. Le dépôt \texttt{system-gestion-soutenance-ui} contient l'application React/TypeScript. Le dépôt \texttt{system-gestion-soutenance-e2e} contient les tests Playwright et reçoit les sources synchronisées des deux premiers dépôts pour ses tests d'intégration.
+Le dépôt \href{https://github.com/abdelaziz-ebourki/system-gestion-soutenance-api}{\texttt{system-gestion-soutenance-api}} contient le code Java/Spring Boot du serveur. Le dépôt \href{https://github.com/abdelaziz-ebourki/system-gestion-soutenance-ui}{\texttt{system-gestion-soutenance-ui}} contient l'application React/TypeScript. Le dépôt \href{https://github.com/abdelaziz-ebourki/system-gestion-soutenance-e2e}{\texttt{system-gestion-soutenance-e2e}} contient les tests Playwright et reçoit les sources synchronisées des deux premiers dépôts pour ses tests d'intégration.
 
 Des workflows GitHub Actions assurent la synchronisation automatique : lors d'un push sur la branche \texttt{main} de l'API ou de l'UI, un script rsync copie les sources dans le dépôt E2E et pousse les modifications. Cette architecture assure que les tests d'intégration s'exécutent toujours sur la dernière version du code, tout en maintenant une séparation claire des responsabilités.
 
