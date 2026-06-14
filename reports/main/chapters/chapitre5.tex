@@ -18,7 +18,7 @@ La stratégie repose sur la validation progressive de chaque couche du système,
 \subsubsection{Tests unitaires et d'intégration (Backend)}
 \label{ch5:backend_tests}
 
-Le backend Java contient \textbf{86 classes de test} réparties dans le répertoire de tests du backend, calqué sur la structure du code source. Chaque module fonctionnel dispose de son propre ensemble de tests : \texttt{auth/}, \texttt{admin/}, \texttt{coordinator/}, \texttt{teacher/}, \texttt{student/}, \texttt{notification/} et \texttt{common/}.
+Le backend Java contient \textbf{82 classes de test} réparties dans le répertoire de tests du backend, calqué sur la structure du code source. Chaque module fonctionnel dispose de son propre ensemble de tests : \texttt{auth/}, \texttt{admin/}, \texttt{coordinator/}, \texttt{teacher/}, \texttt{student/}, \texttt{notification/} et \texttt{common/}.
 
 Les tests sont réalisés avec \textbf{JUnit 5} et \textbf{Mockito}, et se concentrent sur deux axes complémentaires. Les tests unitaires des services isolent chaque service métier avec mock des dépendances (repositories, autres services), permettant de valider la logique de calcul, les règles de gestion et la gestion des erreurs sans aucune interaction avec la base de données. Les tests d'intégration des contrôleurs, réalisés via \texttt{@WebMvcTest}, testent les endpoints REST avec le contexte Spring complet, validant la conformité des contrâts (statuts HTTP, format JSON), la sérialisation des DTOs, la gestion des erreurs (exceptions métier, validation échouée) et la sécurité (accès refusé pour les rôles non autorisés).
 
@@ -33,7 +33,7 @@ Les vérifications de qualité statique complètent les tests. \textbf{Checkstyl
 \subsubsection{Tests de l'interface utilisateur (Frontend)}
 \label{ch5:frontend_tests}
 
-Le frontend TypeScript utilise \textbf{Vitest (v4.1.7)} avec \textbf{React Testing Library} et \textbf{jsdom} pour l'environnement DOM simulé. La suite de tests frontend comprend \textbf{91 fichiers de test} (86 \texttt{*.test.tsx} + 5 \texttt{*.test.ts}), organisés dans le répertoire \texttt{src/test/} qui reproduit la structure de \texttt{src/}.
+Le frontend TypeScript utilise \textbf{Vitest (v4.1.7)} avec \textbf{React Testing Library} et \textbf{jsdom} pour l'environnement DOM simulé. La suite de tests frontend comprend \textbf{79 fichiers de test} (74 \texttt{*.test.tsx} + 5 \texttt{*.test.ts}), organisés dans le répertoire \texttt{src/test/} qui reproduit la structure de \texttt{src/}.
 
 L'architecture de mocking repose sur \textbf{MSW (Mock Service Worker) v3}, qui intercepte les appels réseau au niveau du service worker du navigateur simulé. Le serveur MSW est configuré dans le fichier de setup des mocks et démarre automatiquement avant chaque test via le setup global. Les handlers de mock fournissent des réponses simulées pour l'ensemble des endpoints API (auth, admin, coordinator, teacher, student). Le module registry expose des helpers de haut niveau : \texttt{mockJson} pour les réponses simples, \texttt{mockPaginated} pour les réponses paginées, \texttt{mockCrud} pour les opérations CRUD complètes, et \texttt{mockEcho} pour retourner le corps de la requête (utile pour tester les mutations).
 
@@ -105,9 +105,9 @@ Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécutio
 
         \textbf{Métrique} & \textbf{Valeur} & \textbf{Outil} \\
         \midrule
-        Classes de test backend (JUnit 5) & 86 & Maven Surefire \\
-        Fichiers de test frontend (Vitest) & 91 & Vitest + v8 coverage \\
-        Tests E2E (Playwright) & $\approx$ 65 & Playwright \\
+        Classes de test backend (JUnit 5) & 82 & Maven Surefire \\
+        Fichiers de test frontend (Vitest) & 79 & Vitest + v8 coverage \\
+        Tests E2E (Playwright) & 7 & Playwright \\
         Couverture lignes backend & 85\% & JaCoCo \\
         Couverture branches backend & 70\% & JaCoCo \\
         Contrôleurs REST & 37 & Comptage manuel \\
@@ -124,7 +124,7 @@ Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécutio
 \subsection{Évaluation globale et limites}
 \label{ch5:evaluation}
 
-Le système répond aux exigences fonctionnelles du cahier des charges. La détection automatique des conflits réduit drastiquement le temps de planification et élimine les erreurs humaines. L'intégration des tests dans le pipeline CI garantit la non-régression des fonctionnalités critiques lors de chaque modification du code. La pyramide de tests -- 86 tests unitaires Java, 91 tests frontend TypeScript, 65 tests E2E Playwright -- offre une couverture à chaque niveau de l'application.
+Le système répond aux exigences fonctionnelles du cahier des charges. La détection automatique des conflits réduit drastiquement le temps de planification et élimine les erreurs humaines. L'intégration des tests dans le pipeline CI garantit la non-régression des fonctionnalités critiques lors de chaque modification du code. La pyramide de tests -- 82 tests unitaires Java, 79 tests frontend TypeScript, 7 tests E2E Playwright -- offre une couverture à chaque niveau de l'application.
 
 Cependant, certaines limites subsistent et méritent d'être documentées. La couverture E2E, bien que fonctionnelle, ne couvre pas encore l'intégralité des cas limites et des parcours utilisateurs complexes, notamment les scénarios de rattrapage et les flux d'erreur (serveur indisponible, token expiré). La génération de PDF repose sur le dialogue d'impression du navigateur, ce qui peut varier légèrement selon le système d'exploitation et la version du navigateur -- une évolution vers une génération côté serveur (via Puppeteer ou iText) est envisagée pour assurer un rendu identique.
 

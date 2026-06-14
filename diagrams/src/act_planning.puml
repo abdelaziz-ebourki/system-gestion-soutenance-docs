@@ -13,7 +13,7 @@ repeat
         :Ajuster les paramètres du créneau;
     else (Non)
         :Enregistrer la planification individuelle;
-        :Statut -> PLANIFIEE;
+        :Statut session -> SCHEDULED;
     endif
 repeat while (D'autres soutenances à planifier ?) is (Oui)
 
@@ -23,7 +23,7 @@ repeat while (D'autres soutenances à planifier ?) is (Oui)
 if (Planning Complet ?) then (Oui)
     :Validation finale et verrouillage;
     :Génération massive des convocations;
-    :Statut -> CONVOQUEE;
+    :Statut session -> COMPLETED;
 else (Non)
     :Finaliser les affectations manquantes;
 endif

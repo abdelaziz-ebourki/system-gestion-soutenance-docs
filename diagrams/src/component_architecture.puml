@@ -12,11 +12,11 @@ skinparam componentStyle uml2
 ' ═══════════════════════════════════════════════
 package "Couche Frontend\n(React 19 + TypeScript 6)" as FE #white {
   component "Module Auth\n(Login, Activation,\nReset Mdp)" as FE_Auth
-  component "Dashboard\nAdmin\n(Stats, Config,\nCRUD)" as FE_Admin
-  component "Dashboard\nCoordonnateur\n(Sessions, Jurys,\nPlanification,\nGroupes, Docs)" as FE_Coord
+  component "Dashboard\nAdmin\n(Stats, Config,\nAudit, Salles,\nDépartements)" as FE_Admin
+  component "Dashboard\nCoordonnateur\n(Sessions, Jurys,\nPlanification, Grades,\nConflits, Groupes,\nDocs)" as FE_Coord
   component "Dashboard\nEnseignant\n(Évaluations,\nEmploi du temps,\nIndisponibilités)" as FE_Teacher
   component "Dashboard\nÉtudiant\n(Groupe, Documents,\nConvocations)" as FE_Student
-  component "Composants\nPartagés\n(shadcn/ui,\nCalendars)" as FE_Shared
+  component "Composants\nPartagés\n(shadcn/ui)" as FE_Shared
   component "Infrastructure\n(API Client JWT,\nTanStack Query,\nMSW)" as FE_Infra
 }
 
@@ -26,12 +26,12 @@ package "Couche Frontend\n(React 19 + TypeScript 6)" as FE #white {
 package "Couche Backend\n(Spring Boot 3.4.6 + Java 17)" as BE #white {
   component "Sécurité\n(Spring Security\n+ JWT)" as BE_Sec
   component "Auth\n(AuthService,\nJWT Provider,\nActivationToken)" as BE_Auth
-  component "Admin\n(Audit, Config,\nDépartements,\nFacultés, Salles)" as BE_Admin
-  component "Coordonnateur\n(Planification,\nConflits, Jurys,\nGroupes, Projets,\nOrdonnancement)" as BE_Coord
-  component "Enseignant\n(Évaluations,\nEmploi du temps,\nIndisponibilités)" as BE_Teacher
-  component "Étudiant\n(Convocations,\nSoutenance,\nDocuments, Groupes)" as BE_Student
-  component "Notifications\n(NotificationService)" as BE_Notif
-  component "Commun\n(Audit AOP, Config,\nDTOs, Mappers,\nExceptions)" as BE_Common
+  component "Admin\n(Audit, Config,\nDépartements,\nFacultés, Salles,\nStats)" as BE_Admin
+  component "Coordonnateur\n(Planification,\nConflits, Jurys,\nGroupes, Projets,\nSoutenance, Documents,\nNotes, Stats)" as BE_Coord
+  component "Enseignant\n(Évaluations,\nEmploi du temps,\nIndisponibilités,\nStats)" as BE_Teacher
+  component "Étudiant\n(Convocations,\nSoutenance,\nDocuments, Groupes,\nStats)" as BE_Student
+  component "Notifications\n(NotificationService,\nEmailService)" as BE_Notif
+  component "Commun\n(Audit AOP, Config,\nDTOs, Mappers,\nExceptions, PDF)" as BE_Common
   component "Utilisateur\n(Gestion Profil)" as BE_User
   component "Seed\n(Init Données Démo)" as BE_Seed
 }
@@ -54,9 +54,9 @@ rectangle "Intégrations Externes" as External #white {
 ' TESTING LAYER
 ' ═══════════════════════════════════════════════
 package "Couche de Test" as Testing #white {
-  component "JUnit 5 +\nMockito\n(86 classes)" as Test_BE
-  component "Vitest +\nRTL\n(91 fichiers)" as Test_FE
-  component "Playwright\n(65 E2E)" as Test_E2E
+  component "JUnit 5 +\nMockito\n(82 classes)" as Test_BE
+  component "Vitest +\nRTL\n(79 fichiers)" as Test_FE
+  component "Playwright\n(7 E2E,\ndépôt séparé)" as Test_E2E
   component "JaCoCo\n(Couverture)" as Test_Coverage
   component "Checkstyle\n/ PMD / SpotBugs" as Test_Static
 }

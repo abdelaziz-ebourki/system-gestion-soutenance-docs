@@ -14,7 +14,7 @@ Ce chapitre détaille la mise en œuvre technique du système de gestion des sou
 \label{ch4:environnement}
 
 \subsubsection{Matériel et Logiciels}
-Le développement a été conduit dans un environnement hybride Windows et Linux, utilisant des outils favorisant la collaboration et la qualité du code. \cref{tab:outils_dev} résume l'ensemble des outils et versions utilisés tout au long du projet.
+Le développement a été conduit dans un environnement hybride Windows et Linux, utilisant des outils favorisant la collaboration et la qualité du code. \Cref{tab:outils_dev} résume l'ensemble des outils et versions utilisés tout au long du projet.
 
 \begin{table}[H]
     \centering
@@ -22,28 +22,28 @@ Le développement a été conduit dans un environnement hybride Windows et Linux
     \begin{tabular}{lll}
         \toprule
 
-        \textbf{Catégorie} & \textbf{Outil} & \textbf{Version} \\
+        \textbf{Catégorie} & \textbf{Outil}                 & \textbf{Version} \\
         \midrule
-        Langage backend & Java & 17 (LTS) \\
-        Framework backend & Spring Boot & 3.4.6 \\
-        Build backend & Maven & 3.9+ \\
-        Langage frontend & TypeScript & 6 (strict) \\
-        Framework frontend & React & 19 \\
-        Bundler frontend & Vite & 8 \\
-        CSS framework & Tailwind CSS & 4 \\
-        Composants UI & shadcn/ui & — \\
-        State management & TanStack Query & v5 \\
-        Routing & React Router & v7 \\
-        Drag \& drop & @dnd-kit/core & — \\
-        Tests backend & JUnit 5 + Mockito & — \\
-        Couverture backend & JaCoCo & — \\
-        Tests frontend & Vitest + React Testing Library & — \\
-        Tests E2E & Playwright & 1.52 \\
-        Mocking frontend & MSW (Mock Service Worker) & v3 \\
-        Conteneurisation & Docker Compose & — \\
-        Email (dev) & Mailpit & — \\
-        API testing & Postman & — \\
-        CI/CD & GitHub Actions & — \\
+        Langage backend    & Java                           & 17 (LTS)         \\
+        Framework backend  & Spring Boot                    & 3.4.6            \\
+        Build backend      & Maven                          & 3.9+             \\
+        Langage frontend   & TypeScript                     & 6 (strict)       \\
+        Framework frontend & React                          & 19               \\
+        Bundler frontend   & Vite                           & 8                \\
+        CSS framework      & Tailwind CSS                   & 4                \\
+        Composants UI      & shadcn/ui                      & —                \\
+        State management   & TanStack Query                 & v5               \\
+        Routing            & React Router                   & v7               \\
+        Drag \& drop       & @dnd-kit/core                  & —                \\
+        Tests backend      & JUnit 5 + Mockito              & —                \\
+        Couverture backend & JaCoCo                         & —                \\
+        Tests frontend     & Vitest + React Testing Library & —                \\
+        Tests E2E          & Playwright                     & 1.52             \\
+        Mocking frontend   & MSW (Mock Service Worker)      & v3               \\
+        Conteneurisation   & Docker Compose                 & —                \\
+        Email (dev)        & Mailpit                        & —                \\
+        API testing        & Postman                        & —                \\
+        CI/CD              & GitHub Actions                 & —                \\
         \bottomrule
     \end{tabular}
     \caption{Outils et versions utilisés dans le projet}
@@ -53,16 +53,16 @@ Le développement a été conduit dans un environnement hybride Windows et Linux
 \subsubsection{Workflow de développement}
 \label{ch4:workflow}
 
-Le projet suit un workflow de développement organisé en cycles courts. Chaque fonctionnalité est développée sur une branche dédiée (\texttt{feature/*}), testée localement, puis mergée sur la branche \texttt{main} via une pull request. Les hooks de pré-commit (Husky + lint-staged) exécutent automatiquement le linting et le formatage avant chaque commit, veillant à ce que le code poussé soit toujours conforme aux standards de l'équipe.
+Le projet suit un workflow de développement organisé en cycles courts. Chaque fonctionnalité est développée sur une branche dédiée (\texttt{feature/*}), testée localement, puis mergée sur la branche \texttt{main} via une pull request. Les hooks de pré-commit (Husky + lint-staged) exécutent automatiquement le linting et le formatage avant chaque commit, veillant à ce que le code poussé soit toujours conforme aux standards de l'équipe (ie: les standards industrielle).
 
-La stratégie de branching est simplifiée mais efficace : la branche \texttt{main} est toujours dans un état stable et déployable, les branches \texttt{feature/*} vivent le temps du développement d'une fonctionnalité, et les branches \texttt{fix/*} sont utilisées pour les corrections de bugs. Les messages de commit suivent les conventions sémantiques : \texttt{feat:} pour les nouvelles fonctionnalités, \texttt{fix:} pour les corrections, \texttt{chore:} pour la maintenance, \texttt{docs:} pour la documentation, et \texttt{test:} pour les ajouts de tests.
+La stratégie de branching est simplifiée mais efficace : la branche \texttt{main} est toujours dans un état stable et déployable, les branches \texttt{feature/*} vivent le temps du développement d'une fonctionnalité, et les branches \texttt{fix/*} sont utilisées pour les corrections de bugs. Les messages de commit suivent les conventions sémantiques : \texttt{feat:} pour les nouvelles fonctionnalités, \texttt{fix:} pour les corrections, \texttt{chore:} pour la maintenance et les résolutions des merges conflicts, \texttt{docs:} pour la documentation, et \texttt{test:} pour les ajouts de tests.
 
 Le pipeline CI/CD (GitHub Actions) automatise la construction et les tests à chaque push. Trois workflows distincts couvrent les trois composants : l'API est construite avec Maven (\texttt{./mvnw package}), l'UI est bundlé avec Vite (\texttt{npm run build}), et les tests E2E s'exécutent avec Playwright contre les deux serveurs démarrés en parallèle. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt E2E lors de chaque fusion sur \texttt{main}.
 
 \subsection{Architecture technique du système}
 \label{ch4:architecture}
 
-L'application suit une architecture web moderne et découplée (API REST + SPA), assurant une séparation nette entre la logique métier et la présentation.
+L'application suit une architecture web moderne et découplée (API REST + SPA), assurant une séparation nette entre la logique métier et la présentation, à l'exception du moteur de détection de conflits. Celui-ci est déployé côté serveur (\texttt{ConflictDetectionService}) pour garantir l'intégrité des données lors de la persistance, et dupliqué côté client (\texttt{conflict-engine.ts}) pour offrir une réactivité immédiate lors de la planification interactive. Cette duplication contrôlée permet au coordinateur de visualiser les conflits en temps réel lors du glisser-déposer dans le \textit{Defense Designer}, sans attendre la réponse du serveur, tout en assurant que la validation finale applique les mêmes six règles de gestion (RG1--RG6).
 
 \subsubsection{Le Backend : API REST Spring Boot}
 \label{ch4:backend}
@@ -144,8 +144,8 @@ L'algorithme d'\textbf{auto-génération} parcourt itérativement les salles, le
 \Cref{lst:use-defense-schedule} montre le cœur de la logique de validation lors du drag-and-drop :
 
 \begin{listing}[H]
-\centering
-\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{typescript}
+    \centering
+    \begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{typescript}
 const handleDragEnd = (event: DragEndEvent) => {
   const { active, over } = event;
   setActiveJuryId(null);
@@ -184,8 +184,8 @@ const handleDragEnd = (event: DragEndEvent) => {
   }
 };
 \end{minted}
-\caption{Logique de validation lors du drag-and-drop (extrait)}
-\label{lst:use-defense-schedule}
+    \caption{Logique de validation lors du drag-and-drop (extrait)}
+    \label{lst:use-defense-schedule}
 \end{listing}
 
 \subsubsection{Le Moteur de Détection de Conflits}
@@ -194,8 +194,8 @@ const handleDragEnd = (event: DragEndEvent) => {
 L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement six vérifications lors de chaque enregistrement. \cref{lst:conflict-service} montre la méthode centrale \texttt{runAllChecks} et l'une des vérifications les plus critiques :
 
 \begin{listing}[H]
-\centering
-\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{java}
+    \centering
+    \begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{java}
 private List<ConflictDetailResponse> runAllChecks(
         Map<String, ConflictSlot> schedule, String defenseSessionId) {
     List<ConflictDetailResponse> conflicts = new ArrayList<>();
@@ -239,15 +239,15 @@ private List<ConflictDetailResponse> checkTeacherDoubleBooked(
     return conflicts;
 }
 \end{minted}
-\caption{Service de détection de conflits (extrait)}
-\label{lst:conflict-service}
+    \caption{Service de détection de conflits (extrait)}
+    \label{lst:conflict-service}
 \end{listing}
 
 Le même moteur est dupliqué côté client en TypeScript (\texttt{conflict-engine.ts}). La fonction \texttt{validateSlotAssignment} implémente les mêmes 6 vérifications avec des messages d'erreur en français et des suggestions de résolution intelligentes. \cref{lst:conflict-engine} montre la structure de la validation côté client :
 
 \begin{listing}[H]
-\centering
-\begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{typescript}
+    \centering
+    \begin{minted}[frame=single, fontsize=\small, breaklines, tabsize=2]{typescript}
 export function validateSlotAssignment(
   projectId: string,
   slot: string,
@@ -270,8 +270,8 @@ export function validateSlotAssignment(
   // RG1, RG3, RG4, RG5, RG6
 }
 \end{minted}
-\caption{Moteur de conflits TypeScript (extrait)}
-\label{lst:conflict-engine}
+    \caption{Moteur de conflits TypeScript (extrait)}
+    \label{lst:conflict-engine}
 \end{listing}
 
 Le moteur client inclut également une fonction \texttt{getSmartSuggestions} qui analyse le contexte pour proposer des alternatives pertinentes (salles libres, créneaux disponibles) lorsqu'un conflit est détecté, améliorant ainsi l'expérience utilisateur. Cette fonction parcourt les salles disponibles pour la date et le créneau conflictuel, filtre par capacité, et retourne la première alternative trouvée accompagnée d'un message d'explication.
@@ -359,48 +359,48 @@ L'interface utilisateur est organisée en sections distinctes accessibles via un
     \begin{tabular}{lll}
         \toprule
 
-        \textbf{Chemin} & \textbf{Page / Composant} & \textbf{Accès} \\
+        \textbf{Chemin}                        & \textbf{Page / Composant} & \textbf{Accès} \\
         \midrule
-        \texttt{/login} & Connexion & Public \\
-        \texttt{/verify-account} & Activation de compte & Public \\
-        \texttt{/forgot-password} & Mot de passe oublié & Public \\
-        \texttt{/reset-password} & Réinitialisation MDP & Public \\
+        \texttt{/login}                        & Connexion                 & Public         \\
+        \texttt{/verify-account}               & Activation de compte      & Public         \\
+        \texttt{/forgot-password}              & Mot de passe oublié       & Public         \\
+        \texttt{/reset-password}               & Réinitialisation MDP      & Public         \\
         \midrule
-        \texttt{/admin} & Dashboard Admin & Admin \\
-        \texttt{/admin/config} & Configuration système & Admin \\
-        \texttt{/admin/departments} & Gestion départements & Admin \\
-        \texttt{/admin/rooms} & Gestion salles & Admin \\
-        \texttt{/admin/users/students} & Gestion étudiants & Admin \\
-        \texttt{/admin/users/teachers} & Gestion enseignants & Admin \\
-        \texttt{/admin/users/coordinators} & Gestion coordinateurs & Admin \\
-        \texttt{/admin/audit-logs} & Journal d'audit & Admin \\
+        \texttt{/admin}                        & Dashboard Admin           & Admin          \\
+        \texttt{/admin/config}                 & Configuration système     & Admin          \\
+        \texttt{/admin/departments}            & Gestion départements      & Admin          \\
+        \texttt{/admin/rooms}                  & Gestion salles            & Admin          \\
+        \texttt{/admin/users/students}         & Gestion étudiants         & Admin          \\
+        \texttt{/admin/users/teachers}         & Gestion enseignants       & Admin          \\
+        \texttt{/admin/users/coordinators}     & Gestion coordinateurs     & Admin          \\
+        \texttt{/admin/audit-logs}             & Journal d'audit           & Admin          \\
         \midrule
-        \texttt{/coordinator} & Dashboard Coordinateur & Coord. \\
-        \texttt{/coordinator/schedule} & Defense Designer & Coord. \\
-        \texttt{/coordinator/projects} & Projets \& Groupes & Coord. \\
-        \texttt{/coordinator/juries} & Constitution jurys & Coord. \\
-        \texttt{/coordinator/defense-sessions} & Sessions de soutenance & Coord. \\
-        \texttt{/coordinator/conflicts} & Tableau des conflits & Coord. \\
-        \texttt{/coordinator/grades} & Suivi des notes & Coord. \\
-        \texttt{/coordinator/documents} & Documents & Coord. \\
+        \texttt{/coordinator}                  & Dashboard Coordinateur    & Coord.         \\
+        \texttt{/coordinator/schedule}         & Defense Designer          & Coord.         \\
+        \texttt{/coordinator/projects}         & Projets \& Groupes        & Coord.         \\
+        \texttt{/coordinator/juries}           & Constitution jurys        & Coord.         \\
+        \texttt{/coordinator/defense-sessions} & Sessions de soutenance    & Coord.         \\
+        \texttt{/coordinator/conflicts}        & Tableau des conflits      & Coord.         \\
+        \texttt{/coordinator/grades}           & Suivi des notes           & Coord.         \\
+        \texttt{/coordinator/documents}        & Documents                 & Coord.         \\
         \midrule
-        \texttt{/teacher} & Dashboard Enseignant & Ens. \\
-        \texttt{/teacher/schedule} & Planning personnel & Ens. \\
-        \texttt{/teacher/evaluations} & Saisie des notes & Ens. \\
-        \texttt{/teacher/unavailability} & Indisponibilités & Ens. \\
+        \texttt{/teacher}                      & Dashboard Enseignant      & Ens.           \\
+        \texttt{/teacher/schedule}             & Planning personnel        & Ens.           \\
+        \texttt{/teacher/evaluations}          & Saisie des notes          & Ens.           \\
+        \texttt{/teacher/unavailability}       & Indisponibilités          & Ens.           \\
         \midrule
-        \texttt{/student} & Dashboard Étudiant & Étud. \\
-        \texttt{/student/group} & Groupe de projet & Étud. \\
-        \texttt{/student/documents} & Documents \& convocation & Étud. \\
+        \texttt{/student}                      & Dashboard Étudiant        & Étud.          \\
+        \texttt{/student/group}                & Groupe de projet          & Étud.          \\
+        \texttt{/student/documents}            & Documents \& convocation  & Étud.          \\
         \midrule
-        \texttt{/profile} & Profil utilisateur & Tous \\
-        \texttt{/notifications} & Notifications & Tous \\
+        \texttt{/profile}                      & Profil utilisateur        & Tous           \\
+        \texttt{/notifications}                & Notifications             & Tous           \\
         \midrule
-        \texttt{/print/evaluation-sheet} & Fiche d'évaluation & Public \\
-        \texttt{/print/attendance-list} & Liste de présence & Public \\
-        \texttt{/print/jury-convocation} & Convocation jury & Public \\
-        \texttt{/print/schedule} & Planning imprimable & Public \\
-        \texttt{/print/proces-verbal} & Procès-verbal & Public \\
+        \texttt{/print/evaluation-sheet}       & Fiche d'évaluation        & Public         \\
+        \texttt{/print/attendance-list}        & Liste de présence         & Public         \\
+        \texttt{/print/jury-convocation}       & Convocation jury          & Public         \\
+        \texttt{/print/schedule}               & Planning imprimable       & Public         \\
+        \texttt{/print/proces-verbal}          & Procès-verbal             & Public         \\
         \bottomrule
     \end{tabular}
     \caption{Cartographie complète des pages de l'application}

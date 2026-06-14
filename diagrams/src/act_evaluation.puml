@@ -2,26 +2,16 @@
 !include puml-theme-pfe.puml
 
 start
-:Démarrage de la soutenance;
-:Statut -> EN_COURS;
+:Coordinateur initialise les évaluations
+pour une soutenance;
 
 repeat
-  :Membres du jury saisissent les notes;
-  :Saisie des observations et remarques;
-backward:Modification si nécessaire;
-repeat while (Saisie terminée pour tous ?) is (Non)
+  :Membre du jury saisit individuellement\nsa note (0-20), observation et présence;
+  :Soumission via POST /api/teacher/evaluations/\{id\};
+backward:Note verrouillée après soumission;
+repeat while (Tous les membres ont soumis ?) is (Non)
 
-:Validation de l'évaluation;
-:Calcul automatique de la moyenne (RG6);
-:Détermination de la décision finale\n(Admis, Admis avec corrections, Ajourné);
-
-:Statut -> EVALUEE;
-
-if (Toutes les soutenances de la session globale sont terminées ?) then (Oui)
-    :Génération du Procès-Verbal (PV);
-    :Clôture officielle de la session globale;
-    :Statut -> CLOTUREE;
-endif
+:Calcul automatique de la moyenne pondérée\n(coefficients par rôle de jury);
 
 stop
 @enduml

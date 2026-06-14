@@ -268,7 +268,7 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
     \label{fig:seq_evaluation}
 \end{figure}
 
-\subsubsection{Diagrammes d'activité et de machine d'états}
+\subsubsection{Diagrammes d'activité}
 \label{ch3:activite}
 
 L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \cref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les six règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat à l'interface.
@@ -280,22 +280,13 @@ L'algorithme de détection des conflits, moteur central du système, est modéli
     \label{fig:act_conflict}
 \end{figure}
 
-\Cref{fig:act_evaluation} modélise le processus d'évaluation d'une soutenance, de la saisie des notes par les membres du jury jusqu'à la clôture de la session. Les notes sont saisies individuellement par chaque membre, puis le système calcule automatiquement la moyenne pondérée en appliquant les coefficients configurés pour la session. Une fois toutes les évaluations soumises, une décision est proposée (Admis, Admis avec corrections, Ajouré) et le procès-verbal peut être généré.
+\Cref{fig:act_evaluation} modélise le processus d'évaluation d'une soutenance. Chaque membre du jury saisit individuellement sa note (sur 20), ses observations et son statut de présence via l'endpoint dédié. La soumission est définitive : une fois enregistrée, la note est verrouillée. Une fois tous les membres ayant soumis, le système calcule automatiquement la moyenne pondérée en appliquant les coefficients configurés par rôle de jury (Président, Rapporteur, Examinateur).
 
 \begin{figure}[H]
     \centering
     \pumlsvg[0.5\textwidth]{act_evaluation}
     \caption{Processus d'évaluation et de notation d'une soutenance}
     \label{fig:act_evaluation}
-\end{figure}
-
-\Cref{fig:state_soutenance} modélise le cycle de vie complet d'une soutenance via une machine à états. La soutenance traverse successivement les états : CREEE, PLANIFIEE, JURY\_AFFECTE, CONVOQUEE, EN\_COURS, EVALUEE, et CLOTUREE. L'état ANNULE reachable depuis PLANIFIEE, CONVOQUEE et EVALUEE permet de gérer les annulations à différents stades du processus. Cette modélisation assure que chaque soutenance suit un parcours validé et que les transitions non autorisées sont bloquées par le système.
-
-\begin{figure}[H]
-    \centering
-    \pumlsvg[0.7\textwidth]{state_soutenance}
-    \caption{Machine à états du cycle de vie d'une soutenance}
-    \label{fig:state_soutenance}
 \end{figure}
 
 \subsection{Architecture logicielle}
@@ -317,12 +308,12 @@ Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$
 
 \begin{itemize}[label=\textcolor{primary}{\textbullet}]
     \item \texttt{auth/} -- authentification JWT, mot de passe oublié, activation de compte
-    \item \texttt{admin/} -- gestion des entités académiques (salles, départements, filières, configuration)
-    \item \texttt{coordinator/} -- cœur métier (projets, groupes, jurys, planification, conflits, notes, documents)
+    \item \texttt{admin/} -- gestion des entités académiques (salles, départements, filières, configuration, stats)
+    \item \texttt{coordinator/} -- cœur métier (projets, groupes, jurys, planification, conflits, soutenances, documents, notes, stats)
     \item \texttt{teacher/} -- evaluations, indisponibilités, planning personnel
     \item \texttt{student/} -- groupe, documents, convocation, statistiques
-    \item \texttt{notification/} -- système de notifications et email
-    \item \texttt{common/} -- configuration Spring Security, exceptions, mappers, audit
+    \item \texttt{notification/} -- système de notifications, email et événements
+    \item \texttt{common/} -- configuration Spring Security, exceptions, mappers, audit, génération PDF
     \item \texttt{seed/} -- initialisation des données de démonstration
     \item \texttt{user/} -- hiérarchie des utilisateurs (User, Teacher, Student, Coordinator)
 \end{itemize}
@@ -365,4 +356,4 @@ Les messages de commit suivent les conventions Git : préfixes sémantiques (\te
 \subsection{Conclusion}
 \label{ch3:conclusion}
 
-Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des six règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité, machine à états) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry assure la maintenabilité du système à long terme.
+Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des six règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industry assure la maintenabilité du système à long terme.

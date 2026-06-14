@@ -19,7 +19,7 @@ activate DB
 DB --> Service : OK
 deactivate DB
 
-Service -> Service : Recalculer moyenne provisoire (RG6)
+Service -> Service : Recalculer moyenne provisoire
 Service -> DB : Mettre à jour résultat final si toutes les notes sont validées
 activate DB
 DB --> Service : OK
