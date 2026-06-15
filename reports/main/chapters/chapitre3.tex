@@ -40,7 +40,7 @@ L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les infor
 \begin{table}[H]
     \centering
     \scriptsize
-    \begin{tabularx}{\textwidth}{lXXXX}
+    \begin{xltabular}{\textwidth}{lXXXX}
         \toprule
 
         \textbf{Fonctionnalité}               & \textbf{Admin} & \textbf{Coord.} & \textbf{Enseign.} & \textbf{Étudiant} \\
@@ -67,7 +67,7 @@ L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les infor
         Téléverser documents de soutenance    & —              & —               & —                 & \checkmark        \\
         Téléchargement convocation            & —              & —               & —                 & \checkmark        \\
         \bottomrule
-    \end{tabularx}
+    \end{xltabular}
     \caption{Répartition des fonctionnalités par acteur}
     \label{tab:acteurs_use_cases}
 \end{table}
@@ -79,7 +79,14 @@ Les besoins sont organisés par modules métier, chacun correspondant à un sous
 
 L'\textbf{authentification} est assurée par le module Gestion Identité via JWT avec tokens d'accès et de rafraîchissement. La récupération de mot de passe utilise un lien à durée limitée (1 heure), et l'activation de compte valide la force du mot de passe (bibliothèque zxcvbn). L'interface de connexion unifiée redirige automatiquement selon le rôle de l'utilisateur.
 
-L'\textbf{administration des filières} (MIP, BCG, etc.) et des niveaux (Licence 3, Master 2, etc.) relève du module Gestion Académique, qui inclut l'import massif des étudiants et des salles via fichiers Excel avec validation des données et gestion des erreurs ligne par ligne. Une interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour.
+L'\textbf{administration des filières} (MIP, BCG, etc.) et des niveaux (Licence 3, Master 2, etc.) relève du module Gestion Académique, qui inclut l'import massif des étudiants et des salles via fichiers Excel avec validation des données et gestion des erreurs ligne par ligne. Le flux technique de cet import, depuis la sélection du fichier jusqu'à la persistance en base de données, est détaillé dans la \Cref{fig:seq_import_data}.
+\begin{figure}[H]
+    \centering
+    \pumlsvg[\textwidth]{seq_import_data}
+    \caption{Séquence d'importation massive des données depuis un fichier Excel}
+    \label{fig:seq_import_data}
+\end{figure}
+Une interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour.
 
 La \textbf{constitution des jurys} est gérée par le module Gestion des Projets et Jurys, qui suit les projets selon des statuts (proposé, approuvé, rejeté) et permet de constituer des jurys selon des templates configurables avec rôles normalisés (Président, Rapporteur, Examinateur). Le suivi de la charge des enseignants évite les sur-affectations.
 
@@ -93,7 +100,9 @@ La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère l
 
 L'\textbf{édition documentaire} produit 5 types de documents PDF (fiches d'évaluation, procès-verbaux, listes de présence, convocations jury, planning complet) générés côté serveur et ouverts dans un nouvel onglet du navigateur. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
 
-Enfin, la gestion des \textbf{groupes d'étudiants} permet aux étudiants de créer ou rejoindre un groupe pendant une fenêtre temporelle définie, et aux coordinateurs d'associer les groupes aux projets. Le module \textbf{documents étudiants} gère le téléversement de fichiers (rapport, présentation, archive) avec respect des délais et période configurables par le coordinateur.
+Enfin, la gestion des \textbf{groupes d'étudiants} permet aux étudiants de créer ou rejoindre un groupe pendant une fenêtre temporelle définie, et aux coordinateurs d'associer les groupes aux projets.
+
+Le module \textbf{documents étudiants} gère le téléversement de fichiers (rapport, présentation, archive) avec respect des délais et période configurables par le coordinateur.
 
 \subsubsection{Besoins non fonctionnels}
 \label{ch3:besoins_non_fonctionnels}
@@ -135,7 +144,7 @@ Ces 6 règles sont implémentées dans deux moteurs distincts mais fonctionnelle
 \begin{table}[H]
     \centering
     \small
-    \begin{tabularx}{\textwidth}{lXccc}
+    \begin{xltabular}{\textwidth}{lXccc}
         \toprule
 
         \textbf{Règle} & \textbf{Description}     & \textbf{Java} & \textbf{TypeScript} & \textbf{Sévérité} \\
@@ -147,7 +156,7 @@ Ces 6 règles sont implémentées dans deux moteurs distincts mais fonctionnelle
         RG5            & Unicité de projet        & \checkmark    & \checkmark          & error             \\
         RG6            & Indisponibilité          & \checkmark    & \checkmark          & error             \\
         \bottomrule
-    \end{tabularx}
+    \end{xltabular}
     \caption{Correspondance entre les règles de gestion et leurs implémentations}
     \label{tab:rg_mapping}
 \end{table}
@@ -172,7 +181,7 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.8\textwidth]{uc_hierarchy}
+    \pumlsvg[\textwidth]{uc_hierarchy}
     \caption{Hiérarchie générale des acteurs}
     \label{fig:uc_hierarchy}
 \end{figure}
@@ -181,7 +190,7 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.7\textwidth]{uc_admin}
+    \pumlsvg[\textwidth]{uc_admin}
     \caption{Cas d'utilisation : Administration du système}
     \label{fig:uc_admin}
 \end{figure}
@@ -199,7 +208,7 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.7\textwidth]{uc_jury}
+    \pumlsvg[\textwidth]{uc_jury}
     \caption{Cas d'utilisation : Enseignant / Membre de jury}
     \label{fig:uc_jury}
 \end{figure}
@@ -208,7 +217,7 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.6\textwidth]{uc_student}
+    \pumlsvg[\textwidth]{uc_student}
     \caption{Cas d'utilisation : Étudiant}
     \label{fig:uc_student}
 \end{figure}
@@ -220,6 +229,8 @@ Le diagramme de classes traduit la structure des données du système. On y obse
 
 Plusieurs choix de conception structurels ont été adoptés pour répondre aux besoins du métier. La composition du jury est modélisée comme une relation enrichie entre une soutenance et un enseignant, permettant d'associer un rôle spécifique (Président, Rapporteur, Examinateur) à chaque membre sans complexifier la structure des entités. Afin de garantir l'intégrité historique des données, les évaluations sont liées aux enseignants de manière à ce que les notes et observations soient préservées même en cas de modification ultérieure de la composition du jury. Enfin, la flexibilité de la notation est assurée par un système de pondération dynamique associé à chaque session, permettant d'ajuster les coefficients de calcul des notes selon le rôle du membre du jury.
 
+Le diagramme de classes présenté en \Cref{fig:class_global} traduit la structure des données du système. On y observe une hiérarchie d'utilisateurs basée sur la spécialisation, permettant de distinguer les responsabilités de chaque rôle tout en centralisant les informations communes.
+
 \begin{figure}[H]
     \centering
     \pumlsvg[0.7\textwidth]{class_global}
@@ -230,7 +241,15 @@ Plusieurs choix de conception structurels ont été adoptés pour répondre aux 
 \subsubsection{Diagrammes de séquence}
 \label{ch3:sequence}
 
-Les diagrammes de séquence modélisent les interactions entre les composants du système pour des cas d'utilisation critiques. Nous en présentons trois qui illustrent les flux les plus complexes.
+Les diagrammes de séquence modélisent les interactions entre les composants du système pour des cas d'utilisation critiques. Nous en présentons six qui illustrent les flux les plus complexes.
+
+\Cref{fig:seq_jury_assignment} modélise le processus de constitution des jurys, détaillant les interactions entre le coordinateur, le service de gestion des jurys et la base de données pour assurer une répartition équitable des membres.
+\begin{figure}[H]
+    \centering
+    \pumlsvg[\textwidth]{seq_jury_assignment}
+    \caption{Séquence d'affectation et de validation des membres du jury}
+    \label{fig:seq_jury_assignment}
+\end{figure}
 
 \Cref{fig:seq_planning} modélise le flux de planification interactive via le \textit{Defense Designer}. Ce processus repose sur un cycle de validation itératif où le frontend et le backend collaborent pour préserver l'absence de conflits :
 
@@ -248,6 +267,20 @@ Les diagrammes de séquence modélisent les interactions entre les composants du
     \pumlsvg[\textwidth]{seq_planning}
     \caption{Séquence de planification interactive via le \textit{Defense Designer}}
     \label{fig:seq_planning}
+\end{figure}
+La \Cref{fig:seq_validate_planning} illustre le flux de validation globale du planning, où le coordinateur verrouille la session pour empêcher toute modification ultérieure et déclenche la génération des documents officiels.
+\begin{figure}[H]
+    \centering
+    \pumlsvg[\textwidth]{seq_validate_planning}
+    \caption{Séquence de validation globale et verrouillage de la session}
+    \label{fig:seq_validate_planning}
+\end{figure}
+L'algorithme d'auto-génération est détaillé dans la \Cref{fig:seq_auto_generation}, montrant comment le système tente de placer chaque projet sur le premier créneau libre disponible en respectant les contraintes de capacité et les règles de gestion.
+\begin{figure}[H]
+    \centering
+    \pumlsvg[\textwidth]{seq_auto_generation}
+    \caption{Séquence de l'algorithme d'auto-génération du planning}
+    \label{fig:seq_auto_generation}
 \end{figure}
 
 \Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les identifiants (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT via un cookie \texttt{httpOnly} sécurisé. Le navigateur gère alors automatiquement l'envoi de ce cookie lors des requêtes suivantes, et le frontend redirige l'utilisateur vers la page correspondant à son rôle.
@@ -279,12 +312,19 @@ L'algorithme de détection des conflits, moteur central du système, est modéli
     \caption{Logique de validation des 6 règles de gestion (RG1-RG6)}
     \label{fig:act_conflict}
 \end{figure}
+Le flux opérationnel global du coordinateur lors de la phase de planification est synthétisé dans le diagramme d'activité de la \Cref{fig:act_planning}, mettant en évidence les boucles de correction et les points de décision.
+\begin{figure}[H]
+    \centering
+    \pumlsvg[0.6\textwidth]{act_planning}
+    \caption{Diagramme d'activité du processus de planification}
+    \label{fig:act_planning}
+\end{figure}
 
-\Cref{fig:act_evaluation} modélise le processus d'évaluation d'une soutenance. Chaque membre du jury saisit individuellement sa note (sur 20), ses observations et son statut de présence via l'endpoint dédié. La soumission est définitive : une fois enregistrée, la note est verrouillée. Une fois tous les membres ayant soumis, le système calcule automatiquement la moyenne pondérée en appliquant les coefficients configurés par rôle de jury (Président, Rapporteur, Examinateur).
+\Cref{fig:act_evaluation} modélise le processus d'évaluation d'une soutenance. Chaque membre du jury saisit individuellement sa note (sur 20), ses observations et son statut de présence via l'endpoint dédié. La soumission est définitive : une fois enregistrée, la note est verrouillée. Une fois tous les membres ayant soumis, le système calcule automatiquement la moyenne pondérée en appliquant les coefficients configurés par rôle de jury.
 
 \begin{figure}[H]
     \centering
-    \pumlsvg[0.5\textwidth]{act_evaluation}
+    \pumlsvg[0.8\textwidth]{act_evaluation}
     \caption{Processus d'évaluation et de notation d'une soutenance}
     \label{fig:act_evaluation}
 \end{figure}
@@ -335,6 +375,7 @@ Les données flexibles sont gérées via les annotations \texttt{@ElementCollect
 
 Les entités de configuration (\texttt{DefenseSettings}) utilisent un pattern singleton avec un identifiant fixe (\texttt{id=1L}), simplifiant la gestion des paramètres globaux par le système.
 
+La structure relationnelle finale, incluant la gestion de l'héritage des utilisateurs et les collections d'éléments pour les données flexibles, est représentée dans le \Cref{fig:mld_schema}.
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{mld_schema}

@@ -1,0 +1,53 @@
+@startuml
+!include puml-theme-pfe.puml
+
+actor "Coordinateur" as Coord
+boundary "Defense Designer" as Front
+control "ScheduleController" as Controller
+entity "AutoGenerationService" as Service
+entity "ConflictDetectionService" as Conflict
+database "Base de données" as DB
+
+Coord -> Front : Clique sur "Générer automatiquement"
+Front -> Controller : POST /api/coordinator/schedules/generation (sessionId)
+activate Controller
+
+Controller -> Service : generateAutomaticSchedule(sessionId)
+activate Service
+
+Service -> DB : Récupérer tous les projets non planifiés de la session
+activate DB
+DB --> Service : Liste des projets
+deactivate DB
+
+loop pour chaque projet à planifier
+    Service -> Service : Rechercher créneau libre selon DefenseSettings
+    
+    loop tentative de placement
+        Service -> Conflict : verifierConflits(projet, créneau)
+        activate Conflict
+        Conflict -> DB : Vérifier disponibilité (Enseignants, Salle)
+        activate DB
+        DB --> Conflict : Statuts
+        deactivate DB
+        Conflict --> Service : Validé / Conflit détecté
+        deactivate Conflict
+        
+        alt Validé
+            Service -> DB : Enregistrer planification
+            activate DB
+            DB --> Service : OK
+            deactivate DB
+            break
+        end
+    end
+end
+
+Service --> Controller : Retourner le planning généré
+deactivate Service
+
+Controller --> Front : 200 OK (JSON Schedule)
+deactivate Controller
+
+Front --> Coord : Afficher le planning suggéré
+@enduml

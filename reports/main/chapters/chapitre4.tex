@@ -19,7 +19,7 @@ Le développement a été conduit dans un environnement hybride Windows et Linux
 \begin{table}[H]
     \centering
     \small
-    \begin{tabularx}{\textwidth}{lXX}
+    \begin{xltabular}{\textwidth}{lXX}
         \toprule
 
         \textbf{Catégorie} & \textbf{Outil}                 & \textbf{Version} \\
@@ -45,7 +45,7 @@ Le développement a été conduit dans un environnement hybride Windows et Linux
         API testing        & Postman                        & —                \\
         CI/CD              & GitHub Actions                 & —                \\
         \bottomrule
-    \end{tabularx}
+    \end{xltabular}
     \caption{Outils et versions utilisés dans le projet}
     \label{tab:outils_dev}
 \end{table}
@@ -418,7 +418,7 @@ Le tableau de bord étudiant (\texttt{/student/dashboard}) affiche les informati
     \label{fig:student-dashboard}
 \end{figure}
 
-La page du groupe (\texttt{/student/group}) permet de créer un groupe de projet, de rejoindre un groupe existant via un code d'invitation, et de consulter la composition actuelle du groupe.
+La page du groupe (\texttt{/student/groups}) permet de créer un groupe de projet, de rejoindre un groupe existant via un code d'invitation, et de consulter la composition actuelle du groupe.
 
 \begin{figure}[H]
     \centering
@@ -444,7 +444,7 @@ L'interface utilisateur est organisée en sections distinctes accessibles via un
 \begin{table}[H]
     \centering
     \small
-    \begin{tabularx}{\textwidth}{lXX}
+    \begin{xltabular}{\textwidth}{lXX}
         \toprule
 
         \textbf{Chemin}                        & \textbf{Page / Composant} & \textbf{Accès} \\
@@ -465,7 +465,7 @@ L'interface utilisateur est organisée en sections distinctes accessibles via un
         \midrule
         \texttt{/coordinator}                  & Tableau de bord coord.    & Coord.         \\
         \texttt{/coordinator/schedule}         & \textit{Defense Designer} & Coord.         \\
-        \texttt{/coordinator/projects}         & Projets \& Groupes        & Coord.         \\
+        \texttt{/coordinator/projects}         & Projets, Groupes et annulations     & Coord.         \\
         \texttt{/coordinator/juries}           & Constitution jurys        & Coord.         \\
         \texttt{/coordinator/defense-sessions} & Sessions de soutenance    & Coord.         \\
         \texttt{/coordinator/conflicts}        & Tableau des conflits      & Coord.         \\
@@ -478,10 +478,11 @@ L'interface utilisateur est organisée en sections distinctes accessibles via un
         \texttt{/teacher/unavailability}       & Indisponibilités          & Ens.           \\
         \midrule
         \texttt{/student}                      & Tableau de bord étud.     & Étud.          \\
-        \texttt{/student/group}                & Groupe de projet          & Étud.          \\
+        \texttt{/student/groups}                & Groupe de projet          & Étud.          \\
         \texttt{/student/documents}            & Documents \& convocation  & Étud.          \\
         \midrule
         \texttt{/profile}                      & Profil utilisateur        & Tous           \\
+        \texttt{/profile/password}                & Modification du mot de passe & Tous           \\
         \texttt{/notifications}                & Notifications             & Tous           \\
         \midrule
         \texttt{/print/evaluation-sheet}       & Fiche d'évaluation        & Public         \\
@@ -490,7 +491,7 @@ L'interface utilisateur est organisée en sections distinctes accessibles via un
         \texttt{/print/schedule}               & Planning imprimable       & Public         \\
         \texttt{/print/proces-verbal}          & Procès-verbal             & Public         \\
         \bottomrule
-    \end{tabularx}
+    \end{xltabular}
     \caption{Cartographie complète des pages de l'application}
     \label{tab:pages_mapping}
 \end{table}

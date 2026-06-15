@@ -3,6 +3,74 @@
 
 skinparam Linetype ortho
 
+' ═══════════════════════════════════════════════════════════════
+' Tables non référencées (en haut pour lisibilité)
+' ═══════════════════════════════════════════════════════════════
+
+entity "defense_settings" as defsettings << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  start_time : VARCHAR
+  end_time : VARCHAR
+  defense_duration : INT
+  break_duration : INT
+  group_creation_start_date : VARCHAR
+  group_creation_end_date : VARCHAR
+}
+
+entity "audit_log" as audit << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  action : VARCHAR
+  entity : VARCHAR
+  entity_id : BIGINT
+  performed_by_email : VARCHAR
+  details : TEXT
+  timestamp : TIMESTAMP
+}
+
+entity "notification" as notif << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  type : ENUM(SUCCESS,WARNING,ERROR,INFO,REMINDER)
+  title : VARCHAR
+  message : TEXT
+  timestamp : TIMESTAMP
+  read : BOOLEAN
+  action_link : VARCHAR
+  actor : VARCHAR
+}
+
+entity "unavailability" as unavail << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  teacher_id : BIGINT
+  date : VARCHAR
+}
+
+entity "unavailability_slots" as uslots << (T, #c2ccd7) >> {
+  * unavailability_id : BIGINT (PK, FK→unavailability)
+  * slot : VARCHAR (PK)
+}
+
+entity "student_document" as sdoc << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  student_id : BIGINT
+  name : VARCHAR
+  type : VARCHAR
+  deadline : VARCHAR
+  status : VARCHAR
+  submitted_at : TIMESTAMP
+  file_path : VARCHAR
+}
+
+unavailability ||--|{ uslots
+
+' ═══════════════════════════════════════════════════════════════
+' Tables référencées (en bas)
+' ═══════════════════════════════════════════════════════════════
+
 entity "users" as users << (T, #c2ccd7) >> {
   * id : BIGINT (PK)
   --
@@ -37,6 +105,59 @@ entity "coordinator" as coordinator << (T, #c2ccd7) >> {
   * id : BIGINT (PK, FK→users)
 }
 
+entity "faculty" as faculty << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  name : VARCHAR
+  code : VARCHAR
+  dean_id : BIGINT (FK→teacher)
+  logo_url : VARCHAR
+}
+
+entity "department" as dept << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  name : VARCHAR
+  code : VARCHAR
+  head_id : BIGINT (FK→teacher)
+  faculty_id : BIGINT (FK→faculty)
+}
+
+entity "level" as level << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  name : VARCHAR
+}
+
+entity "major" as major << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  name : VARCHAR
+}
+
+entity "room" as room << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  name : VARCHAR
+  capacity : INT
+  department_id : BIGINT (FK→department)
+}
+
+entity "jury_role_template" as jrtemplate << (T, #c2ccd7) >> {
+  * id : BIGINT (PK)
+  --
+  name : VARCHAR (U)
+  defense_type : ENUM(PFE,MEMOIRE,THESE)
+}
+
+entity "jury_role_template_roles" as jrtroles << (T, #c2ccd7) >> {
+  * jury_role_template_id : BIGINT (PK, FK→jury_role_template)
+  * name : VARCHAR (PK)
+  --
+  count : INT
+  coefficient : INT
+}
+
 entity "defense_session" as defsession << (T, #c2ccd7) >> {
   * id : BIGINT (PK)
   --
@@ -60,21 +181,6 @@ entity "defense_session_coefficients" as dscoeffs << (T, #c2ccd7) >> {
   * role_name : VARCHAR (PK)
   --
   coefficient : INT
-}
-
-entity "defense" as defense << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  date : DATE
-  time : TIME
-  project_id : BIGINT (FK→project, U)
-  room_id : BIGINT (FK→room)
-}
-
-entity "defense_members" as dmembers << (T, #c2ccd7) >> {
-  * defense_id : BIGINT (PK, FK→defense)
-  * teacher_id : BIGINT (FK→teacher)
-  * role_name : VARCHAR (PK)
 }
 
 entity "project" as project << (T, #c2ccd7) >> {
@@ -106,12 +212,19 @@ entity "group_members" as gmembers << (T, #c2ccd7) >> {
   * student_id : BIGINT (PK, FK→student)
 }
 
-entity "room" as room << (T, #c2ccd7) >> {
+entity "defense" as defense << (T, #c2ccd7) >> {
   * id : BIGINT (PK)
   --
-  name : VARCHAR
-  capacity : INT
-  department_id : BIGINT (FK→department)
+  date : DATE
+  time : TIME
+  project_id : BIGINT (FK→project, U)
+  room_id : BIGINT (FK→room)
+}
+
+entity "defense_members" as dmembers << (T, #c2ccd7) >> {
+  * defense_id : BIGINT (PK, FK→defense)
+  * teacher_id : BIGINT (FK→teacher)
+  * role_name : VARCHAR (PK)
 }
 
 entity "evaluation" as eval << (T, #c2ccd7) >> {
@@ -128,108 +241,9 @@ entity "evaluation" as eval << (T, #c2ccd7) >> {
   defense_id : BIGINT (FK→defense)
 }
 
-entity "unavailability" as unavail << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  teacher_id : BIGINT
-  date : VARCHAR
-}
-
-entity "unavailability_slots" as uslots << (T, #c2ccd7) >> {
-  * unavailability_id : BIGINT (PK, FK→unavailability)
-  * slot : VARCHAR (PK)
-}
-
-entity "notification" as notif << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  type : ENUM(SUCCESS,WARNING,ERROR,INFO,REMINDER)
-  title : VARCHAR
-  message : TEXT
-  timestamp : TIMESTAMP
-  read : BOOLEAN
-  action_link : VARCHAR
-  actor : VARCHAR
-}
-
-entity "student_document" as sdoc << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  student_id : BIGINT
-  name : VARCHAR
-  type : VARCHAR
-  deadline : VARCHAR
-  status : VARCHAR
-  submitted_at : TIMESTAMP
-  file_path : VARCHAR
-}
-
-entity "level" as level << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  name : VARCHAR
-}
-
-entity "major" as major << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  name : VARCHAR
-}
-
-entity "department" as dept << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  name : VARCHAR
-  code : VARCHAR
-  head_id : BIGINT (FK→teacher)
-  faculty_id : BIGINT (FK→faculty)
-}
-
-entity "faculty" as faculty << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  name : VARCHAR
-  code : VARCHAR
-  dean_id : BIGINT (FK→teacher)
-  logo_url : VARCHAR
-}
-
-entity "defense_settings" as defsettings << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  start_time : VARCHAR
-  end_time : VARCHAR
-  defense_duration : INT
-  break_duration : INT
-  group_creation_start_date : VARCHAR
-  group_creation_end_date : VARCHAR
-}
-
-entity "jury_role_template" as jrtemplate << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  name : VARCHAR (U)
-  defense_type : ENUM(PFE,MEMOIRE,THESE)
-}
-
-entity "jury_role_template_roles" as jrtroles << (T, #c2ccd7) >> {
-  * jury_role_template_id : BIGINT (PK, FK→jury_role_template)
-  * name : VARCHAR (PK)
-  --
-  count : INT
-  coefficient : INT
-}
-
-entity "audit_log" as audit << (T, #c2ccd7) >> {
-  * id : BIGINT (PK)
-  --
-  action : VARCHAR
-  entity : VARCHAR
-  entity_id : BIGINT
-  performed_by_email : VARCHAR
-  details : TEXT
-  timestamp : TIMESTAMP
-}
+' ═══════════════════════════════════════════════════════════════
+' Relations
+' ═══════════════════════════════════════════════════════════════
 
 users ||--o| student
 users ||--o| teacher

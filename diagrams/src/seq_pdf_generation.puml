@@ -2,23 +2,42 @@
 !include puml-theme-pfe.puml
 
 actor "Utilisateur" as User
-boundary "Print Component (React)" as Front
-entity "Browser Engine" as Browser
-entity "CSS Styles (@media print)" as CSS
+boundary "Interface Documents" as Front
+control "DocumentController" as Controller
+entity "DocumentGenerationService" as Service
+entity "ThymeleafEngine" as Template
+entity "OpenHTMLToPDF" as PdfEngine
+database "Base de données" as DB
 
-User -> Front : Cliquer sur "Imprimer la convocation"
-activate Front
+User -> Front : Cliquer sur "Télécharger PDF" (type, id)
+Front -> Controller : GET /api/documents/generate?type=convocation&id=123
+activate Controller
 
-Front -> Front : Charger données de la soutenance
-Front -> Browser : Demander l'impression (window.print())
-deactivate Front
+Controller -> Service : generatePdf(type, id)
+activate Service
 
-activate Browser
-Browser -> CSS : Appliquer styles d'impression
-CSS -> Browser : Masquer UI (Navigation, Buttons)\nForcer format A4 / Marges
-Browser -> User : Afficher dialogue d'impression système
-User -> Browser : Confirmer "Enregistrer en PDF"
-Browser -> User : Générer fichier PDF local
-deactivate Browser
+Service -> DB : Récupérer données nécessaires (Soutenance, Étudiant, Jury)
+activate DB
+DB --> Service : Data Object
+deactivate DB
 
+Service -> Template : Traiter template HTML avec données (Context)
+activate Template
+Template -> Template : Injection des variables
+Template --> Service : HTML finalisé
+deactivate Template
+
+Service -> PdfEngine : Convertir HTML $\rightarrow$ PDF (CSS-in-PDF)
+activate PdfEngine
+PdfEngine -> PdfEngine : Rendu OpenHTMLToPDF
+PdfEngine --> Service : Flux binaire PDF (byte[])
+deactivate PdfEngine
+
+Service --> Controller : Retourner le flux PDF
+deactivate Service
+
+Controller --> Front : 200 OK (Content-Type: application/pdf)
+deactivate Controller
+
+Front -> User : Déclencher téléchargement du fichier .pdf
 @enduml

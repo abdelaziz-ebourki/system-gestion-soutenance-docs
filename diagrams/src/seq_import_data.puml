@@ -7,7 +7,7 @@ control "Controller" as Controller
 entity "Import Service" as Service
 database "Base de données" as DB
 
-Coord -> Front : Sélectionne fichier (CSV/Excel)
+Coord -> Front : Sélectionne fichier Excel
 Front -> Controller : POST /api/import/students (file)
 activate Controller
 

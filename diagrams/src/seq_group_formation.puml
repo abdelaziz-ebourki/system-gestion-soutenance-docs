@@ -1,0 +1,75 @@
+@startuml
+!include puml-theme-pfe.puml
+
+actor "Étudiant" as Student
+actor "Coordinateur" as Coord
+boundary "Interface Groupes" as Front
+control "GroupController" as Controller
+entity "GroupService" as Service
+database "Base de données" as DB
+
+== Phase de Création (Étudiant) ==
+
+Student -> Front : Initier création de groupe
+Front -> Controller : POST /api/student/groups (members)
+activate Controller
+
+Controller -> Service : creerGroupe(members)
+activate Service
+
+Service -> DB : Vérifier éligibilité des membres
+activate DB
+DB --> Service : OK
+deactivate DB
+
+Service -> DB : Sauvegarder groupe (Statut: DRAFT)
+activate DB
+DB --> Service : OK
+deactivate DB
+
+Service --> Controller : Groupe créé avec succès
+deactivate Service
+
+Controller --> Front : 201 Created
+deactivate Controller
+
+Front --> Student : Groupe enregistré (en attente de validation)
+
+== Phase de Validation (Coordinateur) ==
+
+Coord -> Front : Consulter les groupes en attente
+Front -> Controller : GET /api/coordinator/groups?status=DRAFT
+activate Controller
+
+Controller -> Service : listerGroupesBrouillons()
+activate Service
+Service -> DB : Récupérer groupes DRAFT
+activate DB
+DB --> Service : Liste
+deactivate DB
+Service --> Controller : Liste des groupes
+deactivate Service
+
+Controller --> Front : 200 OK (Liste JSON)
+deactivate Controller
+
+Coord -> Front : Valider le groupe
+Front -> Controller : PATCH /api/coordinator/groups/{id}/validate
+activate Controller
+
+Controller -> Service : validerGroupe(id)
+activate Service
+
+Service -> DB : Mise à jour Statut (DRAFT -> ACTIVE)
+activate DB
+DB --> Service : OK
+deactivate DB
+
+Service --> Controller : Groupe activé
+deactivate Service
+
+Controller --> Front : 200 OK
+deactivate Controller
+
+Front --> Coord : Afficher confirmation de validation
+@enduml

@@ -1,7 +1,7 @@
 @startuml
 !include puml-theme-pfe.puml
 
-title Structure des packages — Backend Spring Boot
+top to bottom direction
 
 package "com.system_gestion_soutenance.api" as root {
 

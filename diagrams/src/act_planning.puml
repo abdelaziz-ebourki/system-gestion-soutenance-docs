@@ -2,31 +2,34 @@
 !include puml-theme-pfe.puml
 
 start
-:Administrateur définit la Session globale;
-:Coordinateur accède à la session globale;
+:Coordinateur crée la Session de soutenance;
+:Définition des dates, coefficients et durées\n(Statut: DRAFT);
+:Activation de la session\n(Statut: ACTIVE);
 
 repeat
-    :Planification d'une soutenance individuelle\n(Étudiant, Salle, Date, Créneau);
+    :Planification d'une soutenance individuelle;
     :Validation automatique des contraintes (RG1, RG2, RG3, RG5, RG6);
     if (Conflits détectés ?) then (Oui)
         :Afficher alertes de conflit;
         :Ajuster les paramètres du créneau;
     else (Non)
         :Enregistrer la planification individuelle;
-        :Statut session -> SCHEDULED;
     endif
 repeat while (D'autres soutenances à planifier ?) is (Oui)
 
-:Affectation des jurys par;
+:Affectation des jurys par soutenance;
 :Vérification RG4 (conflit encadrant);
 
 if (Planning Complet ?) then (Oui)
     :Validation finale et verrouillage;
     :Génération massive des convocations;
-    :Statut session -> COMPLETED;
+    :Statut session -> SCHEDULED;
 else (Non)
     :Finaliser les affectations manquantes;
 endif
+
+:Clôture de la session après soutenances;
+:Statut session -> COMPLETED;
 
 stop
 @enduml
