@@ -1,5 +1,27 @@
 @startmindmap
 !include puml-theme-pfe.puml
+
+<style>
+mindmapDiagram {
+  node {
+    BackgroundColor $SECONDARY
+    LineColor $PRIMARY
+    FontColor $TEXT
+  }
+  rootNode {
+    BackgroundColor $PRIMARY
+    FontColor $WHITE
+    FontStyle bold
+  }
+  leafNode {
+    BackgroundColor $WHITE
+  }
+  arrow {
+    LineColor $PRIMARY
+  }
+}
+</style>
+
 * Organigramme
 ** Doyen\nPr. Mohammed TALBI
 *** Départements

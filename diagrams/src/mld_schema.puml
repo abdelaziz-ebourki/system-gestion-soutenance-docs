@@ -41,16 +41,10 @@ entity "notification" as notif << (T, #c2ccd7) >> {
   actor : VARCHAR
 }
 
-entity "unavailability" as unavail << (T, #c2ccd7) >> {
+entity "teacher_rank" as trank << (T, #c2ccd7) >> {
   * id : BIGINT (PK)
   --
-  teacher_id : BIGINT
-  date : VARCHAR
-}
-
-entity "unavailability_slots" as uslots << (T, #c2ccd7) >> {
-  * unavailability_id : BIGINT (PK, FK→unavailability)
-  * slot : VARCHAR (PK)
+  name : VARCHAR
 }
 
 entity "student_document" as sdoc << (T, #c2ccd7) >> {
@@ -64,8 +58,6 @@ entity "student_document" as sdoc << (T, #c2ccd7) >> {
   submitted_at : TIMESTAMP
   file_path : VARCHAR
 }
-
-unavailability ||--|{ uslots
 
 ' ═══════════════════════════════════════════════════════════════
 ' Tables référencées (en bas)
@@ -98,6 +90,7 @@ entity "student" as student << (T, #c2ccd7) >> {
 entity "teacher" as teacher << (T, #c2ccd7) >> {
   * id : BIGINT (PK, FK→users)
   --
+  teacher_rank_id : BIGINT (FK→teacher_rank)
   department_id : BIGINT (FK→department)
 }
 
@@ -133,6 +126,7 @@ entity "major" as major << (T, #c2ccd7) >> {
   * id : BIGINT (PK)
   --
   name : VARCHAR
+  department_id : BIGINT (FK→department)
 }
 
 entity "room" as room << (T, #c2ccd7) >> {
@@ -251,7 +245,9 @@ users ||--o| coordinator
 
 student }o--|| major
 student }o--|| level
+major }o--|| dept
 
+teacher }o--|| trank
 teacher }o--|| dept
 
 dept }o--|| faculty
@@ -276,8 +272,6 @@ teacher ||--o{ dmembers
 defsession ||--|{ dscoeffs
 defsession }o--|| jrtemplate
 jrtemplate ||--|{ jrtroles
-
-defsession ||--o{ cgroup : session_id
 
 eval }o--|| defense
 

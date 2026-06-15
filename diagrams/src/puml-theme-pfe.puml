@@ -59,25 +59,3 @@ skinparam ArrowFontColor $PRIMARY
 
 skinparam PackageBackgroundColor $WHITE
 skinparam PackageBorderColor $PRIMARY
-
-' Mindmap styling (skinparam doesn't affect mindmaps)
-<style>
-mindmapDiagram {
-  node {
-    BackgroundColor $SECONDARY
-    LineColor $PRIMARY
-    FontColor $TEXT
-  }
-  rootNode {
-    BackgroundColor $PRIMARY
-    FontColor $WHITE
-    FontStyle bold
-  }
-  leafNode {
-    BackgroundColor $WHITE
-  }
-  arrow {
-    LineColor $PRIMARY
-  }
-}
-</style>

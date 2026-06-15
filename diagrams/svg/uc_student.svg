@@ -1,1 +1,103 @@
-<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="742px" preserveAspectRatio="none" style="width:663px;height:742px;background:#FFFFFF;" version="1.1" viewBox="0 0 663 742" width="663px" zoomAndPan="magnify"><defs/><g><!--cluster Module ?tudiant--><g id="cluster_Module &#201;tudiant"><rect fill="#FFFFFF" height="729" rx="4" ry="4" style="stroke:#008080;stroke-width:1.0;" width="553" x="104" y="7"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="100" x="330.5" y="26.8281">Module &#201;tudiant</text></g><g id="elem_Dashboard"><ellipse cx="219.7523" cy="92.7562" fill="#F8F9FA" rx="97.7523" ry="40.2562" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="112" x="163.7523" y="82.2402">Consulter le tableau</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="43" x="198.2523" y="108.5843">de bord</text></g><g id="elem_CreateGroup"><ellipse cx="220.1102" cy="190.1281" fill="#F8F9FA" rx="83.6102" ry="21.6281" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="92" x="174.1102" y="192.7841">Cr&#233;er un groupe</text></g><g id="elem_JoinGroup"><ellipse cx="219.8071" cy="268.8614" fill="#F8F9FA" rx="97.3071" ry="21.8614" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="113" x="163.3071" y="271.5175">Rejoindre un groupe</text></g><g id="elem_ViewGroup"><ellipse cx="219.8431" cy="348.8686" fill="#F8F9FA" rx="99.8431" ry="22.3686" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="120" x="159.8431" y="351.5246">Consulter son groupe</text></g><g id="elem_DefenseDetails"><ellipse cx="542.4594" cy="603.7562" fill="#F8F9FA" rx="98.4594" ry="40.2562" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="113" x="485.9594" y="593.2402">Consulter les d&#233;tails</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="95" x="494.9594" y="619.5843">de la soutenance</text></g><g id="elem_DownloadConv"><ellipse cx="220.1249" cy="446.7562" fill="#F8F9FA" rx="75.1249" ry="40.2562" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="68" x="186.1249" y="436.2402">T&#233;l&#233;charger</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="80" x="180.1249" y="462.5843">la convocation</text></g><g id="elem_UploadDocs"><ellipse cx="220.1604" cy="562.7562" fill="#F8F9FA" rx="78.6604" ry="40.2562" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="60" x="190.1604" y="552.2402">T&#233;l&#233;verser</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="85" x="177.6604" y="578.5843">des documents</text></g><g id="elem_Result"><ellipse cx="219.9594" cy="678.7562" fill="#F8F9FA" rx="98.4594" ry="40.2562" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="113" x="163.4594" y="668.2402">Consulter le r&#233;sultat</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="95" x="172.4594" y="694.5843">de la soutenance</text></g><!--entity Student--><g id="elem_Student"><ellipse cx="29" cy="314.5" fill="#F8F9FA" rx="8" ry="8" style="stroke:#008080;stroke-width:0.5;"/><path d="M29,322.5 L29,349.5 M16,330.5 L42,330.5 M29,349.5 L16,364.5 M29,349.5 L42,364.5 " fill="none" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="46" x="6" y="383.8281">&#201;tudiant</text></g><!--link DownloadConv to DefenseDetails--><g id="link_DownloadConv_DefenseDetails"><path d="M276.1,473.99 C332.29,501.52 413.9917,541.5407 472.9517,570.4207 " fill="none" id="DownloadConv-to-DefenseDetails" style="stroke:#008080;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#008080" points="478.34,573.06,472.0171,565.5088,473.8497,570.8606,468.498,572.6932,478.34,573.06" style="stroke:#008080;stroke-width:1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="52" x="356" y="502.8281">&#171;include&#187;</text></g><!--link Result to DefenseDetails--><g id="link_Result_DefenseDetails"><path d="M306.05,659.1 C352.59,648.21 404.2479,636.1176 450.7679,625.2276 " fill="none" id="Result-to-DefenseDetails" style="stroke:#008080;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#008080" points="456.61,623.86,446.9352,622.0167,451.7416,624.9997,448.7586,629.8061,456.61,623.86" style="stroke:#008080;stroke-width:1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="50" x="357" y="625.8281">&#171;extend&#187;</text></g><!--link Student to Dashboard--><g id="link_Student_Dashboard"><path d="M34.46,305.87 C41.05,262.11 57.15,194.76 96,151 C108.46,136.96 119.6602,128.7066 136.6102,120.3366 " fill="none" id="Student-to-Dashboard" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="141.99,117.68,132.1492,118.0783,137.5068,119.8938,135.6913,125.2514,141.99,117.68" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Student to CreateGroup--><g id="link_Student_CreateGroup"><path d="M44.38,305.83 C54.96,280.2 71.74,248.92 96,229 C111.5,216.28 125.449,209.424 144.509,203.634 " fill="none" id="Student-to-CreateGroup" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="150.25,201.89,140.4759,200.6787,145.4659,203.3433,142.8012,208.3333,150.25,201.89" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Student to JoinGroup--><g id="link_Student_JoinGroup"><path d="M57.16,330.6 C68.79,323.24 82.72,315.08 96,309 C115.5,300.07 131.8378,294.0345 151.8478,287.7245 " fill="none" id="Student-to-JoinGroup" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="157.57,285.92,147.7837,284.8119,152.8015,287.4237,150.1896,292.4415,157.57,285.92" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Student to ViewGroup--><g id="link_Student_ViewGroup"><path d="M57.08,349 C73.92,349 90.72,349 113.9,349 " fill="none" id="Student-to-ViewGroup" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="119.9,349,110.9,345,114.9,349,110.9,353,119.9,349" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Student to DownloadConv--><g id="link_Student_DownloadConv"><path d="M57.24,366.39 C69,373.66 83.01,382.03 96,389 C117.01,400.28 135.1484,409.1624 155.9884,418.8424 " fill="none" id="Student-to-DownloadConv" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="161.43,421.37,154.9526,413.9509,156.8953,419.2637,151.5825,421.2064,161.43,421.37" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Student to UploadDocs--><g id="link_Student_UploadDocs"><path d="M39.23,392.11 C48.5,426.37 65.85,473.61 96,505 C111.45,521.09 126.7717,530.7853 146.8717,539.6653 " fill="none" id="Student-to-UploadDocs" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="152.36,542.09,145.7441,534.7942,147.7864,540.0694,142.5112,542.1118,152.36,542.09" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Student to Result--><g id="link_Student_Result"><path d="M29.46,392.17 C30.96,450.42 41.8,554.53 96,621 C107.79,635.45 118.6402,643.8331 135.4502,652.2131 " fill="none" id="Student-to-Result" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="140.82,654.89,134.55,647.2948,136.3452,652.6593,130.9808,654.4545,140.82,654.89" style="stroke:#008080;stroke-width:1.0;"/></g><!--SRC=[VP9DQiCm48NtEiKqU-S09NWJGw7GJVzMsKoaYUsYQ8n-aaBf0NeKdyCNgsG78eSatXWzVMyqcgU7raWT544Nzhhm3Usfw7QqJ4kXQUV1CzYsRZoerfBqBHiXK7gsi1Z-V50j6hy0TF0M5sIy40b3Ksk2nGkh4FyP-2CWVi6HH1U1DHiNj2SB4VEurOHXOs8_MxPgB5kXQxQCLbqOxT17Lp1GMmuTZUpQ4dfwIiASVgKlResoT65uZkeL_DoLund_sTBnBg_9WHfwZwrsupqqnXh1aq4ZfneLxSWugcY4veNUXruFlMpGrcGt9febcmDBJ7EVt7mqcb758m_Nl0UoBbbLQeHbsCT8tEZyw9AlOkdkH12dcXReRpJ_IcbR_0gHDmBBPNbnBtY4rUhqkCfIJBvR77t7CrJ4nEaHGL6KMVAvccUSw-SeS_KSsAnoFiHy8vjHBa_T_mC0]--></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="675px" preserveAspectRatio="none" style="width:578px;height:675px;" version="1.1" viewBox="0 0 578 675" width="578px" zoomAndPan="magnify"><defs/><g><!--MD5=[21900fc23ff52ac00c106cc72d171e7d]
+cluster Module Étudiant--><rect fill="#FFFFFF" height="640" rx="4" ry="4" style="stroke: #008080; stroke-width: 1.5;" width="458" x="109" y="24"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="100" x="288" y="43.8281">Module Étudiant</text><ellipse cx="200.5179" cy="101.2271" fill="#F8F9FA" rx="69.5179" ry="31.7271" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="112" x="144.5179" y="98.5682">Consulter le tableau</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="43" x="179.0179" y="124.9123">de bord</text><ellipse cx="200.3314" cy="184.9199" fill="#F8F9FA" rx="58.8314" ry="17.4199" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="92" x="154.3314" y="189.5919">Créer un groupe</text><ellipse cx="200.6767" cy="255.1021" fill="#F8F9FA" rx="71.1767" ry="17.6021" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="113" x="144.1767" y="259.7741">Rejoindre un groupe</text><ellipse cx="200.2927" cy="325.1499" fill="#F8F9FA" rx="75.2927" ry="17.6499" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="120" x="140.2927" y="329.822">Consulter son groupe</text><ellipse cx="475.3124" cy="495.9757" fill="#F8F9FA" rx="75.3124" ry="33.9757" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="113" x="418.8124" y="489.4874">Consulter les détails</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="95" x="427.8124" y="515.8315">de la soutenance</text><ellipse cx="200.6205" cy="411.0126" fill="#F8F9FA" rx="55.1205" ry="33.5126" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="68" x="166.6205" y="400.7303">Télécharger</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="80" x="160.6205" y="427.0744">la convocation</text><ellipse cx="200.5617" cy="512.206" fill="#F8F9FA" rx="56.5617" ry="32.706" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="60" x="170.5617" y="500.441">Téléverser</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="85" x="158.0617" y="526.7851">des documents</text><ellipse cx="200.3124" cy="613.9757" fill="#F8F9FA" rx="75.3124" ry="33.9757" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="113" x="143.8124" y="607.4874">Consulter le résultat</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="95" x="152.8124" y="633.8315">de la soutenance</text><!--MD5=[494c489cc4328319247ec2e1625e02a3]
+entity Student--><ellipse cx="34" cy="290.5" fill="#F8F9FA" rx="8" ry="8" style="stroke: #008080; stroke-width: 1.5;"/><path d="M34,298.5 L34,325.5 M21,306.5 L47,306.5 M34,325.5 L21,340.5 M34,325.5 L47,340.5 " fill="none" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="46" x="11" y="360.8281">Étudiant</text><!--MD5=[c7b687f1f4d3c93cf367c44c89d3447a]
+link DownloadConv to DefenseDetails--><path d="M249.68,426 C293.63,439.69 359,460.04 407.93,475.27 " fill="none" id="DownloadConv-&gt;DefenseDetails" style="stroke: #008080; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#008080" points="412.91,476.82,405.5061,470.3252,408.1361,475.3335,403.1277,477.9635,412.91,476.82" style="stroke: #008080; stroke-width: 1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="52" x="312" y="436.8281">«include»</text><!--MD5=[b37464986b066c85c0d18b4d4199c4de]
+link Result to DefenseDetails--><path d="M255.76,590.55 C301.92,570.6 368.07,542 415.52,521.49 " fill="none" id="Result-&gt;DefenseDetails" style="stroke: #008080; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#008080" points="420.34,519.41,410.4916,519.3157,415.7517,521.3968,413.6705,526.6569,420.34,519.41" style="stroke: #008080; stroke-width: 1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="50" x="313" y="535.8281">«extend»</text><!--MD5=[81cba91dad6ec711e1d723eb368de13d]
+link Student to Dashboard--><path d="M42.28,280.71 C50.62,242.17 67.69,186.86 101,150 C111.53,138.35 125.45,129.13 139.5,121.98 " fill="none" id="Student-&gt;Dashboard" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="144.27,119.63,134.4291,120.0269,139.7865,121.8432,137.9703,127.2005,144.27,119.63" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[9fd3a7e924a3c3819d1057208d96659c]
+link Student to CreateGroup--><path d="M54.3,280.74 C65.34,259.84 81,236.02 101,220 C114.28,209.36 131.06,201.81 146.98,196.53 " fill="none" id="Student-&gt;CreateGroup" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="151.89,194.96,142.0987,193.8965,147.1284,196.4854,144.5394,201.5151,151.89,194.96" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[3bf0367e45e6915c23f094fa0d164851]
+link Student to JoinGroup--><path d="M62.17,309.44 C73.92,303.02 87.94,295.75 101,290 C117.11,282.91 135.15,276.17 151.34,270.53 " fill="none" id="Student-&gt;JoinGroup" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="156.3,268.82,146.4857,267.9952,151.5769,270.4609,149.1112,275.5521,156.3,268.82" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[eed5a467a37e26e67fc71f4b66ef89c3]
+link Student to ViewGroup--><path d="M62.16,325 C77.98,325 98.82,325 119.48,325 " fill="none" id="Student-&gt;ViewGroup" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="124.73,325,115.73,321,119.73,325,115.73,329,124.73,325" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[686742af4324c98454d3da8996246426]
+link Student to DownloadConv--><path d="M62.26,339.53 C74.15,345.85 88.25,353.32 101,360 C117.99,368.91 136.68,378.6 153.17,387.13 " fill="none" id="Student-&gt;DownloadConv" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="157.76,389.5,151.6064,381.8102,153.3197,387.2013,147.9286,388.9146,157.76,389.5" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[02b45990907b056a45eb927c71dd6641]
+link Student to UploadDocs--><path d="M48.01,369.22 C58.44,398.47 75.6,436.07 101,462 C113.88,475.15 130.95,485.47 147.25,493.23 " fill="none" id="Student-&gt;UploadDocs" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="151.82,495.35,145.3572,487.9182,147.2894,493.2348,141.9728,495.1671,151.82,495.35" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[79444447905027a7eb0527a4048bf000]
+link Student to Result--><path d="M36.99,369.04 C41.45,420.51 55.71,505.8 101,562 C110.43,573.7 123.21,583.09 136.44,590.49 " fill="none" id="Student-&gt;Result" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="140.94,592.93,134.9348,585.1238,136.5445,590.5467,131.1216,592.1565,140.94,592.93" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[8a4bc9e6b096e93773562d8cee961722]
+@startuml
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam Padding 5
+skinparam defaultFontName "SansSerif"
+skinparam defaultFontSize 12
+
+skinparam ActivityBackgroundColor #F8F9FA
+skinparam ActivityBorderColor #008080
+skinparam ActivityDiamondBackgroundColor #E67E22
+skinparam ActivityDiamondBorderColor #E67E22
+skinparam ActivityDiamondFontColor #FFFFFF
+
+skinparam ActorBackgroundColor #F8F9FA
+skinparam ActorBorderColor #008080
+
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #008080
+skinparam ClassHeaderBackgroundColor #008080
+skinparam ClassAttributeIconSize 0
+
+skinparam ComponentBackgroundColor #F8F9FA
+skinparam ComponentBorderColor #008080
+
+skinparam DatabaseBackgroundColor #F8F9FA
+skinparam DatabaseBorderColor #008080
+
+skinparam NoteBackgroundColor #FFF2E6
+skinparam NoteBorderColor #E67E22
+
+skinparam StateBackgroundColor #F8F9FA
+skinparam StateBorderColor #008080
+
+skinparam UsecaseBackgroundColor #F8F9FA
+skinparam UsecaseBorderColor #008080
+
+skinparam SequenceGroupBackgroundColor #F8F9FA
+skinparam SequenceGroupBorderColor #008080
+skinparam SequenceLifeLineBorderColor #008080
+skinparam SequenceParticipantBackgroundColor #F8F9FA
+skinparam SequenceParticipantBorderColor #008080
+skinparam ControlBackgroundColor #F8F9FA
+skinparam ControlBorderColor #008080
+skinparam BoundaryBackgroundColor #F8F9FA
+skinparam BoundaryBorderColor #008080
+skinparam EntityBackgroundColor #F8F9FA
+skinparam EntityBorderColor #008080
+
+skinparam ArrowColor #008080
+skinparam ArrowFontColor #008080
+
+skinparam PackageBackgroundColor #FFFFFF
+skinparam PackageBorderColor #008080
+left to right direction
+
+actor "Étudiant" as Student
+
+rectangle "Module Étudiant" {
+    usecase "Consulter le tableau\nde bord" as Dashboard
+    usecase "Créer un groupe" as CreateGroup
+    usecase "Rejoindre un groupe" as JoinGroup
+    usecase "Consulter son groupe" as ViewGroup
+    usecase "Consulter les détails\nde la soutenance" as DefenseDetails
+    usecase "Télécharger\nla convocation" as DownloadConv
+    usecase "Téléverser\ndes documents" as UploadDocs
+    usecase "Consulter le résultat\nde la soutenance" as Result
+}
+
+DownloadConv ..> DefenseDetails : <<include>>
+Result ..> DefenseDetails : <<extend>>
+
+Student - -> Dashboard
+Student - -> CreateGroup
+Student - -> JoinGroup
+Student - -> ViewGroup
+Student - -> DownloadConv
+Student - -> UploadDocs
+Student - -> Result
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 11:22:07 WEST 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 21.0.11+10-1-24.04.2-Ubuntu
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

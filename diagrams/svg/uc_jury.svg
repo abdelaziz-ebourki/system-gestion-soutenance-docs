@@ -1,1 +1,94 @@
-<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="435px" preserveAspectRatio="none" style="width:797px;height:435px;background:#FFFFFF;" version="1.1" viewBox="0 0 797 435" width="797px" zoomAndPan="magnify"><defs/><g><!--cluster Module Enseignant--><g id="cluster_Module Enseignant"><rect fill="#FFFFFF" height="422" rx="4" ry="4" style="stroke:#008080;stroke-width:1.0;" width="572" x="219" y="7"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="116" x="447" y="26.8281">Module Enseignant</text></g><g id="elem_Schedule"><ellipse cx="344.6123" cy="74.2225" fill="#F8F9FA" rx="99.1123" ry="22.2225" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="118" x="285.6123" y="76.8785">Consulter le planning</text></g><g id="elem_Unavail"><ellipse cx="344.7462" cy="171.7562" fill="#F8F9FA" rx="77.2462" ry="40.2562" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="72" x="308.7462" y="161.2402">D&#233;clarer des</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="83" x="303.2462" y="187.5843">indisponibilit&#233;s</text></g><g id="elem_EvalInput"><ellipse cx="676.7488" cy="322.1498" fill="#F8F9FA" rx="98.7488" ry="22.1498" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="117" x="618.2488" y="324.8058">Saisir les &#233;valuations</text></g><g id="elem_EvalSubmit"><ellipse cx="344.7407" cy="271.8481" fill="#F8F9FA" rx="109.7407" ry="24.3481" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="146" x="271.7407" y="274.5042">Soumettre les\&#233;valuations</text></g><g id="elem_EvalHistory"><ellipse cx="344.7021" cy="371.7562" fill="#F8F9FA" rx="102.7021" ry="40.2562" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="119" x="285.2021" y="361.2402">Consulter l'historique</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="87" x="301.2021" y="387.5843">des &#233;valuations</text></g><!--entity Jury--><g id="elem_Jury"><ellipse cx="86.5" cy="202.5" fill="#F8F9FA" rx="8" ry="8" style="stroke:#008080;stroke-width:0.5;"/><path d="M86.5,210.5 L86.5,237.5 M73.5,218.5 L99.5,218.5 M86.5,237.5 L73.5,252.5 M86.5,237.5 L99.5,252.5 " fill="none" style="stroke:#008080;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="161" x="6" y="271.8281">Enseignant / Membre de jury</text></g><!--link EvalSubmit to EvalInput--><g id="link_EvalSubmit_EvalInput"><path d="M435.67,285.66 C485.29,293.18 540.4277,301.5309 588.5277,308.8209 " fill="none" id="EvalSubmit-to-EvalInput" style="stroke:#008080;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#008080" points="594.46,309.72,586.161,304.4165,589.5165,308.9708,584.9622,312.3262,594.46,309.72" style="stroke:#008080;stroke-width:1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="52" x="490" y="285.8281">&#171;include&#187;</text></g><!--link EvalHistory to EvalInput--><g id="link_EvalHistory_EvalInput"><path d="M440.51,357.61 C489.25,350.22 542.0678,342.2195 588.6278,335.1595 " fill="none" id="EvalHistory-to-EvalInput" style="stroke:#008080;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#008080" points="594.56,334.26,585.062,331.6545,589.6165,335.0096,586.2614,339.5641,594.56,334.26" style="stroke:#008080;stroke-width:1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="50" x="491" y="333.8281">&#171;extend&#187;</text></g><!--link Jury to Schedule--><g id="link_Jury_Schedule"><path d="M121.19,193.98 C143.98,167.51 176.18,134.79 211,114 C229.36,103.04 245.2143,96.5545 265.5943,90.5545 " fill="none" id="Jury-to-Schedule" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="271.35,88.86,261.5867,87.5646,266.5535,90.2721,263.8461,95.239,271.35,88.86" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Jury to Unavail--><g id="link_Jury_Unavail"><path d="M172.03,215.54 C205.38,207.07 237.3846,198.9468 269.0046,190.9168 " fill="none" id="Jury-to-Unavail" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="274.82,189.44,265.1123,187.7783,269.9738,190.6707,267.0815,195.5322,274.82,189.44" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Jury to EvalSubmit--><g id="link_Jury_EvalSubmit"><path d="M172.03,248.56 C197.23,252 219.0252,254.9881 244.7252,258.4981 " fill="none" id="Jury-to-EvalSubmit" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="250.67,259.31,242.2941,254.1289,245.716,258.6334,241.2115,262.0553,250.67,259.31" style="stroke:#008080;stroke-width:1.0;"/></g><!--link Jury to EvalHistory--><g id="link_Jury_EvalHistory"><path d="M152.8,280.17 C171.3,291.71 191.67,303.81 211,314 C230.55,324.3 246.8095,331.9833 266.9595,340.7633 " fill="none" id="Jury-to-EvalHistory" style="stroke:#008080;stroke-width:1.0;"/><polygon fill="#008080" points="272.46,343.16,265.8071,335.8979,267.8762,341.1627,262.6114,343.2319,272.46,343.16" style="stroke:#008080;stroke-width:1.0;"/></g><!--SRC=[TP71JiCm38RlUGhJ2wUEEvfwWKc0jDF4RPUiyLgZr2c9Cp4X7cZFiHV37MFTqCWbiVL_TdxxXhZssI7qkVEbjDXXsQznCeJ6urf00aHgMW574MkXmCROMaA4OiO9gM7B0dSmnsuL4RJKMuxR0co25tqOCr2M6uzGp8FBUezS0Py6zEI4jKsgU0YSiXUCeBhUMsRYvb1iKRSuq9Vwn_skzZQgtc5QgjXHwWFJYZp9VfSEw2lRZIL_IIui9HhQ9DZlDjPdEtZx0MOQFtEVvGyISeSYwbAfvLLgaLSToR-URbjAEZfwpxXazr_hfuDeQxwC6Ml2P5AD7uDxc4wFkwigSqPTqU6783kLcM4ZK9RLECrJvdT8fyIPdOlSiSyt]--></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="410px" preserveAspectRatio="none" style="width:711px;height:410px;" version="1.1" viewBox="0 0 711 410" width="711px" zoomAndPan="magnify"><defs/><g><!--MD5=[7ed155eedadb3c7641c3b685344a1b7b]
+cluster Module Enseignant--><rect fill="#FFFFFF" height="375" rx="4" ry="4" style="stroke: #008080; stroke-width: 1.5;" width="476" x="224" y="24"/><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="116" x="404" y="43.8281">Module Enseignant</text><ellipse cx="326.6167" cy="87.1368" fill="#F8F9FA" rx="74.1167" ry="17.6368" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="118" x="267.6167" y="91.8088">Consulter le planning</text><ellipse cx="326.6894" cy="173.2005" fill="#F8F9FA" rx="57.1894" ry="33.7005" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="72" x="290.6894" y="163.098">Déclarer des</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="83" x="285.1894" y="189.4421">indisponibilités</text><ellipse cx="610.5286" cy="303.13" fill="#F8F9FA" rx="73.5286" ry="17.63" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="117" x="552.0286" y="307.8021">Saisir les évaluations</text><ellipse cx="326.6574" cy="261.2315" fill="#F8F9FA" rx="86.6574" ry="19.7315" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="146" x="253.6574" y="265.9035">Soumettre les\évaluations</text><ellipse cx="326.7248" cy="348.8161" fill="#F8F9FA" rx="77.2248" ry="33.3161" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="119" x="267.2248" y="343.5362">Consulter l'historique</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="87" x="283.2248" y="369.8803">des évaluations</text><!--MD5=[12629590de3abbc86218b65a4e7370ed]
+entity Jury--><ellipse cx="91.5" cy="194.5" fill="#F8F9FA" rx="8" ry="8" style="stroke: #008080; stroke-width: 1.5;"/><path d="M91.5,202.5 L91.5,229.5 M78.5,210.5 L104.5,210.5 M91.5,229.5 L78.5,244.5 M91.5,229.5 L104.5,244.5 " fill="none" style="stroke: #008080; stroke-width: 1.5;"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="161" x="11" y="264.8281">Enseignant / Membre de jury</text><!--MD5=[1323736424c1661664400d6a4b288467]
+link EvalSubmit to EvalInput--><path d="M399.03,271.65 C443.09,278.21 499.21,286.57 542.43,293.01 " fill="none" id="EvalSubmit-&gt;EvalInput" style="stroke: #008080; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#008080" points="547.63,293.79,539.3095,288.5203,542.6834,293.0609,538.1429,296.4348,547.63,293.79" style="stroke: #008080; stroke-width: 1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="52" x="449" y="269.8281">«include»</text><!--MD5=[0640d01e9ee4d1d2cdb771b31015af2d]
+link EvalHistory to EvalInput--><path d="M400.55,339.24 C433.18,334.67 472.08,328.93 507,323 C520.69,320.67 535.36,317.95 549.21,315.27 " fill="none" id="EvalHistory-&gt;EvalInput" style="stroke: #008080; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#008080" points="554.27,314.29,544.6763,312.0626,549.3601,315.2348,546.1879,319.9185,554.27,314.29" style="stroke: #008080; stroke-width: 1.0;"/><text fill="#008080" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="50" x="450" y="313.8281">«extend»</text><!--MD5=[40290c8d027b568e11d8aa9269adc17a]
+link Jury to Schedule--><path d="M134.62,184.87 C157.08,163.43 186.19,138.74 216,122 C232.07,112.98 250.78,105.91 268.15,100.56 " fill="none" id="Jury-&gt;Schedule" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="273.01,99.1,263.2385,97.8682,268.2228,100.5433,265.5477,105.5277,273.01,99.1" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[9aa485a88979689bbc7c1c94dd006378]
+link Jury to Unavail--><path d="M177.28,208.62 C207.53,201.35 240.88,193.34 268.27,186.76 " fill="none" id="Jury-&gt;Unavail" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="273.31,185.54,263.623,183.7616,268.4494,186.7123,265.4987,191.5386,273.31,185.54" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[f767e5abdec3e8f93f7054ab3f2822d6]
+link Jury to EvalSubmit--><path d="M177.28,240.64 C200.14,243.78 224.77,247.17 247.26,250.25 " fill="none" id="Jury-&gt;EvalSubmit" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="252.32,250.95,243.955,245.7512,247.3674,250.2629,242.8557,253.6753,252.32,250.95" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[644aa941857a62f471ff31eb6124d4cf]
+link Jury to EvalHistory--><path d="M169.44,273.13 C184.75,281.59 200.8,290.23 216,298 C232.56,306.47 250.78,315.18 267.53,322.97 " fill="none" id="Jury-&gt;EvalHistory" style="stroke: #008080; stroke-width: 1.0;"/><polygon fill="#008080" points="272.21,325.14,265.7279,317.725,267.674,323.0365,262.3624,324.9826,272.21,325.14" style="stroke: #008080; stroke-width: 1.0;"/><!--MD5=[fd1576827521ba2e165bc1a8d92a46aa]
+@startuml
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam Padding 5
+skinparam defaultFontName "SansSerif"
+skinparam defaultFontSize 12
+
+skinparam ActivityBackgroundColor #F8F9FA
+skinparam ActivityBorderColor #008080
+skinparam ActivityDiamondBackgroundColor #E67E22
+skinparam ActivityDiamondBorderColor #E67E22
+skinparam ActivityDiamondFontColor #FFFFFF
+
+skinparam ActorBackgroundColor #F8F9FA
+skinparam ActorBorderColor #008080
+
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #008080
+skinparam ClassHeaderBackgroundColor #008080
+skinparam ClassAttributeIconSize 0
+
+skinparam ComponentBackgroundColor #F8F9FA
+skinparam ComponentBorderColor #008080
+
+skinparam DatabaseBackgroundColor #F8F9FA
+skinparam DatabaseBorderColor #008080
+
+skinparam NoteBackgroundColor #FFF2E6
+skinparam NoteBorderColor #E67E22
+
+skinparam StateBackgroundColor #F8F9FA
+skinparam StateBorderColor #008080
+
+skinparam UsecaseBackgroundColor #F8F9FA
+skinparam UsecaseBorderColor #008080
+
+skinparam SequenceGroupBackgroundColor #F8F9FA
+skinparam SequenceGroupBorderColor #008080
+skinparam SequenceLifeLineBorderColor #008080
+skinparam SequenceParticipantBackgroundColor #F8F9FA
+skinparam SequenceParticipantBorderColor #008080
+skinparam ControlBackgroundColor #F8F9FA
+skinparam ControlBorderColor #008080
+skinparam BoundaryBackgroundColor #F8F9FA
+skinparam BoundaryBorderColor #008080
+skinparam EntityBackgroundColor #F8F9FA
+skinparam EntityBorderColor #008080
+
+skinparam ArrowColor #008080
+skinparam ArrowFontColor #008080
+
+skinparam PackageBackgroundColor #FFFFFF
+skinparam PackageBorderColor #008080
+left to right direction
+
+actor "Enseignant / Membre de jury" as Jury
+
+rectangle "Module Enseignant" {
+    usecase "Consulter le planning" as Schedule
+    usecase "Déclarer des\nindisponibilités" as Unavail
+    usecase "Saisir les évaluations" as EvalInput
+    usecase "Soumettre les\évaluations" as EvalSubmit
+    usecase "Consulter l'historique\ndes évaluations" as EvalHistory
+}
+
+EvalSubmit ..> EvalInput : <<include>>
+EvalHistory ..> EvalInput : <<extend>>
+
+Jury - -> Schedule
+Jury - -> Unavail
+Jury - -> EvalSubmit
+Jury - -> EvalHistory
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 11:22:07 WEST 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 21.0.11+10-1-24.04.2-Ubuntu
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
