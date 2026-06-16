@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch3:intro}
 
-Ce chapitre détaille la phase de conception du système de gestion des soutenances. Il définit les exigences fonctionnelles et non fonctionnelles, formalise les règles de gestion qui régissent la planification, et présente la modélisation UML du système. Cette étape est cruciale pour s'assurer que la solution technique répond précisément aux besoins du département. Dans un projet de développement logiciel, la qualité de la phase de conception détermine directement la maintenabilité et l'évolutivité du système résultant. C'est pour cette raison que nous avons adopté une démarche rigoureuse combinant analyse des besoins, modélisation UML et définition formelle des règles de gestion, afin de disposer d'un référentiel clair avant de passer à l'implémentation.
+Ce chapitre détaille la phase de conception du système de gestion des soutenances. Il définit les exigences fonctionnelles et non fonctionnelles, formalise les règles de gestion qui régissent la planification, et présente la modélisation \acrshort{uml} du système. Cette étape est cruciale pour s'assurer que la solution technique répond précisément aux besoins du département. Dans un projet de développement logiciel, la qualité de la phase de conception détermine directement la maintenabilité et l'évolutivité du système résultant. C'est pour cette raison que nous avons adopté une démarche rigoureuse combinant analyse des besoins, modélisation \acrshort{uml} et définition formelle des règles de gestion, afin de disposer d'un référentiel clair avant de passer à l'implémentation.
 
 \subsection{Présentation générale du projet}
 \label{ch3:presentation_generale}
@@ -77,16 +77,16 @@ L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les infor
 
 Les besoins sont organisés par modules métier, chacun correspondant à un sous-système cohérent de l'application. Chaque module a été identifié lors de l'analyse du processus existant avec le coordinateur et l'encadrant, puis priorisé en fonction de son impact sur le processus global de soutenance.
 
-L'\textbf{authentification} est assurée par le module Gestion Identité via JWT avec tokens d'accès et de rafraîchissement. La récupération de mot de passe utilise un lien à durée limitée (1 heure), et l'activation de compte valide la force du mot de passe (bibliothèque zxcvbn). L'interface de connexion unifiée redirige automatiquement selon le rôle de l'utilisateur.
+L'\textbf{authentification} est assurée par le module Gestion Identité via \acrshort{jwt} avec tokens d'accès et de rafraîchissement. La récupération de mot de passe utilise un lien à durée limitée (1 heure), et l'activation de compte valide la force du mot de passe (bibliothèque zxcvbn). L'interface de connexion unifiée redirige automatiquement selon le rôle de l'utilisateur.
 
-L'\textbf{administration des filières} (MIP, BCG, etc.) et des niveaux (Licence 3, Master 2, etc.) relève du module Gestion Académique, qui inclut l'import massif des étudiants et des salles via fichiers Excel avec validation des données et gestion des erreurs ligne par ligne. Le flux technique de cet import, depuis la sélection du fichier jusqu'à la persistance en base de données, est détaillé dans la \Cref{fig:seq_import_data}.
+L'\textbf{administration des filières} (\acrshort{mip}, BCG, etc.) et des niveaux (Licence 3, Master 2, etc.) relève du module Gestion Académique, qui inclut l'import massif des étudiants et des salles via fichiers Excel avec validation des données et gestion des erreurs ligne par ligne. Le flux technique de cet import, depuis la sélection du fichier jusqu'à la persistance en base de données, est détaillé dans la \Cref{fig:seq_import_data}.
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{seq_import_data}
     \caption{Séquence d'importation massive des données depuis un fichier Excel}
     \label{fig:seq_import_data}
 \end{figure}
-Une interface CRUD complète avec recherche et pagination permet de maintenir les référentiels à jour.
+Une interface \gls{crud} complète avec recherche et pagination permet de maintenir les référentiels à jour.
 
 La \textbf{constitution des jurys} est gérée par le module Gestion des Projets et Jurys, qui suit les projets selon des statuts (proposé, approuvé, rejeté) et permet de constituer des jurys selon des templates configurables avec rôles normalisés (Président, Rapporteur, Examinateur). Le suivi de la charge des enseignants évite les sur-affectations.
 
@@ -94,11 +94,11 @@ Les \textbf{sessions de soutenance} sont gérées via un cycle de vie complet : 
 
 Le \textit{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
 
-En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 6 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliqué côté client pour un retour instantané et exécuté côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
+En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 6 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliquée côté client pour un retour instantané et exécutée côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
 La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère les coefficients dynamiques par session et effectue le calcul automatique de la moyenne pondérée. Le membre du jury peut consulter le rapport du projet assigné pour préparer son évaluation, puis saisir les notes. Le coordinateur peut consulter les notes moyennes pondérées par projet, avec le détail des scores par membre du jury.
 
-L'\textbf{édition documentaire} produit 5 types de documents PDF (fiches d'évaluation, procès-verbaux, listes de présence, convocations jury, planning complet) générés côté serveur et ouverts dans un nouvel onglet du navigateur. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
+L'\textbf{édition documentaire} produit 5 types de documents \gls{pdf} (fiches d'évaluation, procès-verbaux, listes de présence, convocations jury, planning complet) générés côté serveur et ouverts dans un nouvel onglet du navigateur. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
 
 Enfin, la gestion des \textbf{groupes d'étudiants} permet aux étudiants de créer ou rejoindre un groupe pendant une fenêtre temporelle définie, et aux coordinateurs d'associer les groupes aux projets.
 
@@ -111,13 +111,13 @@ Les besoins non fonctionnels définissent les qualités transverses du système,
 
 La \textbf{réactivité} constitue un besoin fondamental pour le \textit{Defense Designer} : le retour sur conflit lors du glisser-déposer doit être instantané (latence $< 100$ms) grâce à la validation locale via le moteur de conflits TypeScript. L'état du planning est maintenu dans la mémoire du navigateur, sans aucun appel réseau pendant les opérations de glisser-déposer.
 
-La \textbf{sécurité} repose sur le chiffrement des mots de passe via \texttt{BCrypt}, la protection des endpoints par tokens JWT avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Pour prévenir les attaques de type XSS (\textit{Cross-Site Scripting}), les tokens sont transmis et stockés via des cookies \texttt{httpOnly}, les rendant inaccessibles aux scripts JavaScript du navigateur. Des protections contre les attaques par injection SQL, les failles XSS et les erreurs d'autorisation horizontale ont été renforcées.
+La \textbf{sécurité} repose sur le chiffrement des mots de passe via \texttt{BCrypt}, la protection des endpoints par tokens \acrshort{jwt} avec validation côté serveur (Spring Security), et le contrôle d'accès basé sur les rôles via annotations \texttt{@PreAuthorize}. Pour prévenir les attaques de type XSS (\textit{Cross-Site Scripting}), les tokens sont transmis et stockés via des cookies \texttt{httpOnly}, les rendant inaccessibles aux scripts JavaScript du navigateur. Des protections contre les attaques par injection \acrshort{sql}, les failles XSS et les erreurs d'autorisation horizontale ont été renforcées.
 
-Côté \textbf{disponibilité}, une architecture \textit{stateless} du backend permet un déploiement horizontal scalable. L'API REST ne maintient pas d'état de session côté serveur : chaque requête est autonome via le token JWT, ce qui facilite tests et débogage.
+Côté \textbf{disponibilité}, une architecture \textit{stateless} du backend permet un déploiement horizontal scalable. L'\acrshort{api} \acrshort{rest} ne maintient pas d'état de session côté serveur : chaque requête est autonome via le token \acrshort{jwt}, ce qui facilite tests et débogage.
 
-L'\textbf{ergonomie} s'appuie sur une interface moderne et responsive (\texttt{Tailwind CSS 4}, \texttt{shadcn/ui}). La navigation est contextualisée par rôle avec une sidebar adaptative, et le thème clair/sombre avec persistance du choix améliore le confort lors de sessions prolongées.
+L'\textbf{ergonomie} s'appuie sur une interface moderne et responsive (\texttt{Tailwind \acrshort{css} 4}, \texttt{shadcn/ui}). La navigation est contextualisée par rôle avec une sidebar adaptative, et le thème clair/sombre avec persistance du choix améliore le confort lors de sessions prolongées.
 
-La \textbf{maintenabilité} résulte d'une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. Les \texttt{DTOs} isolent les couches API et \texttt{MapStruct} gère le mapping objet, protégeant le modèle interne des variations de l'interface exposée.
+La \textbf{maintenabilité} résulte d'une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. Les \texttt{DTOs} isolent les couches \acrshort{api} et \texttt{MapStruct} gère le mapping objet, protégeant le modèle interne des variations de l'interface exposée.
 
 Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (lignes) et 70\% (branches) via \texttt{JaCoCo}, complétée par un linting automatisé avec \texttt{ESLint} (TypeScript), et \texttt{Spotless}, \texttt{Checkstyle}, \texttt{PMD} et \texttt{SpotBugs} (Java) intégré dans CI.
 
@@ -163,10 +163,10 @@ Ces 6 règles sont implémentées dans deux moteurs distincts mais fonctionnelle
 
 Lorsqu'une règle ne peut être satisfaite (par exemple, aucun créneau disponible pour un jury donné), le système ne propose pas de mécanisme d'override automatique. Le coordinateur doit soit modifier les paramètres de la session (dates, salles), soit reconfigurer la composition du jury, soit déclarer une indisponibilité compensatoire. Cette approche conservative préserve l'intégrité du planning au prix d'une flexibilité réduite, un choix délibéré compte tenu du caractère critique des contraintes académiques.
 
-\subsection{Conception UML}
+\subsection{Conception \acrshort{uml}}
 \label{ch3:conception_uml}
 
-La modélisation UML permet de formaliser les différentes visions du système : qui fait quoi (cas d'utilisation), comment les données sont structurées (classes), comment les composants interagissent (séquence), et comment les processus se déroulent (activité). Nous avons utilisé les diagrammes UML 2.5 dans tous les diagrammes.
+La modélisation \acrshort{uml} permet de formaliser les différentes visions du système : qui fait quoi (cas d'utilisation), comment les données sont structurées (classes), comment les composants interagissent (séquence), et comment les processus se déroulent (activité). Nous avons utilisé les diagrammes \acrshort{uml} 2.5 dans tous les diagrammes.
 
 \begin{projectbox}{Remarque}
     Afin de garantir une lisibilité optimale, quelques diagrammes ont été scindés par acteur, notamment diagrammes de cas d'utilisation. Bien qu'un diagramme unique regroupant l'ensemble des acteurs et des fonctionnalités soit la norme théorique, la complexité du système rendait une telle approche illisible.
@@ -283,12 +283,12 @@ L'algorithme d'auto-génération est détaillé dans la \Cref{fig:seq_auto_gener
     \label{fig:seq_auto_generation}
 \end{figure}
 
-\Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les identifiants (vérification du hash BCrypt et du statut du compte), puis retourne un token JWT via un cookie \texttt{httpOnly} sécurisé. Le navigateur gère alors automatiquement l'envoi de ce cookie lors des requêtes suivantes, et le frontend redirige l'utilisateur vers la page correspondant à son rôle.
+\Cref{fig:seq_auth} modélise le flux d'authentification. L'utilisateur soumet ses identifiants via le formulaire de connexion, le frontend envoie une requête POST à \texttt{/api/auth/login}, le serveur valide les identifiants (vérification du hash BCrypt et du statut du compte), puis retourne un token \acrshort{jwt} via un cookie \texttt{httpOnly} sécurisé. Le navigateur gère alors automatiquement l'envoi de ce cookie lors des requêtes suivantes, et le frontend redirige l'utilisateur vers la page correspondant à son rôle.
 
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{seq_auth}
-    \caption{Séquence d'authentification via JWT}
+    \caption{Séquence d'authentification via \acrshort{jwt}}
     \label{fig:seq_auth}
 \end{figure}
 
@@ -332,7 +332,7 @@ Le flux opérationnel global du coordinateur lors de la phase de planification e
 \subsection{Architecture logicielle}
 \label{ch3:architecture_logicielle}
 
-Le système adopte une architecture découplée pour maximiser la maintenabilité et la testabilité. La séparation frontend/backend via une API REST permet à chaque couche d'évoluer indépendamment.
+Le système adopte une architecture découplée pour maximiser la maintenabilité et la testabilité. La séparation frontend/backend via une \acrshort{api} \acrshort{rest} permet à chaque couche d'évoluer indépendamment.
 
 \Cref{fig:component_architecture} présente la vue composants du système, organisée en trois couches principales : le frontend React, le backend Spring Boot et la base de données.
 
@@ -343,31 +343,31 @@ Le système adopte une architecture découplée pour maximiser la maintenabilit�
     \label{fig:component_architecture}
 \end{figure}
 
-\subsubsection{Backend (API REST)}
-Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité}. Cette structure permet d'isoler la logique métier (notamment le \texttt{ConflictDetectionService}) de la couche d'accès aux données. Les DTOs assurent le découplage entre les API exposées et le modèle interne. Le projet est organisé en dix packages fonctionnels :
+\subsubsection{Backend (\acrshort{api} \acrshort{rest})}
+Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité}. Cette structure permet d'isoler la logique métier (notamment le \texttt{ConflictDetectionService}) de la couche d'accès aux données. Les DTOs assurent le découplage entre les \acrshort{api} exposées et le modèle interne. Le projet est organisé en dix packages fonctionnels :
 
 \begin{itemize}[label=\textcolor{primary}{\textbullet}]
-    \item \texttt{auth/} -- authentification JWT, mot de passe oublié, activation de compte
+    \item \texttt{auth/} -- authentification \acrshort{jwt}, mot de passe oublié, activation de compte
     \item \texttt{admin/} -- gestion des entités académiques (salles, départements, filières, configuration, stats)
     \item \texttt{coordinator/} -- cœur métier (projets, groupes, jurys, planification, conflits, soutenances, documents, notes, stats)
     \item \texttt{teacher/} -- evaluations, indisponibilités, planning personnel
     \item \texttt{student/} -- groupe, documents, convocation, statistiques
     \item \texttt{notification/} -- système de notifications, email et événements
-    \item \texttt{common/} -- configuration Spring Security, exceptions, mappers, audit, génération PDF
+    \item \texttt{common/} -- configuration Spring Security, exceptions, mappers, audit, génération \acrshort{pdf}
     \item \texttt{seed/} -- initialisation des données de démonstration
     \item \texttt{user/} -- hiérarchie des utilisateurs (User, Teacher, Student, Coordinator)
 \end{itemize}
 
 \subsubsection{Frontend (SPA)}
-L'interface est conçue comme une application monopage (\textit{Single Page Application}) utilisant React 19 avec TypeScript 6 en mode strict. L'état asynchrone est géré par \texttt{TanStack Query v5}, qui assure la synchronisation avec l'API, la mise en cache et le rechargement automatique. Le \textit{Defense Designer} implémente un état local optimiste pour une fluidité maximale lors du glisser-déposer, grâce à la bibliothèque \texttt{@dnd-kit/core}. Chaque page est chargée via \texttt{React.lazy()} pour optimiser le temps de chargement initial, et les routes sont protégées par des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur avant d'autoriser l'accès.
+L'interface est conçue comme une application monopage (\textit{Single Page Application}) utilisant React 19 avec TypeScript 6 en mode strict. L'état asynchrone est géré par \texttt{TanStack Query v5}, qui assure la synchronisation avec l'\acrshort{api}, la mise en cache et le rechargement automatique. Le \textit{Defense Designer} implémente un état local optimiste pour une fluidité maximale lors du glisser-déposer, grâce à la bibliothèque \texttt{@dnd-kit/core}. Chaque page est chargée via \texttt{React.lazy()} pour optimiser le temps de chargement initial, et les routes sont protégées par des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur avant d'autoriser l'accès.
 
 \subsubsection{Sécurité et contrôle d'accès}
-Le flux de sécurité repose sur trois mécanismes complémentaires. L'authentification utilise des tokens JWT signés avec une clé HMAC-SHA, contenant l'identifiant utilisateur et son rôle. Le filtre \texttt{JwtAuthFilter} intercepte chaque requête, extrait le token du header \texttt{Authorization} ou du cookie \texttt{jwt\_token}, le valide, et configure le contexte de sécurité Spring. Le contrôle d'autorisation est implémenté via les annotations \texttt{@PreAuthorize} sur les contrôleurs, qui restreignent l'accès aux endpoints en fonction du rôle de l'utilisateur courant. Enfin, la configuration CORS autorise les origines du frontend en développement (\texttt{localhost:5173}) et en production.
+Le flux de sécurité repose sur trois mécanismes complémentaires. L'authentification utilise des tokens \acrshort{jwt} signés avec une clé HMAC-SHA, contenant l'identifiant utilisateur et son rôle. Le filtre \texttt{JwtAuthFilter} intercepte chaque requête, extrait le token du header \texttt{Authorization} ou du cookie \texttt{jwt\_token}, le valide, et configure le contexte de sécurité Spring. Le contrôle d'autorisation est implémenté via les annotations \texttt{@PreAuthorize} sur les contrôleurs, qui restreignent l'accès aux endpoints en fonction du rôle de l'utilisateur courant. Enfin, la configuration CORS autorise les origines du frontend en développement (\texttt{localhost:5173}) et en production.
 
 \subsection{Modélisation de la base de données}
 \label{ch3:mld}
 
-Le Modèle Logique de Données (MLD) traduit les classes JPA en tables relationnelles. La base de données \texttt{H2} en développement utilise le même schéma que \texttt{MySQL} en production, garantissant la compatibilité entre les environnements.
+Le Modèle Logique de Données (MLD) traduit les classes \acrshort{jpa} en tables relationnelles. La base de données \texttt{H2} en développement utilise le même schéma que \texttt{\acrshort{mysql}} en production, garantissant la compatibilité entre les environnements.
 
 L'héritage des utilisateurs est implémenté via la stratégie \texttt{JOINED} : la table \texttt{users} contient les attributs communs (email, password, role, firstName, lastName, isActive), tandis que les tables \texttt{teachers}, \texttt{students} et \texttt{coordinators} stockent les attributs spécifiques. Cette stratégie, plus coûteuse en jointures que la stratégie \texttt{SINGLE\_TABLE}, a été choisie pour sa clarté sémantique et sa facilité d'évolution.
 
@@ -397,4 +397,4 @@ Les messages de commit suivent les conventions Git : préfixes sémantiques (\te
 \subsection{Conclusion}
 \label{ch3:conclusion}
 
-Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des six règles de gestion, la modélisation UML complète (cas d'utilisation, classes, séquence, activité) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industriels assure la maintenabilité du système à long terme.
+Ce chapitre a permis de formaliser les besoins du système et de concevoir une architecture capable de supporter la complexité de la planification académique. La définition rigoureuse des six règles de gestion, la modélisation \acrshort{uml} complète (cas d'utilisation, classes, séquence, activité) et la description de l'architecture logicielle en couches servent désormais de base technique pour l'implémentation détaillée qui sera présentée au chapitre suivant. Le respect des normes de codage et des standards industriels assure la maintenabilité du système à long terme.

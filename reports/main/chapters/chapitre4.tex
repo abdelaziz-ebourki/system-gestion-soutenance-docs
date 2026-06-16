@@ -57,38 +57,38 @@ Le projet suit un workflow de développement organisé en cycles courts. Chaque 
 
 La stratégie de branching est simplifiée mais efficace : la branche \texttt{main} est toujours dans un état stable et déployable, les branches \texttt{feature/*} vivent le temps du développement d'une fonctionnalité, et les branches \texttt{fix/*} sont utilisées pour les corrections de bugs. Les messages de commit suivent les conventions sémantiques : \texttt{feat:} pour les nouvelles fonctionnalités, \texttt{fix:} pour les corrections, \texttt{chore:} pour la maintenance et les résolutions des conflits de fusion, \texttt{docs:} pour la documentation, et \texttt{test:} pour les ajouts de tests.
 
-Le pipeline CI/CD (GitHub Actions) automatise la construction et les tests à chaque push. Trois workflows distincts couvrent les trois composants : l'API est construite avec Maven (\texttt{./mvnw package}), l'UI est compilée avec Vite (\texttt{npm run build}), et les tests E2E s'exécutent avec Playwright contre les deux serveurs démarrés en parallèle. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt E2E lors de chaque fusion sur \texttt{main}.
+Le pipeline \acrshort{cicd} (GitHub Actions) automatise la construction et les tests à chaque push. Trois workflows distincts couvrent les trois composants : l'\acrshort{api} est construite avec Maven (\texttt{./mvnw package}), l'\acrshort{ui} est compilée avec Vite (\texttt{npm run build}), et les tests \acrshort{e2e} s'exécutent avec Playwright contre les deux serveurs démarrés en parallèle. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt \acrshort{e2e} lors de chaque fusion sur \texttt{main}.
 
 \subsection{Architecture technique du système}
 \label{ch4:architecture}
 
-L'application suit une architecture web moderne et découplée (API REST + SPA), assurant une séparation nette entre la logique métier et la présentation, à l'exception du moteur de détection de conflits. Celui-ci est déployé côté serveur (\texttt{ConflictDetectionService}) pour garantir l'intégrité des données lors de la persistance, et dupliqué côté client (\texttt{conflict-engine.ts}) pour offrir une réactivité immédiate lors de la planification interactive. Cette duplication contrôlée permet au coordinateur de visualiser les conflits en temps réel lors du glisser-déposer dans le \textit{Defense Designer}, sans attendre la réponse du serveur, tout en assurant que la validation finale applique les mêmes six règles de gestion (RG1--RG6).
+L'application suit une architecture web moderne et découplée (\acrshort{api} \acrshort{rest} + SPA), assurant une séparation nette entre la logique métier et la présentation, à l'exception du moteur de détection de conflits. Celui-ci est déployé côté serveur (\texttt{ConflictDetectionService}) pour garantir l'intégrité des données lors de la persistance, et dupliqué côté client (\texttt{conflict-engine.ts}) pour offrir une réactivité immédiate lors de la planification interactive. Cette duplication contrôlée permet au coordinateur de visualiser les conflits en temps réel lors du glisser-déposer dans le \textit{Defense Designer}, sans attendre la réponse du serveur, tout en assurant que la validation finale applique les mêmes six règles de gestion (RG1--RG6).
 
-\subsubsection{Le Backend : API REST Spring Boot}
+\subsubsection{Le Backend : \acrshort{api} \acrshort{rest} Spring Boot}
 \label{ch4:backend}
 
 Le backend est structuré selon un pattern en couches strict pour assurer la maintenabilité. Chaque couche a une responsabilité clairement définie et communique avec les couches adjacentes via des interfaces bien définies.
 
-Les \textbf{endpoints REST} sont exposés par la couche Contrôleur, qui gère la validation des entrées via les annotations \texttt{@Valid} et les DTOs de requête. Les contrôleurs utilisent l'injection de dépendances pour accéder aux services métier et retournent des réponses enveloppées dans \texttt{ApiResponse<T>}. Le paramètre \texttt{@AuthenticationPrincipal User user} extrait l'utilisateur courant directement depuis le contexte de sécurité Spring, sans passer par le \texttt{SecurityContextHolder}.
+Les \textbf{endpoints \acrshort{rest}} sont exposés par la couche Contrôleur, qui gère la validation des entrées via les annotations \texttt{@Valid} et les DTOs de requête. Les contrôleurs utilisent l'injection de dépendances pour accéder aux services métier et retournent des réponses enveloppées dans \texttt{ApiResponse<T>}. Le paramètre \texttt{@AuthenticationPrincipal User user} extrait l'utilisateur courant directement depuis le contexte de sécurité Spring, sans passer par le \texttt{SecurityContextHolder}.
 
-La \textbf{logique métier} réside dans la couche Service, où le \texttt{ConflictDetectionService} et le \texttt{ScheduleService} constituent les services centraux du module de planification. Tous héritent de \texttt{BaseCrudService<T, ID, R>} qui fournit les opérations CRUD de base (\texttt{findAll}, \texttt{findByIdOrThrow}, \texttt{save}, \texttt{deleteWithCheck}), réduisant la duplication de code entre modules.
+La \textbf{logique métier} réside dans la couche Service, où le \texttt{ConflictDetectionService} et le \texttt{ScheduleService} constituent les services centraux du module de planification. Tous héritent de \texttt{BaseCrudService<T, ID, R>} qui fournit les opérations \acrshort{crud} de base (\texttt{findAll}, \texttt{findByIdOrThrow}, \texttt{save}, \texttt{deleteWithCheck}), réduisant la duplication de code entre modules.
 
-La \textbf{persistance des données} est assurée par la couche Repository via Spring Data JPA, avec des requêtes dérivées et des \texttt{@Query} personnalisées. Aucune implémentation concrète n'est nécessaire : Spring Data génère automatiquement les requêtes à partir des noms de méthodes (par exemple, \texttt{findByEmail} produit une requête SELECT avec clause WHERE sur l'email).
+La \textbf{persistance des données} est assurée par la couche Repository via Spring Data \acrshort{jpa}, avec des requêtes dérivées et des \texttt{@Query} personnalisées. Aucune implémentation concrète n'est nécessaire : Spring Data génère automatiquement les requêtes à partir des noms de méthodes (par exemple, \texttt{findByEmail} produit une requête SELECT avec clause WHERE sur l'email).
 
-Enfin, la \textbf{couche Entité} modélise les objets du domaine avec les annotations JPA (\texttt{@Entity}, \texttt{@OneToMany}, \texttt{@ManyToOne}). L'héritage des utilisateurs suit la stratégie JOINED, et les données flexibles (membres de jury, coefficients) sont stockées via \texttt{@ElementCollection}.
+Enfin, la \textbf{couche Entité} modélise les objets du domaine avec les annotations \acrshort{jpa} (\texttt{@Entity}, \texttt{@OneToMany}, \texttt{@ManyToOne}). L'héritage des utilisateurs suit la stratégie JOINED, et les données flexibles (membres de jury, coefficients) sont stockées via \texttt{@ElementCollection}.
 
-Le projet est organisé en modules fonctionnels : \texttt{auth/} (authentification JWT), \texttt{admin/} (configuration des entités académiques), \texttt{coordinator/} (cœur métier avec 11 sous-modules), \texttt{teacher/} (évaluations et indisponibilités), \texttt{student/} (consultation et documents), \texttt{notification/} (email et notifications internes), \texttt{common/} (configuration Spring Security, OpenAPI, audit, mappers, exceptions).
+Le projet est organisé en modules fonctionnels : \texttt{auth/} (authentification \acrshort{jwt}), \texttt{admin/} (configuration des entités académiques), \texttt{coordinator/} (cœur métier avec 11 sous-modules), \texttt{teacher/} (évaluations et indisponibilités), \texttt{student/} (consultation et documents), \texttt{notification/} (email et notifications internes), \texttt{common/} (configuration Spring Security, OpenAPI, audit, mappers, exceptions).
 
 \subsubsection{Le Frontend : SPA React}
 \label{ch4:frontend}
 
 L'interface utilisateur est une application monopage avec les caractéristiques suivantes.
 
-La \textbf{gestion d'état asynchrone} est assurée par \texttt{TanStack Query v5} pour la synchronisation avec l'API, la mise en cache et le rechargement automatique des données. Chaque module dispose de ses propres hooks de requête (par ex.~\texttt{use-admin-queries}, \texttt{use-coordinator-queries}) qui encapsulent les appels API et gèrent automatiquement le cache, les rechargements et les invalidations. Le \texttt{QueryClient} est configuré avec un \texttt{staleTime} de 30~secondes et un nombre de retry limité à 1, pour éviter les rechargements excessifs tout en autorisant une récupération rapide après une erreur réseau.
+La \textbf{gestion d'état asynchrone} est assurée par \texttt{TanStack Query v5} pour la synchronisation avec l'\acrshort{api}, la mise en cache et le rechargement automatique des données. Chaque module dispose de ses propres hooks de requête (par ex.~\texttt{use-admin-queries}, \texttt{use-coordinator-queries}) qui encapsulent les appels \acrshort{api} et gèrent automatiquement le cache, les rechargements et les invalidations. Le \texttt{QueryClient} est configuré avec un \texttt{staleTime} de 30~secondes et un nombre de retry limité à 1, pour éviter les rechargements excessifs tout en autorisant une récupération rapide après une erreur réseau.
 
 Le \textbf{routage} utilise React Router v7 avec des routes imbriquées. Les routes publiques (\texttt{/login}, \texttt{/forgot-password}, \texttt{/print/*}) sont en dehors du layout authentifié. Les routes protégées sont regroupées par rôle sous \texttt{<DashboardLayout>} avec des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur.
 
-Le \textbf{design system} repose sur Tailwind CSS~4 avec des variables CSS, shadcn/ui pour les composants de base (boutons, modales, tableaux), et des abstractions applicatives dans le répertoire \texttt{src/components/ui/}. Chaque composant UI est un wrapper personnalisé qui encapsule les composants Radix UI sous-jacents avec les styles Tailwind de l'application.
+Le \textbf{design system} repose sur Tailwind \acrshort{css}~4 avec des variables \acrshort{css}, shadcn/ui pour les composants de base (boutons, modales, tableaux), et des abstractions applicatives dans le répertoire \texttt{src/components/ui/}. Chaque composant \acrshort{ui} est un wrapper personnalisé qui encapsule les composants Radix UI sous-jacents avec les styles Tailwind de l'application.
 
 Les \textbf{composants spécifiques} sont organisés par module fonctionnel dans le répertoire \texttt{src/components/}. Par exemple, le sous-répertoire \texttt{coordinator/} contient les composants \texttt{DefenseCalendar}, \texttt{DraggableJurySlot}, \texttt{JurySidebar}, \texttt{SlotRow}, \texttt{RoomSearchSelect}, etc. Cette organisation permet de localiser rapidement les composants liés à une fonctionnalité donnée.
 
@@ -100,7 +100,7 @@ La \textbf{validation locale} est assurée par le moteur de conflits TypeScript 
 \subsubsection{Module Authentification et Sécurité}
 \label{ch4:module_auth}
 
-La sécurité repose sur un mécanisme \textit{stateless} utilisant les \textbf{JSON Web Tokens (JWT)}. Le flux d'authentification est géré par \texttt{AuthService} côté serveur.
+La sécurité repose sur un mécanisme \textit{stateless} utilisant les \textbf{\acrshort{json} Web Tokens (\acrshort{jwt})}. Le flux d'authentification est géré par \texttt{AuthService} côté serveur.
 
 \begin{figure}[H]
     \centering
@@ -143,7 +143,7 @@ Le système gère les erreurs de manière personnalisée. Les routes inexistante
     \label{fig:error-boundary}
 \end{figure}
 
-Le token JWT est transmis et stocké via un cookie \texttt{httpOnly} (\texttt{jwt\_token}, \texttt{SameSite=Lax}, durée 2 heures) défini par le serveur lors de la connexion via l'en-tête \texttt{Set-Cookie}. Cette approche renforce la sécurité en rendant le token inaccessible aux scripts JavaScript, protégeant ainsi le système contre les attaques XSS. Le contrôle d'accès est renforcé côté serveur par Spring Security avec des annotations \texttt{@PreAuthorize} basées sur les rôles (\texttt{ROLE\_ADMIN}, \texttt{ROLE\_COORDINATOR}, \texttt{ROLE\_TEACHER}, \texttt{ROLE\_STUDENT}).
+Le token \acrshort{jwt} est transmis et stocké via un cookie \texttt{httpOnly} (\texttt{jwt\_token}, \texttt{SameSite=Lax}, durée 2 heures) défini par le serveur lors de la connexion via l'en-tête \texttt{Set-Cookie}. Cette approche renforce la sécurité en rendant le token inaccessible aux scripts JavaScript, protégeant ainsi le système contre les attaques XSS. Le contrôle d'accès est renforcé côté serveur par Spring Security avec des annotations \texttt{@PreAuthorize} basées sur les rôles (\texttt{ROLE\_ADMIN}, \texttt{ROLE\_COORDINATOR}, \texttt{ROLE\_TEACHER}, \texttt{ROLE\_STUDENT}).
 
 Le module gère également la réinitialisation du mot de passe : l'utilisateur demande un lien de réinitialisation via \texttt{/api/auth/forgot-password}, le système génère un token UUID avec une durée de validité de 1 heure, envoie un email contenant le lien (via Mailpit en développement ou un serveur SMTP en production), et l'utilisateur définit un nouveau mot de passe via \texttt{/api/auth/reset-password}. La validation de la force du mot de passe utilise la bibliothèque zxcvbn, qui évalue la résistance aux attaques par force brute en temps réel.
 
@@ -156,7 +156,7 @@ Le module de planification est l'élément le plus complexe du système. Il impl
 
 L'interaction repose sur \texttt{@dnd-kit/core}, qui permet le glisser-déposer des jurys depuis la barre latérale vers les cellules du calendrier. Chaque cellule représente un couple (date, créneau horaire) pour une salle sélectionnée. Le hook \texttt{useDefenseSchedule} orchestre l'ensemble du cycle de vie. Lors du dépôt d'un jury sur un créneau, le moteur de conflits local est invoqué pour valider l'opération. En cas d'erreur, le dépôt est annulé et un message explicatif (avec suggestion de résolution) est affiché.
 
-Les modifications du planning sont stockées dans un état React local (\texttt{useState}) avec la clé \texttt{juryId} et ne sont synchronisées avec le serveur qu'au moment de la sauvegarde explicite. Cette approche d'\textbf{état local optimiste} réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
+Les modifications du planning sont stockées dans un état React local (\texttt{useState}) avec la clé \texttt{juryId} et ne sont synchronisées avec le serveur qu'au moment de la sauvegarde explicite. Cette approche d'\textbf{état local optimiste} réduit drastiquement le nombre d'appels \acrshort{api} (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
 
 L'algorithme d'\textbf{auto-génération} parcourt itérativement les salles, les jours et les créneaux pour proposer un planning initial. Pour chaque jury non planifié, l'algorithme cherche le premier créneau disponible en vérifiant les contraintes de capacité de salle et les conflits potentiels. Le \texttt{ScheduleService.autoGenerate} côté serveur implémente la même logique avec validation des contraintes de capacité, validant que le planning généré est conforme avant persistance.
 
@@ -172,14 +172,7 @@ L'algorithme d'\textbf{auto-génération} parcourt itérativement les salles, le
 \subsubsection{Le Moteur de Détection de Conflits}
 \label{ch4:module_conflicts}
 
-L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement six vérifications lors de chaque enregistrement. \Cref{fig:conflict-dashboard} montre le tableau de bord des conflits affiché au coordinateur, regroupant chaque type de violation avec son niveau de sévérité.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/conflict-dashboard}
-    \caption{Tableau de bord des conflits -- détection en temps réel des violations de contraintes}
-    \label{fig:conflict-dashboard}
-\end{figure}
+L'intégrité du planning est garantie par le \texttt{ConflictDetectionService} qui exécute systématiquement six vérifications lors de chaque enregistrement. Le tableau de bord des conflits affiché au coordinateur regroupe chaque type de violation avec son niveau de sévérité.
 
 Le même moteur est dupliqué côté client en TypeScript (\texttt{conflict-engine.ts}). La fonction \texttt{validateSlotAssignment} implémente les mêmes 6 vérifications avec des messages d'erreur en français et des suggestions de résolution intelligentes. Cette duplication permet au coordinateur de visualiser les conflits en temps réel lors du glisser-déposer dans le \textit{Defense Designer}, sans attendre la réponse du serveur.
 
@@ -194,30 +187,16 @@ L'enseignant accède à la page d'évaluations (\texttt{/teacher/evaluations}) q
 
 Le calcul de la moyenne pondérée est effectué par le service \texttt{CoordinatorGradeService} via la méthode \texttt{getWeightedAverage}, qui agrège les scores individuels de chaque membre et les pondère selon les coefficients de la session.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/grades}
-    \caption{Page des notes -- scores individuels et moyenne pondérée par soutenance}
-    \label{fig:grades}
-\end{figure}
-
 Le coordinateur peut consulter l'avancement des évaluations via la page des notes, qui affiche pour chaque soutenance le nombre d'évaluations soumises sur le nombre total attendu, avec une barre de progression visuelle. Cette vue permet d'identifier rapidement les soutenances pour lesquelles toutes les notes n'ont pas encore été saisies.
 
 \subsubsection{Génération Documentaire et Stratégie d'Impression}
 \label{ch4:module_print}
 
-Le système supporte cinq types de documents administratifs, chacun implémenté comme un endpoint côté serveur utilisant des modèles Thymeleaf et la conversion HTML-vers-PDF via OpenHTMLToPDF.
+Le système supporte cinq types de documents administratifs, chacun implémenté comme un endpoint côté serveur utilisant des modèles Thymeleaf et la conversion \gls{html}-vers-\acrshort{pdf} via OpenHTMLToPDF.
 
 La \textbf{fiche d'évaluation} (\texttt{PrintEvaluationSheet}) présente les informations du projet, du jury et de l'étudiant, avec des espaces dédiés à la saisie des notes et des observations par chaque membre du jury. La \textbf{liste de présence} (\texttt{PrintAttendanceList}) recense l'ensemble des soutenances d'une journée avec les noms des étudiants, des encadrants et des membres du jury, permettant au coordinateur de vérifier la présence physique de chaque acteur. La \textbf{convocation jury} (\texttt{PrintJuryConvocation}) est une lettre officielle adressée à chaque membre du jury, mentionnant la date, l'heure, la salle et le projet à évaluer. Le \textbf{planning imprimable} (\texttt{PrintDefenseSchedule}) présente le planning complet sous forme de tableau, organisé par salle et par créneau horaire. Enfin, le \textbf{procès-verbal} (\texttt{PrintProcesVerbal}) documente le déroulement de la soutenance avec les notes finales, la décision du jury (Admis ou Ajourné) et les signatures.
 
-La génération de documents PDF est entièrement traitée côté serveur. Le \texttt{DocumentDataService} assemble les données structurées à partir des entités JPA (projets, jurys, créneaux, évaluations), puis le \texttt{DocumentGenerationService} les injecte dans des modèles Thymeleaf pour produire du HTML. Ce HTML est ensuite converti en PDF via \texttt{OpenHTMLToPDF} (basé sur Flying Saucer), qui applique les feuilles de style dédiées au format A4. Cette architecture garantit un rendu consistant quel que soit le navigateur, sans dépendre des capacités d'impression du client.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/generated-convocation}
-    \caption{Convocation jury générée au format PDF}
-    \label{fig:generated-convocation}
-\end{figure}
+La génération de documents \acrshort{pdf} est entièrement traitée côté serveur. Le \texttt{DocumentDataService} assemble les données structurées à partir des entités \acrshort{jpa} (projets, jurys, créneaux, évaluations), puis le \texttt{DocumentGenerationService} les injecte dans des modèles Thymeleaf pour produire du \acrshort{html}. Ce \acrshort{html} est ensuite converti en \acrshort{pdf} via \texttt{OpenHTMLToPDF} (basé sur Flying Saucer), qui applique les feuilles de style dédiées au format A4. Cette architecture garantit un rendu consistant quel que soit le navigateur, sans dépendre des capacités d'impression du client.
 
 \subsubsection{Système de Notifications}
 \label{ch4:module_notifications}
@@ -227,13 +206,6 @@ Le système de notifications internes permet au système de communiquer des info
 Les notifications sont créées automatiquement par les services métier lors d'événements significatifs : création d'une soutenance, changement de statut d'une session, détection de conflit, soumission d'une évaluation, etc. Le frontend interroge le serveur toutes les 30 secondes via le hook \texttt{useNotifications} (configurable via \texttt{NOTIFICATION\_POLL\_INTERVAL}) pour récupérer les nouvelles notifications. Le composant \texttt{NotificationBadge} dans la sidebar affiche le nombre de notifications non lues sous forme de badge rouge.
 
 L'endpoint \texttt{POST /api/notifications/\{id\}/send-email} permet aux administrateurs et coordinateurs de déclencher l'envoi d'un email associé à une notification. En mode développement, les emails sont dirigés vers Mailpit, qui offre une interface web (\texttt{http://localhost:8025}) permettant de visualiser les emails envoyés sans nécessiter de serveur SMTP réel.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/notifications}
-    \caption{Panneau de notifications -- alertes en temps réel}
-    \label{fig:notifications}
-\end{figure}
 
 \subsubsection{Système d'Audit}
 \label{ch4:module_audit}
@@ -256,14 +228,7 @@ Chaque entrée d'audit contient l'action effectuée (\texttt{CREATE}, \texttt{UP
 
 Le module d'administration gère la configuration structurelle du système à travers plusieurs entités de référence. Un singleton \texttt{DefenseSettings} fournit les paramètres globaux par défaut (horaires, durées) utilisés par le moteur de planification ainsi que les bornes de création des groupes, tandis que les réglages spécifiques à chaque session sont définis par le coordinateur.
 
-Les entités de référence (\texttt{Level}, \texttt{Major}, \texttt{JuryRoleTemplate}) sont gérées via des interfaces CRUD standard avec recherche et pagination. Le composant \texttt{ConfigEntityManager} est un composant réutilisable qui fournit automatiquement les dialogues de création, modification et suppression pour toute entité de référence, réduisant ainsi la duplication de code entre les différentes pages de configuration.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/admin-config}
-    \caption{Page de configuration générale -- paramètres de l'administration}
-    \label{fig:admin-config}
-\end{figure}
+Les entités de référence (\texttt{Level}, \texttt{Major}, \texttt{JuryRoleTemplate}) sont gérées via des interfaces \acrshort{crud} standard avec recherche et pagination. Le composant \texttt{ConfigEntityManager} est un composant réutilisable qui fournit automatiquement les dialogues de création, modification et suppression pour toute entité de référence, réduisant ainsi la duplication de code entre les différentes pages de configuration.
 
 L'interface d'administration s'articule autour d'un tableau de bord offrant une vue d'ensemble du système : nombre d'utilisateurs, de projets, de soutenances planifiées et d'alertes en attente de traitement.
 
@@ -274,14 +239,7 @@ L'interface d'administration s'articule autour d'un tableau de bord offrant une 
     \label{fig:admin-dashboard}
 \end{figure}
 
-La gestion des départements permet de créer, modifier et supprimer les départements académiques, chaque département étant associé à un coordinateur responsable. Les entités de référence suivantes (niveaux, filières, modèles de rôles de jury) suivent le même schéma CRUD standard via le composant réutilisable \texttt{ConfigEntityManager}.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/admin-departments}
-    \caption{Gestion des départements}
-    \label{fig:admin-departments}
-\end{figure}
+La gestion des départements permet de créer, modifier et supprimer les départements académiques, chaque département étant associé à un coordinateur responsable. Les entités de référence suivantes (niveaux, filières, modèles de rôles de jury) suivent le même schéma \acrshort{crud} standard via le composant réutilisable \texttt{ConfigEntityManager}.
 
 La gestion des salles définit les espaces physiques disponibles pour les soutenances, en spécifiant la capacité d'accueil et les équipements présents (vidéoprojecteur, tableau blanc). Cette information est utilisée par le moteur de conflits (RG3) pour valider l'affectation des jurys aux créneaux.
 
@@ -303,21 +261,7 @@ La gestion des étudiants offre une vue paginée avec recherche instantanée, pe
 
 La gestion des enseignants suit le même modèle, avec en plus la possibilité d'assigner un département principal et de gérer le statut actif/inactif du compte. Les enseignants désactivés ne peuvent plus se connecter mais leurs historiques d'évaluation sont conservés.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/admin-teachers}
-    \caption{Gestion des enseignants}
-    \label{fig:admin-teachers}
-\end{figure}
-
 Enfin, la gestion des coordinateurs permet d'affecter un coordinateur à un département. Le coordinateur dispose de droits étendus sur son département : planification des soutenances, composition des jurys, validation des notes et suivi des évaluations.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/admin-coordinators}
-    \caption{Gestion des coordinateurs}
-    \label{fig:admin-coordinators}
-\end{figure}
 
 \subsubsection{Gestion de la Planification (Coordinateur)}
 \label{ch4:features_coordinator}
@@ -333,30 +277,9 @@ Le coordinateur dispose d'un tableau de bord centralisé offrant une vue d'ensem
 
 La page des sessions de soutenance (\texttt{/coordinator/sessions}) permet de créer, modifier et activer les sessions de soutenance, en définissant les coefficients d'évaluation et les plages horaires.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/coord-sessions}
-    \caption{Sessions de soutenance -- création et activation}
-    \label{fig:coord-sessions}
-\end{figure}
-
 La gestion des projets (\texttt{/coordinator/projects}) offre une vue paginée de tous les projets, avec recherche et filtrage par département et par statut. Chaque projet affiche l'étudiant, l'encadrant et le statut de validation.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/coord-projects}
-    \caption{Gestion des projets -- vue paginée avec filtres}
-    \label{fig:coord-projects}
-\end{figure}
-
 La composition des jurys (\texttt{/coordinator/juries}) permet d'affecter les membres du jury aux soutenances en veillant à la répartition équitable des charges.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/coord-juries}
-    \caption{Composition des jurys -- affectation des membres}
-    \label{fig:coord-juries}
-\end{figure}
 
 La page des documents (\texttt{/coordinator/documents}) centralise l'accès aux documents générés (convocations, fiches d'évaluation, procès-verbaux) avec téléchargement en un clic.
 
@@ -372,69 +295,20 @@ La page des documents (\texttt{/coordinator/documents}) centralise l'accès aux 
 
 Le tableau de bord enseignant (\texttt{/teacher/dashboard}) résume les soutenances assignées, les évaluations en attente et les notifications pertinentes.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/teacher-dashboard}
-    \caption{Tableau de bord enseignant -- vue d'ensemble}
-    \label{fig:teacher-dashboard}
-\end{figure}
-
 La page de planning (\texttt{/teacher/schedule}) affiche le planning personnel de l'enseignant, filtré pour ne montrer que les soutenances auxquelles il est assigné en tant que membre de jury.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/teacher-schedule}
-    \caption{Planning enseignant -- soutenances assignées}
-    \label{fig:teacher-schedule}
-\end{figure}
 
 La page d'évaluations (\texttt{/teacher/evaluations}) liste les soutenances à évaluer avec le statut de chaque note (en attente ou soumise) et permet la saisie directe des scores.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/teacher-evaluations}
-    \caption{Évaluations à saisir -- statut et notes}
-    \label{fig:teacher-evaluations}
-\end{figure}
-
 Le module d'indisponibilités (\texttt{/teacher/unavailability}) fournit un calendrier interactif permettant à l'enseignant de déclarer les créneaux d'indisponibilité sur les prochaines semaines. Ces indisponibilités sont prises en compte par le moteur de conflits (RG6).
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/teacher-unavailability}
-    \caption{Gestion des indisponibilités -- calendrier interactif}
-    \label{fig:teacher-unavailability}
-\end{figure}
 
 \subsubsection{Espace Étudiant}
 \label{ch4:features_student}
 
 Le tableau de bord étudiant (\texttt{/student/dashboard}) affiche les informations pertinentes : groupe de projet, soutenance assignée, documents à télécharger et notifications.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/student-dashboard}
-    \caption{Tableau de bord étudiant -- vue d'ensemble}
-    \label{fig:student-dashboard}
-\end{figure}
-
 La page du groupe (\texttt{/student/groups}) permet de créer un groupe de projet, de rejoindre un groupe existant via un code d'invitation, et de consulter la composition actuelle du groupe.
 
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/student-group}
-    \caption{Groupe de projet -- création et adhésion}
-    \label{fig:student-group}
-\end{figure}
-
 La page des documents (\texttt{/student/documents}) affiche la liste des documents requis (convocation, fiche d'évaluation, etc.) avec leur statut (manquant, soumis, accepté) et permet de télécharger les convocations.
-
-\begin{figure}[H]
-    \centering
-    \screenshotbox[\textwidth]{figures/screenshots/student-documents}
-    \caption{Documents de l'étudiant -- statut et téléchargement}
-    \label{fig:student-documents}
-\end{figure}
 
 \subsection{Interface utilisateur et navigation}
 \label{ch4:interface}
@@ -511,34 +385,34 @@ La stratégie de tests suit la pyramide des tests : un grand nombre de tests uni
 \subsubsection{Hooks de pré-commit}
 \label{ch4:hooks}
 
-Husky et lint-staged implémentent des hooks de pré-commit qui s'exécutent automatiquement avant chaque commit Git. Pour les fichiers TypeScript/TSX, ESLint et Prettier sont exécutés en parallèle. Pour les fichiers Java, le formatage est vérifié via SpotBugs, Checkstyle et PMD. Si l'une de ces vérifications échoue, le commit est bloqué, empêchant l'introduction de code non formaté ou contenant des erreurs de linting dans le dépôt. Cette barrière de qualité, combinée aux hooks post-commit qui exécutent les tests unitaires, constitue un filet de sécurité qui maintient la qualité du code à chaque étape du développement.
+Husky et lint-staged implémentent des hooks de pré-commit qui s'exécutent automatiquement avant chaque commit Git. Pour les fichiers TypeScript/\gls{tsx}, ESLint et Prettier sont exécutés en parallèle. Pour les fichiers Java, le formatage est vérifié via SpotBugs, Checkstyle et PMD. Si l'une de ces vérifications échoue, le commit est bloqué, empêchant l'introduction de code non formaté ou contenant des erreurs de linting dans le dépôt. Cette barrière de qualité, combinée aux hooks post-commit qui exécutent les tests unitaires, constitue un filet de sécurité qui maintient la qualité du code à chaque étape du développement.
 
 \subsubsection{Conventions Git et GitHub}
 \label{ch4:git_conventions}
 
 Les messages de commit suivent les conventions sémantiques : préfixes \texttt{feat:}, \texttt{fix:}, \texttt{chore:}, \texttt{docs:}, \texttt{test:}, suivis d'une description en anglais à l'impératif. Les pull requests documentent les changements apportés et lient les issues GitHub correspondantes. Les issues GitHub servent de support au suivi des tâches, avec des labels de priorité (\texttt{high}, \texttt{medium}, \texttt{low}) et de catégorie (\texttt{bug}, \texttt{feature}, \texttt{documentation}). Les releases GitHub documentent les versions majeures avec un changelog structuré.
 
-\subsubsection{Pipeline CI/CD}
+\subsubsection{Pipeline \acrshort{cicd}}
 \label{ch4:cicd}
 
-Le pipeline GitHub Actions automatise la construction, les tests et la synchronisation entre les dépôts. Trois workflows distincts s'exécutent à chaque push sur \texttt{main} : le workflow de l'API compile le code Java avec Maven, exécute les tests unitaires et vérifie la couverture de code. Le workflow de l'UI lance le build Vite et les tests Vitest. Le workflow E2E synchronise les sources, démarre les deux serveurs, et exécute les tests Playwright. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt E2E, s'assurant que les tests d'intégration s'exécutent toujours sur la dernière version du code.
+Le pipeline GitHub Actions automatise la construction, les tests et la synchronisation entre les dépôts. Trois workflows distincts s'exécutent à chaque push sur \texttt{main} : le workflow de l'\acrshort{api} compile le code Java avec Maven, exécute les tests unitaires et vérifie la couverture de code. Le workflow de l'\acrshort{ui} lance le build Vite et les tests Vitest. Le workflow \acrshort{e2e} synchronise les sources, démarre les deux serveurs, et exécute les tests Playwright. La synchronisation entre les dépôts est assurée par des scripts rsync qui copient les sources dans le dépôt \acrshort{e2e}, s'assurant que les tests d'intégration s'exécutent toujours sur la dernière version du code.
 
 \subsection{Difficultés rencontrées et solutions}
 \label{ch4:difficultes}
 
 Plusieurs difficultés techniques ont été rencontrées au cours du développement, nécessitant des solutions adaptées.
 
-La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive (glisser-déposer) et la base de données. Le \textit{Defense Designer} manipule un état local complexe (associations jury $\rightarrow$ créneau) qui doit être validé contre six règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final. Cette approche réduit drastiquement le nombre d'appels API (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
+La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive (glisser-déposer) et la base de données. Le \textit{Defense Designer} manipule un état local complexe (associations jury $\rightarrow$ créneau) qui doit être validé contre six règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final. Cette approche réduit drastiquement le nombre d'appels \acrshort{api} (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
 
 Une seconde difficulté a été la \textbf{duplication du moteur de conflits} entre Java et TypeScript. Pour assurer la cohérence, les deux implémentations suivent exactement la même séquence de vérifications et les mêmes structures de données (projet, salle, enseignant, indisponibilité). Les tests unitaires des deux moteurs valident les mêmes scénarios, et les messages d'erreur sont maintenus de manière cohérente entre les deux implémentations.
 
 Une troisième difficulté a été la \textbf{conception du système de templates de jurys}. Les départements ont des besoins différents en termes de composition de jury (certains exigent un Président, un Rapporteur et un Examinateur, d'autres ajoutent un Co-encadrant). La solution a été d'implémenter des \texttt{JuryRoleTemplate} configurables par le coordinateur, chaque template définissant les rôles nécessaires, le nombre de membres par rôle et le coefficient associé. Cette flexibilité permet au système de s'adapter à différents contextes sans modification du code.
 
-La quatrième difficulté concernait la \textbf{génération de documents PDF}. Les cinq types de documents (convocation étudiant, convocation jury, fiche d'évaluation, liste de présence, procès-verbal) devaient produire des formats A4 structurés avec un rendu consistant. La solution retenue est la génération côté serveur : le \texttt{DocumentDataService} assemble les données à partir des entités JPA, le \texttt{DocumentGenerationService} les injecte dans des modèles Thymeleaf, et \texttt{OpenHTMLToPDF} (basé sur Flying Saucer) convertit le HTML en PDF avec les feuilles de style dédiées. Cette architecture garantit un rendu identique quel que soit le navigateur, contrairement à une approche client \texttt{@media print} qui présente des incompatibilités entre Chrome, Firefox et Safari.
+La quatrième difficulté concernait la \textbf{génération de documents \acrshort{pdf}}. Les cinq types de documents (convocation étudiant, convocation jury, fiche d'évaluation, liste de présence, procès-verbal) devaient produire des formats A4 structurés avec un rendu consistant. La solution retenue est la génération côté serveur : le \texttt{DocumentDataService} assemble les données à partir des entités \acrshort{jpa}, le \texttt{DocumentGenerationService} les injecte dans des modèles Thymeleaf, et \texttt{OpenHTMLToPDF} (basé sur Flying Saucer) convertit le \acrshort{html} en \acrshort{pdf} avec les feuilles de style dédiées. Cette architecture garantit un rendu identique quel que soit le navigateur, contrairement à une approche client \texttt{@media print} qui présente des incompatibilités entre Chrome, Firefox et Safari.
 
-La cinquième difficulté concernait le \textbf{suivi des tâches et la collaboration} entre les membres de l'équipe de développement. Avec trois dépôts distincts (API, UI, E2E) et des fonctionnalités à coordonner, il fallait un outil léger et intégré au workflow existant. Les solutions de gestion de projet (Jira, Trello, Notion) impliquaient une surcharge configurationnelle disproportionnée pour un projet de cette envergure. La solution retenue fut d'utiliser directement \texttt{GitHub Issues} comme canal unique de suivi : chaque tâche est documentée dans une issue étiquetée par priorité et catégorie, les pull requests referment automatiquement les issues correspondantes, et le tableau GitHub fournit une visibilité en temps réel sur l'avancement. Cette approche minimale élimine la friction outillage tout en maintenant une traçabilité complète des décisions et des modifications.
+La cinquième difficulté concernait le \textbf{suivi des tâches et la collaboration} entre les membres de l'équipe de développement. Avec trois dépôts distincts (\acrshort{api}, \acrshort{ui}, \acrshort{e2e}) et des fonctionnalités à coordonner, il fallait un outil léger et intégré au workflow existant. Les solutions de gestion de projet (Jira, Trello, Notion) impliquaient une surcharge configurationnelle disproportionnée pour un projet de cette envergure. La solution retenue fut d'utiliser directement \texttt{GitHub Issues} comme canal unique de suivi : chaque tâche est documentée dans une issue étiquetée par priorité et catégorie, les pull requests referment automatiquement les issues correspondantes, et le tableau GitHub fournit une visibilité en temps réel sur l'avancement. Cette approche minimale élimine la friction outillage tout en maintenant une traçabilité complète des décisions et des modifications.
 
 \subsection{Conclusion}
 \label{ch4:conclusion}
 
-Ce chapitre a présenté la traduction technique de la conception. L'utilisation d'une architecture découplée (API REST + SPA React), d'un moteur de conflits rigoureux implémenté en Java et dupliqué en TypeScript pour la réactivité, et d'une interface utilisateur moderne basée sur Tailwind CSS et shadcn/ui, a permis de répondre aux exigences de fiabilité et d'ergonomie fixées. Les modules de notifications, d'audit et de configuration administrative complètent le système en offrant les fonctionnalités transverses nécessaires à un usage productif. Les bonnes pratiques adoptées (tests automatisés, hooks de pré-commit, conventions Git, pipeline CI/CD) garantissent la maintenabilité du code à long terme. Le système est désormais prêt pour la phase de validation qui sera détaillée au chapitre suivant.
+Ce chapitre a présenté la traduction technique de la conception. L'utilisation d'une architecture découplée (\acrshort{api} \acrshort{rest} + SPA React), d'un moteur de conflits rigoureux implémenté en Java et dupliqué en TypeScript pour la réactivité, et d'une interface utilisateur moderne basée sur Tailwind \acrshort{css} et shadcn/ui, a permis de répondre aux exigences de fiabilité et d'ergonomie fixées. Les modules de notifications, d'audit et de configuration administrative complètent le système en offrant les fonctionnalités transverses nécessaires à un usage productif. Les bonnes pratiques adoptées (tests automatisés, hooks de pré-commit, conventions Git, pipeline \acrshort{cicd}) garantissent la maintenabilité du code à long terme. Le système est désormais prêt pour la phase de validation qui sera détaillée au chapitre suivant.
