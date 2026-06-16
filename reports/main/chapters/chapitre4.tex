@@ -30,7 +30,7 @@ Le développement a été conduit dans un environnement hybride Windows et Linux
         Langage frontend   & TypeScript                     & 6 (strict)       \\
         Framework frontend & React                          & 19               \\
         Bundler frontend   & Vite                           & 8                \\
-        CSS framework      & Tailwind CSS                   & 4                \\
+        CSS framework      & Tailwind \acrshort{css}                   & 4                \\
         Composants UI      & shadcn/ui                      & —                \\
         State management   & TanStack Query                 & v5               \\
         Routing            & React Router                   & v7               \\
@@ -94,13 +94,30 @@ Les \textbf{composants spécifiques} sont organisés par module fonctionnel dans
 
 La \textbf{validation locale} est assurée par le moteur de conflits TypeScript (\texttt{conflict-engine.ts}), une réplique fonctionnelle du moteur Java, permettant une validation instantanée sans aller-retour serveur. Les schémas de validation Zod (\texttt{validations.ts}) garantissent la conformité des données saisies par l'utilisateur avant envoi au serveur.
 
+\subsubsection{Structure des dépôts}
+\label{ch4:repo_structure}
+
+Les dépôts de l'application sont organisés en deux projets distincts : l'\acrshort{api} Spring Boot et l'\acrshort{ui} React. Le dépôt \acrshort{api} suit une structure en couches par module fonctionnel, tandis que le dépôt \acrshort{ui} sépare les composants réutilisables (\texttt{components/}), les pages (\texttt{pages/}), les hooks (\texttt{hooks/}) et les tests (\texttt{test/}) selon les conventions React modernes. \Cref{fig:tree-api} et~\Cref{fig:tree-ui} présentent l'arborescence simplifiée de chaque dépôt.
+
+\begin{figure}[H]
+    \input{figures/trees/api-simple}
+    \caption{Arborescence simplifiée du dépôt \acrshort{api}}
+    \label{fig:tree-api}
+\end{figure}
+
+\begin{figure}[H]
+    \input{figures/trees/ui-simple}
+    \caption{Arborescence simplifiée du dépôt \acrshort{ui}}
+    \label{fig:tree-ui}
+\end{figure}
+
 \subsection{Implémentation des modules fonctionnels}
 \label{ch4:modules_impl}
 
 \subsubsection{Module Authentification et Sécurité}
 \label{ch4:module_auth}
 
-La sécurité repose sur un mécanisme \textit{stateless} utilisant les \textbf{\acrshort{json} Web Tokens (\acrshort{jwt})}. Le flux d'authentification est géré par \texttt{AuthService} côté serveur.
+La sécurité repose sur un mécanisme \textit{stateless} utilisant les \textbf{\acrshort{json} Web Tokens (\acrshort{jwt})}. Le flux d'authentification est géré par \texttt{AuthService} côté serveur, comme illustré dans~\cref{fig:login}.
 
 \begin{figure}[H]
     \centering
@@ -109,7 +126,7 @@ La sécurité repose sur un mécanisme \textit{stateless} utilisant les \textbf{
     \label{fig:login}
 \end{figure}
 
-Après soumission du formulaire d'inscription, le système envoie un email de confirmation contenant un lien de vérification. L'utilisateur doit cliquer sur ce lien avant de pouvoir se connecter, ce qui valide son adresse email et active son compte.
+Après soumission du formulaire d'inscription, le système envoie un email de confirmation contenant un lien de vérification. L'utilisateur doit cliquer sur ce lien avant de pouvoir se connecter, ce qui valide son adresse email et active son compte, comme le montre~\cref{fig:verify-account}.
 
 \begin{figure}[H]
     \centering
@@ -118,7 +135,7 @@ Après soumission du formulaire d'inscription, le système envoie un email de co
     \label{fig:verify-account}
 \end{figure}
 
-En cas d'oubli du mot de passe, l'utilisateur peut demander un lien de réinitialisation. Le système génère un token UUID valide pendant 1 heure et envoie un email contenant le lien. La validation de la force du mot de passe utilise la bibliothèque zxcvbn pour évaluer la résistance aux attaques par force brute en temps réel.
+En cas d'oubli du mot de passe, l'utilisateur peut demander un lien de réinitialisation. Le système génère un token UUID valide pendant 1 heure et envoie un email contenant le lien. La validation de la force du mot de passe utilise la bibliothèque zxcvbn pour évaluer la résistance aux attaques par force brute en temps réel. \Cref{fig:forgot-password} présente le formulaire correspondant.
 
 \begin{figure}[H]
     \centering
@@ -127,7 +144,7 @@ En cas d'oubli du mot de passe, l'utilisateur peut demander un lien de réinitia
     \label{fig:forgot-password}
 \end{figure}
 
-Le système gère les erreurs de manière personnalisée. Les routes inexistantes affichent une page 404 dédiée, tandis que les erreurs inattendues côté client sont interceptées par un composant \texttt{ErrorBoundary} qui propose un bouton de rechargement de l'application au lieu de laisser le navigateur afficher une page blanche.
+Le système gère les erreurs de manière personnalisée. Les routes inexistantes affichent une page 404 dédiée, tandis que les erreurs inattendues côté client sont interceptées par un composant \texttt{ErrorBoundary} qui propose un bouton de rechargement de l'application au lieu de laisser le navigateur afficher une page blanche. \Cref{fig:error-404} et~\cref{fig:error-boundary} illustrent ces pages d'erreur.
 
 \begin{figure}[H]
     \centering
@@ -214,7 +231,7 @@ La traçabilité des actions est assurée par un système d'audit basé sur la p
 
 L'aspect intercepte l'exécution de la méthode annotée, capture le résultat (succès ou échec), extrait l'identifiant de l'entité concernée (soit depuis les arguments de la méthode, soit depuis la valeur de retour via réflexion), et écrit un journal d'audit dans une transaction indépendante (\texttt{TransactionTemplate}) pour assurer l'enregistrement même en cas d'échec de la transaction métier.
 
-Chaque entrée d'audit contient l'action effectuée (\texttt{CREATE}, \texttt{UPDATE}, \texttt{DELETE}), le type d'entité concernée, l'identifiant de l'entité, l'email de l'utilisateur ayant effectué l'action, les détails de l'opération et l'horodatage. Le coordinateur d'administration peut consulter ces journaux via la page \texttt{/admin/audit-logs}, qui offre une vue paginée et filtrable de l'ensemble des actions effectuées dans le système.
+Chaque entrée d'audit contient l'action effectuée (\texttt{CREATE}, \texttt{UPDATE}, \texttt{DELETE}), le type d'entité concernée, l'identifiant de l'entité, l'email de l'utilisateur ayant effectué l'action, les détails de l'opération et l'horodatage. Le coordinateur d'administration peut consulter ces journaux via la page \texttt{/admin/audit-logs}, qui offre une vue paginée et filtrable de l'ensemble des actions effectuées dans le système (\cref{fig:admin-audit}).
 
 \begin{figure}[H]
     \centering
@@ -230,7 +247,7 @@ Le module d'administration gère la configuration structurelle du système à tr
 
 Les entités de référence (\texttt{Level}, \texttt{Major}, \texttt{JuryRoleTemplate}) sont gérées via des interfaces \acrshort{crud} standard avec recherche et pagination. Le composant \texttt{ConfigEntityManager} est un composant réutilisable qui fournit automatiquement les dialogues de création, modification et suppression pour toute entité de référence, réduisant ainsi la duplication de code entre les différentes pages de configuration.
 
-L'interface d'administration s'articule autour d'un tableau de bord offrant une vue d'ensemble du système : nombre d'utilisateurs, de projets, de soutenances planifiées et d'alertes en attente de traitement.
+L'interface d'administration s'articule autour d'un tableau de bord offrant une vue d'ensemble du système : nombre d'utilisateurs, de projets, de soutenances planifiées et d'alertes en attente de traitement. \Cref{fig:admin-dashboard} présente cette vue d'ensemble.
 
 \begin{figure}[H]
     \centering
@@ -241,7 +258,7 @@ L'interface d'administration s'articule autour d'un tableau de bord offrant une 
 
 La gestion des départements permet de créer, modifier et supprimer les départements académiques, chaque département étant associé à un coordinateur responsable. Les entités de référence suivantes (niveaux, filières, modèles de rôles de jury) suivent le même schéma \acrshort{crud} standard via le composant réutilisable \texttt{ConfigEntityManager}.
 
-La gestion des salles définit les espaces physiques disponibles pour les soutenances, en spécifiant la capacité d'accueil et les équipements présents (vidéoprojecteur, tableau blanc). Cette information est utilisée par le moteur de conflits (RG3) pour valider l'affectation des jurys aux créneaux.
+La gestion des salles définit les espaces physiques disponibles pour les soutenances, en spécifiant la capacité d'accueil et les équipements présents (vidéoprojecteur, tableau blanc). Cette information est utilisée par le moteur de conflits (RG3) pour valider l'affectation des jurys aux créneaux. \Cref{fig:admin-rooms} illustre cette interface.
 
 \begin{figure}[H]
     \centering
@@ -250,7 +267,7 @@ La gestion des salles définit les espaces physiques disponibles pour les souten
     \label{fig:admin-rooms}
 \end{figure}
 
-La gestion des étudiants offre une vue paginée avec recherche instantanée, permettant d'activer ou de désactiver les comptes et de réinitialiser les mots de passe. Chaque fiche affiche le nom, l'email, le département et le groupe de projet rattaché.
+La gestion des étudiants offre une vue paginée avec recherche instantanée, permettant d'activer ou de désactiver les comptes et de réinitialiser les mots de passe. Chaque fiche affiche le nom, l'email, le département et le groupe de projet rattaché. \Cref{fig:admin-students} montre cette interface.
 
 \begin{figure}[H]
     \centering
@@ -266,7 +283,7 @@ Enfin, la gestion des coordinateurs permet d'affecter un coordinateur à un dép
 \subsubsection{Gestion de la Planification (Coordinateur)}
 \label{ch4:features_coordinator}
 
-Le coordinateur dispose d'un tableau de bord centralisé offrant une vue d'ensemble sur les soutenances à planifier, les sessions actives et les statistiques du département.
+Le coordinateur dispose d'un tableau de bord centralisé offrant une vue d'ensemble sur les soutenances à planifier, les sessions actives et les statistiques du département. \Cref{fig:coord-dashboard} illustre cette vue.
 
 \begin{figure}[H]
     \centering
@@ -281,7 +298,7 @@ La gestion des projets (\texttt{/coordinator/projects}) offre une vue paginée d
 
 La composition des jurys (\texttt{/coordinator/juries}) permet d'affecter les membres du jury aux soutenances en veillant à la répartition équitable des charges.
 
-La page des documents (\texttt{/coordinator/documents}) centralise l'accès aux documents générés (convocations, fiches d'évaluation, procès-verbaux) avec téléchargement en un clic.
+La page des documents (\texttt{/coordinator/documents}) centralise l'accès aux documents générés (convocations, fiches d'évaluation, procès-verbaux) avec téléchargement en un clic (\cref{fig:coord-documents}).
 
 \begin{figure}[H]
     \centering
@@ -308,7 +325,16 @@ Le tableau de bord étudiant (\texttt{/student/dashboard}) affiche les informati
 
 La page du groupe (\texttt{/student/groups}) permet de créer un groupe de projet, de rejoindre un groupe existant via un code d'invitation, et de consulter la composition actuelle du groupe.
 
-La page des documents (\texttt{/student/documents}) affiche la liste des documents requis (convocation, fiche d'évaluation, etc.) avec leur statut (manquant, soumis, accepté) et permet de télécharger les convocations.
+La page des documents (\texttt{/student/documents}) affiche la liste des documents requis (rapport, présentation, etc.) avec leur statut (manquant, soumis, accepté) et permet de télécharger la convocation.
+
+Une fois téléchargée, la convocation se présente sous la forme d'un document officiel structuré (\cref{fig:convocation}), mentionnant les membres du groupe, la date, l'heure et la salle de la soutenance, le sujet du projet ainsi que la composition complète du jury.
+
+\begin{figure}[H]
+    \centering
+    \screenshotbox[0.8\textwidth]{figures/docs/convocation}
+    \caption{Convocation de soutenance générée par le système}
+    \label{fig:convocation}
+\end{figure}
 
 \subsection{Interface utilisateur et navigation}
 \label{ch4:interface}
@@ -380,7 +406,7 @@ Le développement du système a été guidé par des bonnes pratiques industriel
 \subsubsection{Tests automatisés}
 \label{ch4:tests}
 
-La stratégie de tests suit la pyramide des tests : un grand nombre de tests unitaires à la base, un nombre modéré de tests d'intégration au milieu, et un nombre réduit de tests de bout en bout au sommet. Côté backend, 86 classes de test JUnit 5 + Mockito couvrent les services, les contrôleurs et les utilitaires, avec une couverture de 85\% des lignes et 70\% des branches mesurée par JaCoCo. Côté frontend, 91 fichiers de test Vitest + React Testing Library couvrent les pages, les hooks, les composants et les utilitaires, avec une stratégie de mocking basée sur MSW (Mock Service Worker) qui simule les réponses de l'API sans appel réseau. Les tests E2E Playwright (environ 65 tests) valident les parcours utilisateur complets contre l'API réelle, avec une authentification préalable pour les 4 rôles.
+La stratégie de tests suit la pyramide des tests : un grand nombre de tests unitaires à la base, un nombre modéré de tests d'intégration au milieu, et un nombre réduit de tests de bout en bout au sommet. Côté backend, 87 classes de test JUnit 5 + Mockito (647 tests) couvrent les services, les contrôleurs et les utilitaires. Côté frontend, 83 fichiers de test Vitest + React Testing Library (664 tests) couvrent les pages, les hooks, les composants et les utilitaires, avec une stratégie de mocking basée sur MSW (Mock Service Worker) qui simule les réponses de l'API sans appel réseau.
 
 \subsubsection{Hooks de pré-commit}
 \label{ch4:hooks}

@@ -24,297 +24,31 @@
     \bottomrule
     \endfoot
 
-    JWT & \textit{JSON Web Token} -- standard ouvert (RFC 7519) pour l'échange sécurisé d'informations entre parties sous forme d'objet JSON signé numériquement. Dans ce système, les JWT sont stockés dans un cookie \texttt{httpOnly} pour l'authentification stateless. \\
+    JWT & \textit{JSON Web Token} -- standard ouvert (RFC 7519) pour l'échange sécurisé d'informations entre parties sous forme d'objet JSON signé numériquement. Dans ce système, les \acrshort{jwt} sont stockés dans un cookie \texttt{httpOnly} pour l'authentification stateless. \\
     RBAC & \textit{Role-Based Access Control} -- modèle de contrôle d'accès où les permissions sont assignées à des rôles plutôt qu'à des utilisateurs individuels. Le système utilise quatre rôles : administrateur, coordinateur, enseignant, étudiant. \\
-    SPA & \textit{Single Page Application} -- architecture frontend où une seule page HTML est chargée initialement, puis le contenu est mis à jour dynamiquement via JavaScript sans rechargement complet de la page. \\
+    SPA & \textit{Single Page Application} -- architecture frontend où une seule page \acrshort{html} est chargée initialement, puis le contenu est mis à jour dynamiquement via JavaScript sans rechargement complet de la page. \\
     AOP & \textit{Aspect-Oriented Programming} -- paradigme de programmation permettant d'isoler des préoccupations transversales (logging, audit, sécurité) dans des modules autonomes appelés aspects. Utilisé dans ce système pour le journal d'audit. \\
     DTO & \textit{Data Transfer Object} -- objet de transfert de données servant à encapsuler les données échangées entre les couches de l'architecture (contrôleur, service, repository) sans exposer les entités JPA directement. \\
     MLD & \textit{Modèle Logique de Données} -- représentation structurée des données d'une base relationnelle, dérivée du modèle conceptuel (MCD) et traduisant les entités en tables avec leurs clés et relations. \\
     CI/CD & \textit{Continuous Integration / Continuous Deployment} -- ensemble de pratiques automatisant la construction, les tests et le déploiement du code à chaque modification. Implémenté via GitHub Actions. \\
     DnD & \textit{Drag and Drop} (glisser-déposer) -- interaction utilisateur permettant de déplacer des éléments visuels (jurys) vers des emplacements cibles (créneaux du planning) dans le \textit{Defense Designer}. \\
     ORM & \textit{Object-Relational Mapping} -- technique de mapping entre les objets d'un langage orienté objet (Java) et les tables d'une base de données relationnelle. Implémenté via Hibernate/JPA. \\
-    API REST & \textit{Application Programming Interface -- Representational State Transfer} -- style d'architecture pour les interfaces web utilisant les verbes HTTP (GET, POST, PUT, PATCH, DELETE) pour les opérations CRUD. \\
+    API \acrshort{rest} & \textit{Application Programming Interface -- Representational State Transfer} -- style d'architecture pour les interfaces web utilisant les verbes HTTP (GET, POST, PUT, PATCH, DELETE) pour les opérations CRUD. \\
     CORS & \textit{Cross-Origin Resource Sharing} -- mécanisme de sécurité permettant de contrôler les requêtes inter-domaines. Configuré pour autoriser les origines du frontend en développement et production. \\
     XSS & \textit{Cross-Site Scripting} -- type de vulnerability permettant d'injecter du code JavaScript dans les pages consultées par d'autres utilisateurs. Prévenu par les cookies \texttt{httpOnly} et la validation des entrées. \\
     BCrypt & Algorithme de hachage de mots de passe conçu pour être résistant aux attaques par force brute. Utilisé pour stocker les mots de passe de manière sécurisée. \\
-    OpenHTMLToPDF & Bibliothèque Java open source convertissant du HTML et CSS en PDF. Basée sur Flying Saucer, elle est utilisée pour la génération côté serveur des documents administratifs. \\
-    Thymeleaf & Moteur de templates Java permettant de générer du HTML côté serveur. Utilisé pour construire les modèles de documents PDF avant conversion via OpenHTMLToPDF. \\
+    OpenHTMLToPDF & Bibliothèque Java open source convertissant du \acrshort{html} et \acrshort{css} en \acrshort{pdf}. Basée sur Flying Saucer, elle est utilisée pour la génération côté serveur des documents administratifs. \\
+    Thymeleaf & Moteur de templates Java permettant de générer du \acrshort{html} côté serveur. Utilisé pour construire les modèles de documents \acrshort{pdf} avant conversion via OpenHTMLToPDF. \\
     WebSocket & Protocole de communication bidirectionnel en temps réel entre le client et le serveur. Mentionné dans les perspectives d'évolution pour les notifications temps réel. \\
     PWA & \textit{Progressive Web Application} -- application web utilisant des technologies modernes pour offrir une expérience similaire à une application native, incluant le mode hors ligne et les notifications push. \\
-    LMD & \textit{Licence -- Master -- Doctorat} -- système d'organisation des études supérieur adopté au Maroc, structurant les formations en trois cycles successifs. \\
-    PlantUML & Outil de modélisation UML basé sur du texte, permettant de générer automatiquement des diagrammes à partir de descriptions semi-formelles. \\
+    LMD & \textit{Licence -- Master -- Doctorat} -- système d'organisation des études supérieur adopté, structurant les formations en trois cycles successifs. \\
+    PlantUML & Outil de modélisation UML basé sur du texte, permettant de générer automatiquement des diagrammes à partir de descriptions formelles. \\
 
     \bottomrule
 \end{xltabular}
 
-% ── Annexe B : Endpoints API ─────────────────────────────────────────────────
-\section{Liste complète des endpoints \acrshort{api}}
-\label{annex:api_endpoints}
-
-L'\acrshort{api} \acrshort{rest} expose 124 endpoints organisés par module. Le préfixe commun est \texttt{/api}.
-
-\subsection{Authentification}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    POST  & /auth/login              & Authentifier un utilisateur (cookie JWT) \\
-    POST  & /auth/logout             & Déconnexion (effacement du cookie) \\
-    POST  & /auth/forgot-password    & Demander un lien de réinitialisation \\
-    POST  & /auth/reset-password     & Réinitialiser le mot de passe via un token \\
-    POST  & /auth/verify-account     & Vérifier le compte via le token d'activation \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Profil utilisateur}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET    & /me                     & Obtenir le profil de l'utilisateur courant \\
-    PATCH  & /me                     & Modifier le prénom et/ou le nom \\
-    PUT    & /me/password            & Changer le mot de passe \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Administration -- Gestion des utilisateurs}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET     & /admin/users                & Lister les utilisateurs (paginé, filtrable par rôle) \\
-    POST    & /admin/users                & Créer un utilisateur \\
-    POST    & /admin/users/bulk           & Création massive d'utilisateurs \\
-    PUT     & /admin/users/\{id\}          & Modifier un utilisateur \\
-    DELETE  & /admin/users/\{id\}          & Supprimer un utilisateur \\
-    GET     & /coordinator/users          & Lister les utilisateurs (par rôle STUDENT/TEACHER) \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Administration -- Configuration académique}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET     & /admin/faculties              & Lister les facultés \\
-    POST    & /admin/faculties              & Créer une faculté \\
-    GET     & /admin/faculties/\{id\}        & Détails d'une faculté \\
-    PUT     & /admin/faculties/\{id\}        & Modifier une faculté \\
-    PATCH   & /admin/faculties/\{id\}        & Modification partielle d'une faculté \\
-    DELETE  & /admin/faculties/\{id\}        & Supprimer une faculté \\
-    \midrule
-    GET     & /admin/departments            & Lister les départements \\
-    POST    & /admin/departments            & Créer un département \\
-    GET     & /admin/departments/\{id\}      & Détails d'un département \\
-    PUT     & /admin/departments/\{id\}      & Modifier un département \\
-    PATCH   & /admin/departments/\{id\}      & Modification partielle d'un département \\
-    DELETE  & /admin/departments/\{id\}      & Supprimer un département \\
-    \midrule
-    GET     & /admin/config/majors          & Lister les filières \\
-    POST    & /admin/config/majors          & Créer une filière \\
-    PUT     & /admin/config/majors/\{id\}    & Modifier une filière \\
-    PATCH   & /admin/config/majors/\{id\}    & Modification partielle d'une filière \\
-    DELETE  & /admin/config/majors/\{id\}    & Supprimer une filière \\
-    \midrule
-    GET     & /admin/config/levels          & Lister les niveaux \\
-    POST    & /admin/config/levels          & Créer un niveau \\
-    PUT     & /admin/config/levels/\{id\}    & Modifier un niveau \\
-    PATCH   & /admin/config/levels/\{id\}    & Modification partielle d'un niveau \\
-    DELETE  & /admin/config/levels/\{id\}    & Supprimer un niveau \\
-    \midrule
-    GET     & /admin/config/teacher-ranks     & Lister les grades \\
-    POST    & /admin/config/teacher-ranks     & Créer un grade \\
-    PUT     & /admin/config/teacher-ranks/\{id\} & Modifier un grade \\
-    PATCH   & /admin/config/teacher-ranks/\{id\} & Modification partielle d'un grade \\
-    DELETE  & /admin/config/teacher-ranks/\{id\} & Supprimer un grade \\
-    \midrule
-    GET     & /admin/config/jury-role-templates     & Lister les templates de rôles de jury \\
-    POST    & /admin/config/jury-role-templates     & Créer un template \\
-    PUT     & /admin/config/jury-role-templates/\{id\} & Modifier un template \\
-    DELETE  & /admin/config/jury-role-templates/\{id\} & Supprimer un template \\
-    \midrule
-    GET     & /admin/config/settings        & Obtenir les paramètres de soutenance \\
-    PUT     & /admin/config/settings        & Modifier les paramètres (complet) \\
-    PATCH   & /admin/config/settings        & Modifier les paramètres (partiel) \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Administration -- Salles, Statistiques, Audit}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET     & /admin/rooms                  & Lister les salles \\
-    POST    & /admin/rooms                  & Créer une salle \\
-    POST    & /admin/rooms/bulk             & Création massive de salles \\
-    PUT     & /admin/rooms/\{id\}            & Modifier une salle \\
-    PATCH    & /admin/rooms/\{id\}            & Modification partielle d'une salle \\
-    DELETE  & /admin/rooms/\{id\}            & Supprimer une salle \\
-    \midrule
-    GET     & /admin/stats                  & Statistiques globales \\
-    \midrule
-    GET     & /admin/audit-logs             & Journal d'audit (paginé) \\
-    POST    & /admin/audit-logs             & Créer une entrée d'audit manuellement \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Coordinateur -- Sessions de soutenance}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET     & /coordinator/defense-sessions                  & Lister les sessions \\
-    POST    & /coordinator/defense-sessions                  & Créer une session \\
-    PUT     & /coordinator/defense-sessions/\{id\}            & Modifier une session \\
-    DELETE  & /coordinator/defense-sessions/\{id\}            & Supprimer une session \\
-    POST    & /coordinator/defense-sessions/\{id\}/transition & Changer le statut \\
-    PATCH   & /coordinator/defense-sessions/\{id\}/freeze     & Geler la session \\
-    PATCH   & /coordinator/defense-sessions/\{id\}/unfreeze   & Dégeler la session \\
-    PATCH   & /coordinator/defense-sessions/\{id\}/approve    & Approuver la session (ADMIN) \\
-    PATCH   & /coordinator/defense-sessions/\{id\}/revoke-approval & Retirer l'approbation \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Coordinateur -- Projets, Groupes, Jurys}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET     & /coordinator/projects              & Lister les projets \\
-    POST    & /coordinator/projects              & Créer un projet \\
-    POST    & /coordinator/projects/bulk         & Import massive de projets \\
-    PUT     & /coordinator/projects/\{id\}        & Modifier un projet \\
-    PATCH   & /coordinator/projects/\{id\}/status & Changer le statut du projet \\
-    DELETE  & /coordinator/projects/\{id\}        & Supprimer un projet \\
-    \midrule
-    GET     & /coordinator/groups                & Lister les groupes \\
-    POST    & /coordinator/groups                & Créer un groupe \\
-    DELETE  & /coordinator/groups/\{id\}          & Supprimer un groupe \\
-    DELETE  & /coordinator/groups/\{id\}/members/\{studentId\} & Retirer un membre \\
-    \midrule
-    GET     & /coordinator/juries                & Lister les jurys \\
-    POST    & /coordinator/juries                & Créer un jury \\
-    PUT     & /coordinator/juries/\{id\}          & Modifier un jury \\
-    DELETE  & /coordinator/juries/\{id\}          & Supprimer un jury \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Coordinateur -- Planning et Conflits}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET     & /coordinator/schedules                 & Obtenir le planning courant \\
-    POST    & /coordinator/schedules                 & Sauvegarder le planning \\
-    POST    & /coordinator/schedules/generation      & Auto-génération du planning \\
-    PATCH   & /coordinator/schedules/publication     & Publier le planning \\
-    \midrule
-    POST    & /coordinator/conflicts/validate        & Valider le planning contre les conflits \\
-    \midrule
-    GET     & /coordinator/grades                    & Consulter les notes et moyennes \\
-    GET     & /coordinator/unavailability            & Consulter les indisponibilités \\
-    GET     & /coordinator/stats                     & Statistiques du coordinateur \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Coordinateur -- Défenses}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    POST    & /coordinator/defenses/\{id\}/cancel    & Annuler une soutenance planifiée \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Coordinateur -- Documents}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    POST  & /coordinator/documents/pdf/evaluation-sheets      & Générer la fiche d'évaluation PDF \\
-    POST  & /coordinator/documents/pdf/attendance-lists       & Générer la liste de présence PDF \\
-    POST  & /coordinator/documents/pdf/jury-convocations      & Générer la convocation jury PDF \\
-    POST  & /coordinator/documents/pdf/schedule               & Générer le planning PDF \\
-    POST  & /coordinator/documents/pdf/proces-verbal          & Générer le PV PDF \\
-    \midrule
-    POST  & /coordinator/documents/evaluation-sheets      & Données de la fiche d'évaluation \\
-    POST  & /coordinator/documents/attendance-lists       & Données de la liste de présence \\
-    POST  & /coordinator/documents/jury-convocations      & Données de la convocation jury \\
-    POST  & /coordinator/documents/schedule               & Données du planning imprimable \\
-    POST  & /coordinator/documents/proces-verbal          & Données du procès-verbal \\
-    \midrule
-    POST  & /coordinator/documents/evaluation-sheets/pdf  & Télécharger la fiche d'évaluation PDF \\
-    POST  & /coordinator/documents/attendance-lists/pdf   & Télécharger la liste de présence PDF \\
-    POST  & /coordinator/documents/jury-convocations/pdf  & Télécharger la convocation jury PDF \\
-    POST  & /coordinator/documents/schedule/pdf           & Télécharger le planning PDF \\
-    POST  & /coordinator/documents/proces-verbal/pdf      & Télécharger le PV PDF \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Enseignant}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET   & /teacher/evaluations               & Lister les évaluations assignées \\
-    POST  & /teacher/evaluations/\{id\}         & Soumettre une évaluation (score + commentaire) \\
-    \midrule
-    GET   & /teacher/unavailabilities          & Obtenir les créneaux d'indisponibilité \\
-    POST  & /teacher/unavailabilities          & Enregistrer les créneaux d'indisponibilité \\
-    \midrule
-    GET   & /teacher/schedules                 & Obtenir le planning personnel \\
-    \midrule
-    GET   & /teacher/stats                     & Statistiques personnelles \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Étudiant}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET     & /student/groups                 & Obtenir l'espace groupe \\
-    POST    & /student/groups                 & Créer un groupe \\
-    POST    & /student/groups/\{id\}/members   & Rejoindre un groupe \\
-    DELETE  & /student/groups/leave            & Quitter son groupe \\
-    \midrule
-    GET     & /student/documents              & Lister les documents \\
-    POST    & /student/documents/\{id\}/attachments & Téléverser une pièce jointe \\
-    GET     & /student/documents/\{id\}/download    & Télécharger un document \\
-    \midrule
-    GET     & /student/defenses               & Obtenir les infos de sa soutenance \\
-    GET     & /student/convocations           & Télécharger sa convocation PDF \\
-    \midrule
-    GET     & /student/stats                  & Statistiques personnelles \\
-    \bottomrule
-\end{xltabular}
-
-\subsection{Notifications}
-
-\begin{xltabular}{\textwidth}{llX}
-    \toprule
-    \textbf{Méthode} & \textbf{Chemin} & \textbf{Description} \\
-    \midrule
-    GET    & /notifications                  & Lister les notifications (paginé) \\
-    PATCH  & /notifications/\{id\}/read       & Marquer une notification comme lue \\
-    PATCH  & /notifications/read-all          & Marquer toutes les notifications comme lues \\
-    POST   & /notifications/\{id\}/send-email & Envoyer un email associé à une notification \\
-    \bottomrule
-\end{xltabular}
-
-% ── Annexe C : Manuel d'utilisation rapide ────────────────────────────────────
+\newpage
+% ── Annexe B : Manuel d'utilisation rapide ────────────────────────────────────
 \section{Manuel d'utilisation rapide}
 \label{annex:manuel}
 
@@ -401,3 +135,4 @@ Ce manuel décrit les étapes essentielles pour chaque rôle de l'application.
     \item La page de documents (\texttt{/student/documents}) permet de consulter et télécharger les documents requis.
     \item La convocation peut être téléchargée directement depuis l'application.
 \end{itemize}
+

@@ -45,7 +45,7 @@
 	<!-- Corps du texte -->
 	<text x="50" y="225" font-family="serif" font-size="16" fill="black">
 		Il est porté à la connaissance des membres du
-		<tspan font-weight="bold">Groupe\_4</tspan> :
+		<tspan font-weight="bold">Groupe_4</tspan> :
 	</text>
 	<text x="50" y="250" font-family="serif" font-size="16" fill="black">
 		<tspan font-weight="bold" text-decoration="underline">Mohamed Ali</tspan>
