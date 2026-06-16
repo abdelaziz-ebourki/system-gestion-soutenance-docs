@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soutenance PFE — Système de Gestion des Soutenances et des Jurys</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       DESIGN SYSTEM — Distinctive Editorial
+       Palette: white | black | primary | accent
+       Motif:   geometric corner bracket + left rail
+       ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --white: #ffffff;
+      --black: #0a0a0a;
+      --primary: #008080;
+      --accent: #E67E22;
+
+      --text: var(--black);
+      --text-muted: rgba(10, 10, 10, 0.4);
+      --text-muted-dark: rgba(10, 10, 10, 0.55);
+      --text-light: rgba(255, 255, 255, 0.7);
+      --border: rgba(10, 10, 10, 0.07);
+      --border-light: rgba(255, 255, 255, 0.15);
+      --fill-subtle: rgba(0, 128, 128, 0.04);
+      --fill-hover: rgba(230, 126, 34, 0.06);
+    }
+
+    /* ── Base ─────────────────────────────────────── */
+    .reveal {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .reveal :focus { outline: none; }
+    .reveal .slides { text-align: left; }
+    .reveal .slides > section { padding: 44px 56px; }
+    .reveal .slides > section.center { text-align: center; }
+
+    /* ── Signature: left rail on content slides ───── */
+    .reveal .slides > section:not(.dark-bg)::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 44px;
+      bottom: 44px;
+      width: 1.5px;
+      background: var(--border);
+    }
+    .reveal .slides > section:not(.dark-bg)::after {
+      content: '└';
+      position: absolute;
+      left: 18px;
+      bottom: 36px;
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    /* ── Headings ──────────────────────────────────── */
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+      font-family: 'Inter', system-ui, sans-serif;
+      text-transform: none;
+    }
+    .reveal h1 {
+      font-size: 2.2em;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+    .reveal h2 {
+      font-size: 1.55em;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5em;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    }
+    .reveal p {
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 0.75em;
+    }
+    .reveal li {
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 0.72em;
+    }
+
+    /* ── Slide bg ──────────────────────────────────── */
+    .reveal .slide-background {
+      background: var(--white);
+    }
+
+    /* ── Chrome ────────────────────────────────────── */
+    .reveal .controls { color: var(--text); }
+    .reveal .controls button { color: var(--text); transition: color 0.2s; }
+    .reveal .controls button:hover { color: var(--accent); }
+    .reveal .slide-number { font-size: 11px; font-weight: 500; color: var(--text-muted); background: transparent; }
+    .reveal .progress { background: var(--border); height: 2px; }
+    .reveal .progress span { background: var(--accent); }
+
+    /* ── Signature bracket ─────────────────────────── */
+    .sig {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 1em;
+    }
+    .sig-bracket {
+      font-size: 0.55em;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .sig-tag {
+      font-size: 0.38em;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .sig-bar {
+      width: 20px;
+      height: 2px;
+      background: var(--accent);
+      margin-left: 2px;
+    }
+
+    /* ── Section intro ─────────────────────────────── */
+    .section-intro {
+      display: flex !important;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+    .section-intro .sig-bracket {
+      font-size: 1em;
+      color: var(--accent);
+    }
+    .section-intro .section-number {
+      font-size: 7em;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 0.85;
+      letter-spacing: -0.06em;
+      margin: 4px 0 2px;
+    }
+    .section-intro .section-number + .sig-bar {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin: 6px 0 10px;
+    }
+    .section-intro .section-title {
+      font-size: 1em;
+      font-weight: 400;
+      color: var(--text-light);
+      letter-spacing: 0.0em;
+    }
+
+    /* ── Sommaire ──────────────────────────────────── */
+    .sommaire-list {
+      list-style: none;
+      counter-reset: s;
+      padding: 0;
+      max-width: 700px;
+    }
+    .sommaire-list li {
+      counter-increment: s;
+      padding: 14px 0 14px 48px;
+      position: relative;
+      font-size: 0.66em;
+      font-weight: 500;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      cursor: default;
+      transition: padding-left 0.2s;
+    }
+    .sommaire-list li:last-child { border-bottom: none; }
+    .sommaire-list li::before {
+      content: "0" counter(s);
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.65em;
+      font-weight: 800;
+      color: var(--accent);
+      opacity: 0.5;
+      letter-spacing: -0.02em;
+      transition: opacity 0.2s;
+    }
+    .sommaire-list li:hover { padding-left: 54px; }
+    .sommaire-list li:hover::before { opacity: 1; }
+
+    /* ── Card grid ─────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 0.4em;
+    }
+    .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    .card {
+      border: 1px solid var(--border);
+      padding: 20px 22px;
+      background: var(--white);
+    }
+    .card .card-title {
+      font-size: 0.62em;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.4em;
+      letter-spacing: -0.01em;
+    }
+    .card .card-title::before {
+      content: '└ ';
+      color: var(--accent);
+      font-weight: 300;
+    }
+    .card .card-body {
+      font-size: 0.5em;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    /* ── Two-col ───────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .col-label {
+      font-size: 0.4em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.8em;
+    }
+
+    /* ── Timeline ──────────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 20px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 5px;
+      bottom: 5px;
+      width: 1px;
+      background: var(--border);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 13px;
+      font-size: 0.5em;
+      line-height: 1.6;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: 7px;
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+    }
+    .timeline-item .tl-title {
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1px;
+    }
+    .timeline-item .tl-body {
+      color: var(--text-muted);
+      font-size: 0.95em;
+    }
+
+    /* ── Highlight block ───────────────────────────── */
+    .highlight-block {
+      border-left: 2px solid var(--accent);
+      padding: 8px 0 8px 18px;
+      margin: 0.5em 0;
+    }
+    .highlight-block p {
+      font-size: 0.5em;
+      line-height: 1.7;
+      margin: 0;
+    }
+    .highlight-block strong { color: var(--text); }
+
+    /* ── Rule list ─────────────────────────────────── */
+    .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.5em;
+    }
+    .rule-item:last-child { border-bottom: none; }
+    .rule-item .rule-id {
+      font-weight: 800;
+      color: var(--accent);
+      font-size: 0.85em;
+      min-width: 32px;
+    }
+    .rule-item .rule-text {
+      flex: 1;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .rule-item .rule-severity {
+      font-size: 0.7em;
+      font-weight: 600;
+      padding: 3px 12px;
+      letter-spacing: 0.04em;
+    }
+    .rule-severity.error {
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .rule-severity.warning {
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    /* ── COMPARISON CARDS (replaces table) ─────────── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 0.4em;
+    }
+    .compare-card {
+      border: 1px solid var(--border);
+      position: relative;
+      background: var(--white);
+    }
+    /* Corner bracket accent on each card */
+    .compare-card::before {
+      content: '└';
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .compare-card-header {
+      padding: 24px 20px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-card-header .cat {
+      font-size: 0.55em;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .compare-card-header .cat-sub {
+      font-size: 0.4em;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .compare-card-body {
+      padding: 12px 20px 20px;
+    }
+    .compare-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .compare-row:last-child { margin-bottom: 0; }
+    .compare-marker {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.4em;
+      font-weight: 700;
+    }
+    .compare-marker.plus {
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .compare-marker.minus {
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .compare-text {
+      font-size: 0.4em;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .compare-text.muted { color: var(--text-muted); }
+
+    /* ── Compare conclusion (replaces highlight-block after table) ── */
+    .compare-verdict {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 0.7em;
+      padding: 14px 20px;
+      border: 1px solid var(--border);
+      background: var(--fill-subtle);
+    }
+    .compare-verdict .verdict-icon {
+      flex-shrink: 0;
+      font-size: 1.2em;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .compare-verdict .verdict-text {
+      font-size: 0.45em;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .compare-verdict .verdict-text strong { color: var(--text); }
+
+    /* ── Metrics ───────────────────────────────────── */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 0.8em;
+    }
+    .metric {
+      text-align: center;
+      padding: 14px 8px 12px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .metric::before {
+      content: '└';
+      position: absolute;
+      left: 6px;
+      top: 6px;
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .metric .metric-value {
+      font-size: 2em;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+    .metric .metric-label {
+      font-size: 0.4em;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    /* ── Perspective list ──────────────────────────── */
+    .persp-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .persp-item:last-child { border-bottom: none; }
+    .persp-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.45em;
+      font-weight: 800;
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+    .persp-text {
+      font-size: 0.5em;
+      line-height: 1.6;
+    }
+    .persp-text strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 1px;
+      font-weight: 700;
+    }
+    .persp-text .persp-body {
+      color: var(--text-muted);
+    }
+
+    /* ── Check list ────────────────────────────────── */
+    .check-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .check-list li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 0.3em;
+      font-size: 0.48em;
+      line-height: 1.9;
+    }
+    .check-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 13px;
+      height: 13px;
+      border: 1.5px solid var(--accent);
+    }
+    .check-list li::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: calc(50% - 4px);
+      width: 3.5px;
+      height: 6.5px;
+      border: solid var(--accent);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* ── Tech badges ───────────────────────────────── */
+    .stack-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 0.3em;
+    }
+    .tech-badge {
+      display: inline-block;
+      border: 1px solid var(--border);
+      padding: 3px 12px;
+      font-size: 0.38em;
+      font-weight: 600;
+      color: var(--text);
+      margin: 2px 2px;
+    }
+    .tech-badge:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Arch diagram ──────────────────────────────── */
+    .arch-row {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0;
+      margin-top: 0.5em;
+    }
+    .arch-box {
+      flex: 1;
+      text-align: center;
+      padding: 20px 16px;
+      font-size: 0.48em;
+      font-weight: 700;
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: var(--white);
+      position: relative;
+    }
+    .arch-box + .arch-box { border-left: none; }
+    .arch-box .arch-sub {
+      font-size: 0.8em;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .arch-box::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1em;
+      color: var(--text-muted);
+      z-index: 1;
+    }
+    .arch-box:last-child::after { display: none; }
+
+    /* ── Title slide ───────────────────────────────── */
+    .title-slide {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      padding: 20px;
+    }
+    .title-slide .sig-bracket {
+      font-size: 1.2em;
+      margin-bottom: 16px;
+    }
+    .title-slide .university {
+      font-size: 0.55em;
+      font-weight: 500;
+      color: var(--text-light);
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+    .title-slide .faculty {
+      font-size: 0.65em;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+    .title-slide .department {
+      font-size: 0.5em;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    .title-slide h1 {
+      color: var(--white);
+      font-size: 1.5em;
+      margin-bottom: 18px;
+      max-width: 900px;
+    }
+    .title-slide .project-type {
+      display: inline-block;
+      font-size: 0.42em;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border-light);
+      padding: 4px 18px;
+      margin-bottom: 18px;
+    }
+    .title-slide .students {
+      font-size: 0.6em;
+      color: var(--text-light);
+      margin-bottom: 14px;
+    }
+    .title-slide .students strong {
+      color: var(--white);
+      font-weight: 700;
+    }
+    .title-slide .jury {
+      font-size: 0.38em;
+      color: var(--text-light);
+      line-height: 1.9;
+    }
+    .title-slide .jury strong { color: var(--white); }
+    .title-slide .year {
+      font-size: 0.42em;
+      font-weight: 500;
+      color: var(--text-light);
+      margin-top: 18px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Demo slide ────────────────────────────────── */
+    .demo-slide {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+    }
+    .demo-slide .play-box {
+      width: 64px;
+      height: 64px;
+      border: 1.5px solid var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .demo-slide .play-box svg { display: block; }
+    .demo-slide h2 {
+      font-size: 1.6em;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.15em;
+      letter-spacing: -0.02em;
+    }
+    .demo-slide .demo-sub {
+      font-size: 0.6em;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* ── End slide ─────────────────────────────────── */
+    .end-slide {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+    }
+    .end-slide .sig-bracket {
+      font-size: 1.4em;
+      margin-bottom: 12px;
+    }
+    .end-slide h2 {
+      font-size: 2em;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.15em;
+      letter-spacing: -0.02em;
+    }
+    .end-slide .end-sub {
+      font-size: 0.7em;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+    .end-slide .end-jury {
+      font-size: 0.38em;
+      color: var(--text-light);
+      margin-top: 1.2em;
+      line-height: 2;
+    }
+    .end-slide .end-jury strong { color: var(--white); }
+    .end-slide .end-details {
+      font-size: 0.36em;
+      color: var(--text-light);
+      margin-top: 1.6em;
+      line-height: 1.7;
+    }
+
+    /* ── Impact card ───────────────────────────────── */
+    .impact-card {
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .impact-card .impact-body {
+      font-size: 0.46em;
+      line-height: 1.8;
+    }
+    .impact-card .impact-body strong { color: var(--text); }
+
+    /* ── Dark bg ───────────────────────────────────── */
+    .dark-bg { background: var(--black) !important; }
+    .dark-bg .reveal h1,
+    .dark-bg .reveal h2,
+    .dark-bg .reveal h3,
+    .dark-bg .reveal p,
+    .dark-bg .reveal li { color: var(--white); }
+
+    /* ── Fragment ──────────────────────────────────── */
+    .reveal .fragment.visible { opacity: 1; transform: none; }
+
+    /* ── Scrollbar ─────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 1 : TITRE
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="title-slide">
+          <span class="sig-bracket">└</span>
+          <div class="university">Université Hassan II de Casablanca</div>
+          <div class="faculty">Faculté des Sciences Ben M'Sick</div>
+          <div class="department">Département de Mathématiques et Informatique</div>
+          <div class="project-type">Projet de Fin d'Études — Licence MIP</div>
+          <h1>Conception et Développement d'un Système Web de Gestion des Soutenances et des Jurys</h1>
+          <div class="students">
+            <strong>Zaitouni Nourelislam</strong> &amp; <strong>Taoudi Ebourki Abdelaziz</strong>
+          </div>
+          <div class="jury">
+            <strong>Encadrant :</strong> Pr. AIT DAOUD Mohammed &nbsp;|&nbsp;
+            <strong>Co-encadrante :</strong> Mme. SAMMAH Salma<br />
+            <strong>Examinatrice :</strong> Pr. OUCHRA Hafsa &nbsp;|&nbsp;
+            <strong>Examinatrice :</strong> Dr. AJBAL Khaoula
+          </div>
+          <div class="year">Année Universitaire 2025 — 2026</div>
+        </div>
+        <aside class="notes">
+          Bonjour à tous. Nous allons vous présenter notre projet de fin d'études portant sur la conception et le développement d'un système web de gestion des soutenances et des jurys.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 2 : SOMMAIRE
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">Sommaire</span><span class="sig-bar"></span></div>
+        <h2>Plan de la présentation</h2>
+        <ol class="sommaire-list">
+          <li class="fragment">Contexte et Problématique</li>
+          <li class="fragment">Objectifs du Projet</li>
+          <li class="fragment">État de l'Art et Choix Technologiques</li>
+          <li class="fragment">Architecture et Conception</li>
+          <li class="fragment">Réalisation — Modules Clés</li>
+          <li class="fragment">Tests et Validation</li>
+          <li class="fragment">Conclusion et Perspectives</li>
+        </ol>
+        <aside class="notes">
+          Voici le plan de notre présentation.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 3 : SECTION — CONTEXTE
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="section-intro">
+          <span class="sig-bracket">└</span>
+          <div class="section-number">01</div>
+          <div class="sig-bar"></div>
+          <div class="section-title">Contexte &amp; Problématique</div>
+        </div>
+        <aside class="notes">
+          Commençons par le contexte et la problématique.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 4 : CONTEXTE
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">01 — Contexte</span><span class="sig-bar"></span></div>
+        <h2>Contexte &amp; Problématique</h2>
+        <div class="two-col">
+          <div>
+            <div class="col-label">Défis</div>
+            <div class="card-grid cols-2">
+              <div class="card fragment">
+                <div class="card-title">Volume &amp; Complexité</div>
+                <div class="card-body">Organisation de nombreuses soutenances avec des contraintes croisées (salles, créneaux, jurys)</div>
+              </div>
+              <div class="card fragment">
+                <div class="card-title">Multiplicité des acteurs</div>
+                <div class="card-body">Coordination entre étudiants, encadrants, jurys et administration</div>
+              </div>
+              <div class="card fragment">
+                <div class="card-title">Gestion documentaire</div>
+                <div class="card-body">Convocations, fiches d'évaluation, PV et planning à générer</div>
+              </div>
+              <div class="card fragment">
+                <div class="card-title">Traçabilité</div>
+                <div class="card-body">Nécessité d'un historique fiable des décisions et évaluations</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Processus actuel</div>
+            <div class="timeline fragment">
+              <div class="timeline-item">
+                <div class="tl-title">Fichiers Excel</div>
+                <div class="tl-body">Données dispersées, pas de versioning</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">E-mails</div>
+                <div class="tl-body">Allers-retours pour collecter les disponibilités</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Vérification manuelle</div>
+                <div class="tl-body">Détection tardive des conflits</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Documents à la main</div>
+                <div class="tl-body">Processus chronophage et source d'erreurs</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Absence de traçabilité</div>
+                <div class="tl-body">Responsabilités difficiles à identifier</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          L'organisation des soutenances est un processus complexe qui implique de nombreux acteurs. Le processus actuel repose sur des tableurs Excel, des e-mails et du papier.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 5 : SECTION — OBJECTIFS
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="section-intro">
+          <span class="sig-bracket">└</span>
+          <div class="section-number">02</div>
+          <div class="sig-bar"></div>
+          <div class="section-title">Objectifs du Projet</div>
+        </div>
+        <aside class="notes">
+          Passons aux objectifs.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 6 : OBJECTIFS
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">02 — Objectifs</span><span class="sig-bar"></span></div>
+        <h2>Objectifs du Projet</h2>
+        <div class="highlight-block fragment">
+          <p><strong>Objectif principal :</strong> Développer une application web complète permettant la gestion centralisée, automatisée et fiable de l'organisation des soutenances et des jurys.</p>
+        </div>
+        <div class="card-grid cols-4" style="margin-top: 0.7em;">
+          <div class="card fragment">
+            <div class="card-title">Gestion des Acteurs</div>
+            <div class="card-body">4 rôles — RBAC, contrôle d'accès granulaire</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Planification</div>
+            <div class="card-body">Defense Designer, détection de conflits, auto-génération</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Documents</div>
+            <div class="card-body">Convocations, fiches, PV — génération A4 automatique</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Évaluation</div>
+            <div class="card-body">Saisie des notes, moyennes pondérées par rôle</div>
+          </div>
+        </div>
+        <aside class="notes">
+          L'objectif principal se décline en 4 axes : RBAC, planification, documents, évaluation.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 7 : SECTION — ÉTAT DE L'ART
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="section-intro">
+          <span class="sig-bracket">└</span>
+          <div class="section-number">03</div>
+          <div class="sig-bar"></div>
+          <div class="section-title">État de l'Art &amp; Technologies</div>
+        </div>
+        <aside class="notes">
+          Analysons les solutions existantes, puis nos choix technologiques.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 8 : ÉTAT DE L'ART — COMPARAISON
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">03 — État de l'Art</span><span class="sig-bar"></span></div>
+        <h2>Analyse des Solutions Existantes</h2>
+
+        <div class="compare-grid">
+          <div class="compare-card fragment">
+            <div class="compare-card-header">
+              <div class="cat">ERP Académiques</div>
+              <div class="cat-sub">Apogée, Aurion</div>
+            </div>
+            <div class="compare-card-body">
+              <div class="compare-row">
+                <span class="compare-marker plus">+</span>
+                <span class="compare-text">Gestion administrative complète</span>
+              </div>
+              <div class="compare-row">
+                <span class="compare-marker minus">–</span>
+                <span class="compare-text">Pas de module soutenance natif</span>
+              </div>
+              <div class="compare-row">
+                <span class="compare-marker minus">–</span>
+                <span class="compare-text">Coût élevé, verrouillage éditeur</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-card fragment">
+            <div class="compare-card-header">
+              <div class="cat">Outils Génériques</div>
+              <div class="cat-sub">Doodle, Google Calendar</div>
+            </div>
+            <div class="compare-card-body">
+              <div class="compare-row">
+                <span class="compare-marker plus">+</span>
+                <span class="compare-text">Prise en main rapide</span>
+              </div>
+              <div class="compare-row">
+                <span class="compare-marker minus">–</span>
+                <span class="compare-text">Pas de logique métier jury/soutenance</span>
+              </div>
+              <div class="compare-row">
+                <span class="compare-marker minus">–</span>
+                <span class="compare-text">Aucune génération documentaire</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-card fragment">
+            <div class="compare-card-header">
+              <div class="cat">Open Source</div>
+              <div class="cat-sub">Thesis Mgmt (TUM), UniTime</div>
+            </div>
+            <div class="compare-card-body">
+              <div class="compare-row">
+                <span class="compare-marker plus">+</span>
+                <span class="compare-text">Partiellement adaptées</span>
+              </div>
+              <div class="compare-row">
+                <span class="compare-marker minus">–</span>
+                <span class="compare-text">Pas de cycle PFE + jurys + documents</span>
+              </div>
+              <div class="compare-row">
+                <span class="compare-marker minus">–</span>
+                <span class="compare-text">Adaptation complexe au contexte marocain</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-verdict fragment">
+          <span class="verdict-icon">└</span>
+          <div class="verdict-text">
+            <strong>Conclusion :</strong> Aucune solution existante ne couvre simultanément la planification interactive, la détection de conflits, la génération de documents et l'adaptation au contexte universitaire marocain.
+          </div>
+        </div>
+        <aside class="notes">
+          Trois catégories analysées. Aucune ne répond à tous nos besoins simultanément.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 9 : CHOIX TECHNOLOGIQUES
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">03 — Technologies</span><span class="sig-bar"></span></div>
+        <h2>Choix Technologiques</h2>
+        <div class="card-grid cols-3" style="margin-top: 0.4em;">
+          <div class="card fragment">
+            <div class="card-title">Frontend</div>
+            <div class="stack-list" style="margin-bottom: 6px;">
+              <span class="tech-badge">React 19</span>
+              <span class="tech-badge">TypeScript 6</span>
+              <span class="tech-badge">Tailwind 4</span>
+            </div>
+            <div class="card-body">
+              SPA, <code>@dnd-kit</code> glisser-déposer, TanStack Query, shadcn/ui
+            </div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Backend</div>
+            <div class="stack-list" style="margin-bottom: 6px;">
+              <span class="tech-badge">Spring Boot 3.4</span>
+              <span class="tech-badge">Java 17</span>
+              <span class="tech-badge">MySQL</span>
+            </div>
+            <div class="card-body">
+              Architecture couches, Spring Security + JWT, Spring Data JPA, H2 tests
+            </div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">DevOps &amp; Qualité</div>
+            <div class="stack-list" style="margin-bottom: 6px;">
+              <span class="tech-badge">Docker</span>
+              <span class="tech-badge">GitHub Actions</span>
+              <span class="tech-badge">Playwright</span>
+            </div>
+            <div class="card-body">
+              CI/CD, conteneurisation, Husky + lint-staged, Jest/Vitest, JUnit 5, JaCoCo
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          Frontend React 19 + TS6 + Tailwind 4, Backend Spring Boot 3.4, DevOps Docker + CI/CD.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 10 : SECTION — ARCHITECTURE
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="section-intro">
+          <span class="sig-bracket">└</span>
+          <div class="section-number">04</div>
+          <div class="sig-bar"></div>
+          <div class="section-title">Architecture &amp; Conception</div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 11 : ARCHITECTURE
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">04 — Architecture</span><span class="sig-bar"></span></div>
+        <h2>Architecture Générale</h2>
+        <div class="arch-row fragment">
+          <div class="arch-box">
+            Frontend SPA
+            <div class="arch-sub">React + TypeScript</div>
+          </div>
+          <div class="arch-box">
+            API REST
+            <div class="arch-sub">Spring Boot</div>
+          </div>
+          <div class="arch-box">
+            Base de Données
+            <div class="arch-sub">MySQL / H2</div>
+          </div>
+        </div>
+        <div class="card-grid cols-3" style="margin-top: 1em;">
+          <div class="card fragment">
+            <div class="card-title">API-First</div>
+            <div class="card-body">Contrat REST, Swagger, séparation frontend/backend stricte</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Multi-dépôts</div>
+            <div class="card-body">3 repos (api, ui, e2e) synchronisés par CI</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Double Validation</div>
+            <div class="card-body">Moteur de conflits TS côté client + Java côté serveur</div>
+          </div>
+        </div>
+        <aside class="notes">
+          Architecture 3 couches : SPA, REST API, DB. Approche API-first, multi-repos, double validation.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 12 : RÈGLES DE GESTION
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">04 — Conception</span><span class="sig-bar"></span></div>
+        <h2>Moteur de Conflits — 6 Règles</h2>
+        <div class="rule-item fragment">
+          <span class="rule-id">RG1</span>
+          <span class="rule-text">Un enseignant ne peut être affecté à deux soutenances aux horaires chevauchants.</span>
+          <span class="rule-severity error">error</span>
+        </div>
+        <div class="rule-item fragment">
+          <span class="rule-id">RG2</span>
+          <span class="rule-text">Une salle ne peut accueillir qu'une seule soutenance pour un créneau donné.</span>
+          <span class="rule-severity error">error</span>
+        </div>
+        <div class="rule-item fragment">
+          <span class="rule-id">RG3</span>
+          <span class="rule-text">Toutes les soutenances doivent être planifiées dans les bornes de la session.</span>
+          <span class="rule-severity error">error</span>
+        </div>
+        <div class="rule-item fragment">
+          <span class="rule-id">RG4</span>
+          <span class="rule-text">Un encadrant ne doit pas être sollicité sur plusieurs projets le même jour.</span>
+          <span class="rule-severity warning">warning</span>
+        </div>
+        <div class="rule-item fragment">
+          <span class="rule-id">RG5</span>
+          <span class="rule-text">Un projet ne peut être planifié qu'une seule fois par session.</span>
+          <span class="rule-severity error">error</span>
+        </div>
+        <div class="rule-item fragment">
+          <span class="rule-id">RG6</span>
+          <span class="rule-text">Aucune soutenance sur un créneau déclaré indisponible par un membre du jury.</span>
+          <span class="rule-severity error">error</span>
+        </div>
+        <div class="highlight-block fragment" style="margin-top: 0.5em;">
+          <p><strong>error</strong> → blocage &nbsp;·&nbsp; <strong>warning</strong> → alerte sans blocage</p>
+        </div>
+        <aside class="notes">
+          6 règles de gestion — 5 bloquantes, 1 avertissement. Implémentées en TS et Java.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 13 : SECTION — RÉALISATION
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="section-intro">
+          <span class="sig-bracket">└</span>
+          <div class="section-number">05</div>
+          <div class="sig-bar"></div>
+          <div class="section-title">Réalisation — Modules Clés</div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 14 : DEFENSE DESIGNER
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">05 — Réalisation</span><span class="sig-bar"></span></div>
+        <h2>Le Defense Designer</h2>
+        <div class="two-col">
+          <div>
+            <div class="col-label">Interface interactive</div>
+            <div class="timeline" style="margin-top: 0.3em;">
+              <div class="timeline-item">
+                <div class="tl-title">Glisser-déposer</div>
+                <div class="tl-body">Jurys déposés sur un calendrier salles × créneaux</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Validation instantanée</div>
+                <div class="tl-body">6 RG vérifiées en TS en &lt; 100 ms</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">État local optimiste</div>
+                <div class="tl-body">Un seul appel API à la sauvegarde</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Suggestions</div>
+                <div class="tl-body">Alternatives proposées en cas de conflit</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Auto-génération</div>
+            <div class="timeline" style="margin-top: 0.3em;">
+              <div class="timeline-item">
+                <div class="tl-title">Algorithme glouton</div>
+                <div class="tl-body">Place chaque jury par salle → jour → créneau</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Contraintes respectées</div>
+                <div class="tl-body">Capacité, conflits, disponibilités</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Re-validation serveur</div>
+                <div class="tl-body">Double vérification avant persistance</div>
+              </div>
+            </div>
+            <div class="highlight-block fragment" style="margin-top: 0.7em;">
+              <p><strong>Résultat :</strong> Temps de planification réduit, zéro conflit non détecté.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          Defense Designer : drag-and-drop, validation instantanée, état optimiste, auto-génération.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 15 : MODULES
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">05 — Réalisation</span><span class="sig-bar"></span></div>
+        <h2>Modules Fonctionnels</h2>
+        <div class="card-grid cols-2">
+          <div class="card fragment">
+            <div class="card-title">Authentification &amp; Sécurité</div>
+            <div class="card-body">JWT stateless, RBAC 4 rôles, Spring Security, <code>@PreAuthorize</code>, mot de passe oublié token UUID (1h), zxcvbn</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Génération Documentaire</div>
+            <div class="card-body">5 types PDF (convocations, fiches, listes, PV, planning). Thymeleaf + OpenHTMLToPDF, format A4</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Évaluation &amp; Notation</div>
+            <div class="card-body">Pondération dynamique, moyenne pondérée automatique, suivi avancement, notes verrouillées</div>
+          </div>
+          <div class="card fragment">
+            <div class="card-title">Notifications &amp; Audit</div>
+            <div class="card-body">Notifications internes (success/warning/error), polling 30s, audit AOP <code>@Audited</code></div>
+          </div>
+        </div>
+        <aside class="notes">
+          Quatre modules clés : auth JWT, PDF, évaluation, audit.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 16 : SECTION — TESTS
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="section-intro">
+          <span class="sig-bracket">└</span>
+          <div class="section-number">06</div>
+          <div class="sig-bar"></div>
+          <div class="section-title">Tests &amp; Validation</div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 17 : TESTS
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">06 — Validation</span><span class="sig-bar"></span></div>
+        <h2>Tests &amp; Métriques</h2>
+        <div class="metric-grid">
+          <div class="metric fragment">
+            <div class="metric-value">647</div>
+            <div class="metric-label">Tests Backend — JUnit 5</div>
+          </div>
+          <div class="metric fragment">
+            <div class="metric-value">664</div>
+            <div class="metric-label">Tests Frontend — Vitest</div>
+          </div>
+          <div class="metric fragment">
+            <div class="metric-value">86.7%</div>
+            <div class="metric-label">Couverture lignes Frontend</div>
+          </div>
+          <div class="metric fragment">
+            <div class="metric-value">134</div>
+            <div class="metric-label">Requêtes Postman</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="col-label">Pyramide</div>
+            <div class="timeline" style="margin-top: 0.3em;">
+              <div class="timeline-item">
+                <div class="tl-title">Tests unitaires</div>
+                <div class="tl-body">Services métier isolés</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Tests d'intégration</div>
+                <div class="tl-body">Contrôleurs REST, Spring complet</div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-title">Tests E2E</div>
+                <div class="tl-body">Playwright — 8 fichiers, 4 rôles</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Qualité</div>
+            <div class="stack-list" style="margin-top: 0.3em;">
+              <span class="tech-badge">JaCoCo</span>
+              <span class="tech-badge">Checkstyle</span>
+              <span class="tech-badge">PMD</span>
+              <span class="tech-badge">SpotBugs</span>
+              <span class="tech-badge">ESLint</span>
+              <span class="tech-badge">Prettier</span>
+            </div>
+            <div class="highlight-block fragment" style="margin-top: 0.7em;">
+              <p><strong>Total :</strong> 1 445 tests + 134 requêtes API</p>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          647 tests backend, 664 frontend, E2E Playwright. Couverture 86.7%.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 18 : SECTION — CONCLUSION
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="section-intro">
+          <span class="sig-bracket">└</span>
+          <div class="section-number">07</div>
+          <div class="sig-bar"></div>
+          <div class="section-title">Conclusion &amp; Perspectives</div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 19 : CONCLUSION
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">07 — Conclusion</span><span class="sig-bar"></span></div>
+        <h2>Conclusion &amp; Résultats</h2>
+        <div class="two-col">
+          <div>
+            <div class="col-label">Objectifs atteints</div>
+            <ul class="check-list">
+              <li class="fragment">Planification interactive — Defense Designer</li>
+              <li class="fragment">Détection automatique de conflits (6 règles)</li>
+              <li class="fragment">Auto-génération du planning</li>
+              <li class="fragment">Génération de 5 types de documents</li>
+              <li class="fragment">Évaluation avec moyennes pondérées</li>
+              <li class="fragment">Sécurité RBAC (4 rôles) + JWT</li>
+              <li class="fragment">1 445 tests automatisés</li>
+              <li class="fragment">Architecture maintenable et évolutive</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-label">Impact</div>
+            <div class="impact-card fragment">
+              <div class="impact-body">
+                <strong>Coordinateur :</strong> Temps de planification réduit, zéro conflit.<br/><br/>
+                <strong>Enseignants :</strong> Planning en ligne, saisie notes, indisponibilités.<br/><br/>
+                <strong>Étudiants :</strong> Consultation, convocation téléchargeable.
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          Tous les objectifs atteints. Defense Designer, conflits, documents, évaluation.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 20 : PERSPECTIVES
+           ════════════════════════════════════════════ -->
+      <section data-background="#ffffff">
+        <div class="sig"><span class="sig-bracket">└</span><span class="sig-tag">07 — Perspectives</span><span class="sig-bar"></span></div>
+        <h2>Perspectives d'Évolution</h2>
+        <div class="persp-item fragment">
+          <div class="persp-num">01</div>
+          <div class="persp-text">
+            <strong>Application Mobile</strong>
+            <span class="persp-body">Notifications push natives pour le planning et les convocations</span>
+          </div>
+        </div>
+        <div class="persp-item fragment">
+          <div class="persp-num">02</div>
+          <div class="persp-text">
+            <strong>Temps Réel</strong>
+            <span class="persp-body">WebSocket pour synchronisation en direct des modifications</span>
+          </div>
+        </div>
+        <div class="persp-item fragment">
+          <div class="persp-num">03</div>
+          <div class="persp-text">
+            <strong>Algorithmes Optimisés</strong>
+            <span class="persp-body">Programmation par contraintes ou recuit simulé</span>
+          </div>
+        </div>
+        <div class="persp-item fragment">
+          <div class="persp-num">04</div>
+          <div class="persp-text">
+            <strong>Mode Hors Ligne (PWA)</strong>
+            <span class="persp-body">Accès aux données sans connexion internet</span>
+          </div>
+        </div>
+        <aside class="notes">
+          Perspectives : mobile, temps réel, algorithmes, PWA.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 21 : DÉMO
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="demo-slide">
+          <div class="play-box">
+            <svg width="24" height="28" viewBox="0 0 24 28" fill="none">
+              <polygon points="2,2 22,14 2,26" fill="white"/>
+            </svg>
+          </div>
+          <h2>Démonstration</h2>
+          <div class="demo-sub">5 minutes — Application en direct</div>
+        </div>
+        <aside class="notes">
+          Démonstration en direct : connexion, dashboard admin, Defense Designer, enseignants, étudiants.
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════
+           SLIDE 22 : MERCI
+           ════════════════════════════════════════════ -->
+      <section class="center dark-bg" data-background="#0a0a0a">
+        <div class="end-slide">
+          <span class="sig-bracket">└</span>
+          <h2>Merci de votre attention</h2>
+        </div>
+        <aside class="notes">
+          Merci de votre attention. Prêts pour les questions.
+        </aside>
+      </section>
+
+    </div><!-- .slides -->
+  </div><!-- .reveal -->
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      showSlideNumber: 'all',
+      controls: true,
+      controlsLayout: 'bottom-right',
+      progress: true,
+      center: true,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      backgroundTransition: 'fade',
+      width: 1280,
+      height: 720,
+      margin: 0.04,
+      minScale: 0.2,
+      maxScale: 2.0,
+      plugins: [RevealNotes],
+    });
+  </script>
+</body>
+</html>
