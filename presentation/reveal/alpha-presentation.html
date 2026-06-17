@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
   <style>
     /* ═══════════════════════════════════════════════════════════════
@@ -16,15 +17,15 @@
        ═══════════════════════════════════════════════════════════════ */
     :root {
       --white: #ffffff;
-      --black: #0a0a0a;
+      --black: #121314;
       --primary: #008080;
       --accent: #E67E22;
 
       --text: var(--black);
-      --text-muted: rgba(10, 10, 10, 0.4);
-      --text-muted-dark: rgba(10, 10, 10, 0.55);
+      --text-muted: rgba(18, 19, 20, 0.4);
+      --text-muted-dark: rgba(18, 19, 20, 0.55);
       --text-light: rgba(255, 255, 255, 0.7);
-      --border: rgba(10, 10, 10, 0.07);
+      --border: rgba(18, 19, 20, 0.07);
       --border-light: rgba(255, 255, 255, 0.15);
       --fill-subtle: rgba(0, 128, 128, 0.04);
       --fill-hover: rgba(230, 126, 34, 0.06);
@@ -765,13 +766,61 @@
     .dark-bg .reveal p,
     .dark-bg .reveal li { color: var(--white); }
 
-    /* ── Fragment ──────────────────────────────────── */
-    .reveal .fragment.visible { opacity: 1; transform: none; }
+    /* ── Fragment animations ────────────────────────── */
+    .reveal .fragment {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal .fragment.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Rule items slide from left */
+    .reveal .rule-item.fragment { transform: translateX(-14px); }
+    .reveal .rule-item.fragment.visible { transform: translateX(0); }
+    /* Metrics scale in */
+    .reveal .metric.fragment { transform: scale(0.92); }
+    .reveal .metric.fragment.visible { transform: scale(1); }
+    /* Timeline items */
+    .reveal .timeline-item.fragment { transform: translateX(-10px); }
+    .reveal .timeline-item.fragment.visible { transform: translateX(0); }
 
     /* ── Scrollbar ─────────────────────────────────── */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); }
+    /* ── Ambient dot pattern ──────────────────────── */
+    .reveal .slides > section:not(.dark-bg) {
+      background-image: radial-gradient(rgba(0,0,0,0.008) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    /* ── Keyframe animations ─────────────────────────── */
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+    /* Demo play button */
+    .demo-slide .demo-icon {
+      animation: pulse-soft 2.5s ease-in-out infinite;
+      display: inline-block;
+    }
+    /* Section numbers: editorial serif */
+    .section-intro .section-number {
+      font-family: 'DM Serif Display', serif;
+      font-weight: 400;
+      font-size: 8em;
+    }
+    /* Metric values: editorial serif */
+    .metric .metric-value {
+      font-family: 'DM Serif Display', serif;
+      font-weight: 400;
+    }
+    /* End slide: larger "Merci" */
+    .end-slide h2 {
+      font-size: 2.4em;
+    }
   </style>
 </head>
 <body>
@@ -781,7 +830,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 1 : TITRE
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="title-slide">
           <span class="sig-bracket">└</span>
           <div class="university">Université Hassan II de Casablanca</div>
@@ -828,7 +877,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 3 : SECTION — CONTEXTE
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="section-intro">
           <span class="sig-bracket">└</span>
           <div class="section-number">01</div>
@@ -902,7 +951,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 5 : SECTION — OBJECTIFS
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="section-intro">
           <span class="sig-bracket">└</span>
           <div class="section-number">02</div>
@@ -949,7 +998,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 7 : SECTION — ÉTAT DE L'ART
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="section-intro">
           <span class="sig-bracket">└</span>
           <div class="section-number">03</div>
@@ -1093,7 +1142,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 10 : SECTION — ARCHITECTURE
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="section-intro">
           <span class="sig-bracket">└</span>
           <div class="section-number">04</div>
@@ -1188,7 +1237,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 13 : SECTION — RÉALISATION
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="section-intro">
           <span class="sig-bracket">└</span>
           <div class="section-number">05</div>
@@ -1283,7 +1332,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 16 : SECTION — TESTS
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="section-intro">
           <span class="sig-bracket">└</span>
           <div class="section-number">06</div>
@@ -1357,7 +1406,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 18 : SECTION — CONCLUSION
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="section-intro">
           <span class="sig-bracket">└</span>
           <div class="section-number">07</div>
@@ -1444,7 +1493,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 21 : DÉMO
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="demo-slide">
           <div class="play-box">
             <svg width="24" height="28" viewBox="0 0 24 28" fill="none">
@@ -1462,7 +1511,7 @@
       <!-- ════════════════════════════════════════════
            SLIDE 22 : MERCI
            ════════════════════════════════════════════ -->
-      <section class="center dark-bg" data-background="#0a0a0a">
+      <section class="center dark-bg" data-background="#121314">
         <div class="end-slide">
           <span class="sig-bracket">└</span>
           <h2>Merci de votre attention</h2>
