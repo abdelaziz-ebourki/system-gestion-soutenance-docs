@@ -18,7 +18,7 @@ La stratégie repose sur la validation progressive de chaque couche du système,
 \subsubsection{Tests unitaires et d'intégration (Backend)}
 \label{ch5:backend_tests}
 
-Le backend Java contient \textbf{93 classes de test} (647 tests unitaires et d'intégration) réparties dans le répertoire de tests du backend, calqué sur la structure du code source. Chaque module fonctionnel dispose de son propre ensemble de tests : \texttt{auth/}, \texttt{admin/}, \texttt{coordinator/}, \texttt{teacher/}, \texttt{student/}, \texttt{notification/} et \texttt{common/}.
+Le backend Java contient \textbf{\metric{ClassesBackend} classes de test} (\metric{TestsBackend} tests unitaires et d'intégration) réparties dans le répertoire de tests du backend, calqué sur la structure du code source. Chaque module fonctionnel dispose de son propre ensemble de tests : \texttt{auth/}, \texttt{admin/}, \texttt{coordinator/}, \texttt{teacher/}, \texttt{student/}, \texttt{notification/} et \texttt{common/}.
 
 Les tests sont réalisés avec \textbf{JUnit 5} et \textbf{Mockito}, et se concentrent sur deux axes complémentaires. Les tests unitaires des services isolent chaque service métier avec mock des dépendances (repositories, autres services), permettant de valider la logique de calcul, les règles de gestion et la gestion des erreurs sans aucune interaction avec la base de données. Les tests d'intégration des contrôleurs, réalisés via \texttt{@WebMvcTest}, testent les endpoints \acrshort{rest} avec le contexte Spring complet, validant la conformité des contrats (statuts \acrshort{http}, format \acrshort{json}), la sérialisation des DTOs, la gestion des erreurs (exceptions métier, validation échouée) et la sécurité (accès refusé pour les rôles non autorisés). Le rapport de couverture est présenté dans~\cref{fig:api-coverage}.
 
@@ -28,24 +28,24 @@ Les tests sont réalisés avec \textbf{JUnit 5} et \textbf{Mockito}, et se conce
     \label{fig:api-coverage}
 \end{figure}
 
-Parmi les classes de test notables, \texttt{ConflictDetectionServiceTest} constitue la suite la plus importante. Elle valide exhaustivement chacune des six règles de gestion (RG1--RG6) avec des jeux de données spécifiques couvrant les cas nominaux (pas de conflit), les cas limites (conflit exact à la frontière d'un créneau), et les cas d'erreur (conflit multiple). Chaque test suit le pattern Arrange--Act--Assert : préparation des données de test (projets, salles, enseignants, indisponibilités), exécution de la méthode de vérification, et vérification du résultat (liste de conflits vide ou non vide selon le cas testé).
+Parmi les classes de test notables, \texttt{ConflictDetectionServiceTest} constitue la suite la plus importante. Elle valide exhaustivement chacune des \metric{ReglesGestion} règles de gestion (RG1--RG6) avec des jeux de données spécifiques couvrant les cas nominaux (pas de conflit), les cas limites (conflit exact à la frontière d'un créneau), et les cas d'erreur (conflit multiple). Chaque test suit le pattern Arrange--Act--Assert : préparation des données de test (projets, salles, enseignants, indisponibilités), exécution de la méthode de vérification, et vérification du résultat (liste de conflits vide ou non vide selon le cas testé).
 
 Les autres classes de test couvrent l'ensemble des modules : \texttt{AuthServiceTest} valide le cycle de vie de l'authentification (login, activation, reset), \texttt{ScheduleServiceTest} teste la logique de planification et d'auto-génération, \texttt{JuryServiceTest} teste la constitution des jurys et de la gestion des membres, \texttt{CoordinatorDefenseSessionServiceTest} teste le cycle de vie des sessions, \texttt{DocumentDataServiceTest} teste la génération des données documentaires, \texttt{NotificationServiceTest} teste le système de notifications internes, et \texttt{StudentDocumentServiceTest} teste la logique d'accès aux documents côté étudiant.
 
-La couverture de code est monitorée via \textbf{JaCoCo (v0.8.15)} avec les objectifs suivants : couverture minimale de 85\% sur les lignes de code et 70\% sur les branches conditionnelles. La couverture actuelle mesurée s'établit à 82,8\% pour les lignes et 65,7\% pour les branches, en dessous des seuils cibles en raison de l'évolution récente du code ; l'ajout de tests de rattrapage est en cours pour atteindre ces objectifs. Les exclusions portent sur les DTOs, les entités JPA (structures de données pures sans logique), les classes de configuration Spring et le code de seed (peuplement initial de la base de démonstration). Le rapport de couverture est généré en \acrshort{html} et en XML, ce dernier étant consommé par les outils de CI pour vérifier les seuils automatiquement.
+La couverture de code est monitorée via \textbf{JaCoCo (v0.8.15)} avec les objectifs suivants : couverture minimale de \metric{CouvertureLignesBackCible} sur les lignes de code et \metric{CouvertureBranchesBackCible} sur les branches conditionnelles. La couverture actuelle mesurée s'établit à \metric{CouvertureLignesBackActuel} pour les lignes et \metric{CouvertureBranchesBackActuel} pour les branches, en dessous des seuils cibles en raison de l'évolution récente du code ; l'ajout de tests de rattrapage est en cours pour atteindre ces objectifs. Les exclusions portent sur les DTOs, les entités JPA (structures de données pures sans logique), les classes de configuration Spring et le code de seed (peuplement initial de la base de démonstration). Le rapport de couverture est généré en \acrshort{html} et en XML, ce dernier étant consommé par les outils de CI pour vérifier les seuils automatiquement.
 
 Les vérifications de qualité statique complètent les tests. \textbf{Checkstyle} vérifie la conformité du code aux conventions de codage Java (nommage, indentation, longueur des lignes, imports). \textbf{PMD} détecte les problèmes de qualité de code (code mort, duplication, complexité cyclomatique excessive, variables non utilisées). \textbf{SpotBugs} analyse le code bytecode pour identifier les bugs potentiels (pointeurs nuls, fuites de ressources, problèmes de thread safety). Ces trois outils sont intégrés au build Maven via les plugins \texttt{maven-checkstyle-plugin}, \texttt{maven-pmd-plugin} et \texttt{spotbugs-maven-plugin}, et s'exécutent automatiquement lors de chaque \texttt{mvn verify}.
 
 \subsubsection{Tests de l'interface utilisateur (Frontend)}
 \label{ch5:frontend_tests}
 
-Le frontend TypeScript utilise \textbf{Vitest (v4.1.7)} avec \textbf{React Testing Library} et \textbf{jsdom} pour l'environnement DOM simulé. La suite de tests frontend comprend \textbf{83 fichiers de test} (78 \texttt{*.test.tsx} + 5 \texttt{*.test.ts}), organisés dans le répertoire \texttt{src/test/} qui reproduit la structure de \texttt{src/}.
+Le frontend TypeScript utilise \textbf{Vitest (v4.1.7)} avec \textbf{React Testing Library} et \textbf{jsdom} pour l'environnement DOM simulé. La suite de tests frontend comprend \textbf{\metric{FichiersFrontend} fichiers de test} (\metric{FichiersTestTSX} \texttt{*.test.tsx} + \metric{FichiersTestTS} \texttt{*.test.ts}), organisés dans le répertoire \texttt{src/test/} qui reproduit la structure de \texttt{src/}.
 
 L'architecture de mocking repose sur \textbf{MSW (Mock Service Worker) v3}, qui intercepte les appels réseau au niveau du service worker du navigateur simulé. Le serveur MSW est configuré dans le fichier de setup des mocks et démarre automatiquement avant chaque test via le setup global. Les handlers de mock fournissent des réponses simulées pour l'ensemble des endpoints \acrshort{api} (auth, admin, coordinator, teacher, student). Le module registry expose des helpers de haut niveau : \texttt{mockJson} pour les réponses simples, \texttt{mockPaginated} pour les réponses paginées, \texttt{mockCrud} pour les opérations \acrshort{crud} complètes, et \texttt{mockEcho} pour retourner le corps de la requête (utile pour tester les mutations).
 
 Le composant utilitaire \texttt{src/test/utils.tsx} fournit \texttt{renderWithProviders}, une fonction qui enveloppe tout composant testé dans les providers nécessaires : \texttt{QueryClientProvider} (TanStack Query), \texttt{MemoryRouter} (React Router), \texttt{AuthProvider} (contexte d'authentification) et \texttt{TooltipProvider} (shadcn/ui). Cette abstraction élimine la duplication de configuration entre les tests et assure un environnement de test cohérent.
 
-Les tests couvrent cinq catégories de composants. Les hooks personnalisés sont testés via des composants « harness » qui les appellent dans un contexte React contrôlé. Les composants \acrshort{ui} (DefenseCalendar, DraggableJurySlot, JurySidebar, AvailabilityCalendar, ProjectDialog) sont testés pour leur rendu, leurs interactions et leur état. La validation (conflict-engine.test.ts) est testée unitairement pour valider la cohérence avec le moteur Java. Le routage (ProtectedRoute) est testé pour les redirections selon les rôles. Enfin, chaque page de l'application dispose d'un test de rendu validant la présence des éléments clés. La couverture obtenue est détaillée dans~\cref{fig:ui-coverage}.
+Les tests couvrent \metric{CategoriesComposants} catégories de composants. Les hooks personnalisés sont testés via des composants « harness » qui les appellent dans un contexte React contrôlé. Les composants \acrshort{ui} (DefenseCalendar, DraggableJurySlot, JurySidebar, AvailabilityCalendar, ProjectDialog) sont testés pour leur rendu, leurs interactions et leur état. La validation (conflict-engine.test.ts) est testée unitairement pour valider la cohérence avec le moteur Java. Le routage (ProtectedRoute) est testé pour les redirections selon les rôles. Enfin, chaque page de l'application dispose d'un test de rendu validant la présence des éléments clés. La couverture obtenue est détaillée dans~\cref{fig:ui-coverage}.
 
 \begin{figure}[H]
     \screenshotbox[0.95\textwidth]{../../assets/app-screenshots/ui-test-coverage-report.png}
@@ -58,9 +58,9 @@ Les tests couvrent cinq catégories de composants. Les hooks personnalisés sont
 
 La validation finale du système est confiée à \textbf{Playwright (v1.52)}, qui simule des interactions réelles dans un navigateur Chromium. Contrairement aux tests unitaires et d'intégration qui tournent contre des mocks, les tests \acrshort{e2e} s'exécutent contre l'\acrshort{api} Spring Boot réelle et la base de données H2, assurant une fidélité maximale aux comportements de production.
 
-L'architecture repose sur le pattern \textbf{setup-project} de Playwright. Le fichier \texttt{auth.setup.ts} s'exécute une seule fois avant tous les tests et authentifie les 4 rôles (admin, coordinateur, enseignant, étudiant) en remplissant le formulaire de connexion et en soumettant les credentials. Le contexte de navigateur résultant (cookies \acrshort{jwt}) est sérialisé dans des fichiers \acrshort{json} (\texttt{.auth/admin.json}, etc.) et réutilisé via l'option \texttt{storageState} de chaque bloc \texttt{test.describe}. Cette approche élimine la phase de connexion pour chaque test, réduisant le temps d'exécution et la fragilité liée aux changements d'interface de connexion.
+L'architecture repose sur le pattern \textbf{setup-project} de Playwright. Le fichier \texttt{auth.setup.ts} s'exécute une seule fois avant tous les tests et authentifie les \metric{RolesUtilisateurs} rôles (admin, coordinateur, enseignant, étudiant) en remplissant le formulaire de connexion et en soumettant les credentials. Le contexte de navigateur résultant (cookies \acrshort{jwt}) est sérialisé dans des fichiers \acrshort{json} (\texttt{.auth/admin.json}, etc.) et réutilisé via l'option \texttt{storageState} de chaque bloc \texttt{test.describe}. Cette approche élimine la phase de connexion pour chaque test, réduisant le temps d'exécution et la fragilité liée aux changements d'interface de connexion.
 
-Les tests \acrshort{e2e} sont organisés en 8 fichiers de test, chacun ciblant un rôle ou un flux spécifique : \texttt{auth.spec.ts} teste le cycle de connexion (succès, échec, déconnexion, reset MDP, activation), \texttt{admin.spec.ts} teste le \acrshort{crud} des départements, salles et utilisateurs, \texttt{coordinator.spec.ts} teste la création et transition des sessions ainsi que la gestion des projets, \texttt{teacher.spec.ts} teste la saisie des indisponibilités et des évaluations, \texttt{student.spec.ts} teste la consultation du groupe et des documents, \texttt{audit-logs.spec.ts} vérifie l'accès aux journaux d'audit par rôle sur l'ensemble des routes, et \texttt{system.spec.ts} teste les notifications et le responsive design.
+Les tests \acrshort{e2e} sont organisés en \metric{FichiersE2E} fichiers de test, chacun ciblant un rôle ou un flux spécifique : \texttt{auth.spec.ts} teste le cycle de connexion (succès, échec, déconnexion, reset MDP, activation), \texttt{admin.spec.ts} teste le \acrshort{crud} des départements, salles et utilisateurs, \texttt{coordinator.spec.ts} teste la création et transition des sessions ainsi que la gestion des projets, \texttt{teacher.spec.ts} teste la saisie des indisponibilités et des évaluations, \texttt{student.spec.ts} teste la consultation du groupe et des documents, \texttt{audit-logs.spec.ts} vérifie l'accès aux journaux d'audit par rôle sur l'ensemble des routes, et \texttt{system.spec.ts} teste les notifications et le responsive design.
 
 La configuration Playwright utilise un worker unique (\texttt{workers: 1}) et le parallélisme désactivé (\texttt{fullyParallel: false}), car les tests s'exécutent contre une base de données H2 partagée dont l'état est modifié par chaque test. Les tentatives de rejeu sont désactivées en développement (0) et activées en CI (2). Les traces et captures d'écran ne sont conservées qu'en cas d'échec, pour faciliter le diagnostic sans encombrer l'espace disque.
 
@@ -69,18 +69,18 @@ Le pipeline CI (\texttt{.github/workflows/e2e-tests.yml}) automatise l'exécutio
 \subsubsection{Tests d'API (Postman)}
 \label{ch5:postman_tests}
 
-En complément des tests automatisés, une collection Postman de \textbf{142 requêtes} couvre l'ensemble des endpoints \acrshort{rest} de l'API. Organisée par module fonctionnel (auth, admin, coordinator, teacher, student, common), elle permet de valider manuellement les contrats d'interface et de servir de documentation exécutable pour l'équipe. Les tests Postman incluent des assertions sur les statuts \acrshort{http}, la structure \acrshort{json} des réponses et les scénarios de bout en bout. La collection est présentée dans~\cref{fig:postman}.
+En complément des tests automatisés, une collection Postman de \textbf{\metric{RequetesPostman} requêtes} couvre l'ensemble des endpoints \acrshort{rest} de l'API. Organisée par module fonctionnel (auth, admin, coordinator, teacher, student, common), elle permet de valider manuellement les contrats d'interface et de servir de documentation exécutable pour l'équipe. Les tests Postman incluent des assertions sur les statuts \acrshort{http}, la structure \acrshort{json} des réponses et les scénarios de bout en bout. La collection est présentée dans~\cref{fig:postman}.
 
 \begin{figure}[H]
     \screenshotbox[0.95\textwidth]{../../assets/app-screenshots/postman-250-all-pass.png}
-    \caption{Collection Postman -- 250 assertions passant avec succès}
+    \caption{Collection Postman -- \metric{AssertionsPostman} assertions passant avec succès}
     \label{fig:postman}
 \end{figure}
 
 \subsection{Scénarios de validation et résultats}
 \label{ch5:scenarios}
 
-\Cref{tab:validation_results} présente dix scénarios de validation couvrant les fonctionnalités critiques du système, du niveau unitaire jusqu'au bout en bout. Chaque scénario décrit les étapes d'exécution, les résultats attendus et le verdict de validation.
+\Cref{tab:validation_results} présente \metric{ScenariosValidation} scénarios de validation couvrant les fonctionnalités critiques du système, du niveau unitaire jusqu'au bout en bout. Chaque scénario décrit les étapes d'exécution, les résultats attendus et le verdict de validation.
 
 \begin{table}[H]
     \centering
@@ -90,7 +90,7 @@ En complément des tests automatisés, une collection Postman de \textbf{142 req
 
         \textbf{Niveau} & \textbf{Fonctionnalité} & \textbf{Scénario de test} & \textbf{Résultat} \\
         \midrule
-        Unitaire & Détection conflits RG1--RG6 & Chevauchement enseignant, occupation salle, bornes de période, surcharge encadrant, unicité projet, indisponibilité & \textbf{Validé (6/6)} \\
+        Unitaire & Détection conflits RG1--RG6 & Chevauchement enseignant, occupation salle, bornes de période, surcharge encadrant, unicité projet, indisponibilité & \textbf{Validé (\metric{ReglesGestion}/\metric{ReglesGestion})} \\
         \addlinespace
         Unitaire & Calcul moyenne pondérée & Coefficients 40/35/25, notes 14/16/12, vérification du résultat & \textbf{Validé} \\
         \addlinespace
@@ -100,7 +100,7 @@ En complément des tests automatisés, une collection Postman de \textbf{142 req
         \addlinespace
         UI & \textit{Defense Designer} & Drag jury vers cellule, validation locale message d'erreur, message de succès, sauvegarde & \textbf{Validé} \\
         \addlinespace
-        Coord. & Impression documents & Génération \acrshort{pdf} côté serveur (Thymeleaf + OpenHTMLToPDF), 5 types de documents & \textbf{Validé} \\
+        Coord. & Impression documents & Génération \acrshort{pdf} côté serveur (Thymeleaf + OpenHTMLToPDF), \metric{TypesDocuments} types de documents & \textbf{Validé} \\
         \addlinespace
         UI & \texttt{ProtectedRoute} & Redirection student vers /login si accès /admin, message de session expirée & \textbf{Validé} \\
         \addlinespace
@@ -128,17 +128,17 @@ En complément des tests automatisés, une collection Postman de \textbf{142 req
 
         \textbf{Métrique} & \textbf{Valeur} & \textbf{Outil} \\
         \midrule
-        Tests backend (JUnit 5) & 647 (93 classes) & Maven Surefire \\
-        Tests frontend (Vitest) & 664 (83 fichiers) & Vitest + v8 \\
-        Requêtes Postman & 142 & Postman Collection \\
-        Couverture lignes frontend & 86,68\% & Vitest + v8 \\
-        Couverture branches frontend & 79,06\% & Vitest + v8 \\
-        Couverture fonctions frontend & 76,65\% & Vitest + v8 \\
-        Contrôleurs \acrshort{rest} & 37 & Comptage manuel \\
-        Endpoints API & $\approx$ 80 & Swagger UI \\
-        Composants React (src/components) & 39+ & Comptage manuel \\
-        Pages de l'application (routes) & 33 & Route mapping \\
-        Hooks TanStack Query & 25+ & Fichiers \texttt{use-*-queries.ts} \\
+        Tests backend (JUnit 5) & \metric{TestsBackend} (\metric{ClassesBackend} classes) & Maven Surefire \\
+        Tests frontend (Vitest) & \metric{TestsFrontend} (\metric{FichiersFrontend} fichiers) & Vitest + v8 \\
+        Requêtes Postman & \metric{RequetesPostman} & Postman Collection \\
+        Couverture lignes frontend & \metric{CouvertureLignesFront} & Vitest + v8 \\
+        Couverture branches frontend & \metric{CouvertureBranchesFront} & Vitest + v8 \\
+        Couverture fonctions frontend & \metric{CouvertureFonctionsFront} & Vitest + v8 \\
+        Contrôleurs \acrshort{rest} & \metric{ControleursREST} & Comptage manuel \\
+        Endpoints API & \metric{EndpointsAPI} & Swagger UI \\
+        Composants React (src/components) & \metric{ComposantsReact} & Comptage manuel \\
+        Pages de l'application (routes) & \metric{PagesApp} & Route mapping \\
+        Hooks TanStack Query & \metric{HooksQuery} & Fichiers \texttt{use-*-queries.ts} \\
         \bottomrule
     \end{xltabular}
     \caption{Métriques de qualité du système}
@@ -148,15 +148,15 @@ En complément des tests automatisés, une collection Postman de \textbf{142 req
 \subsection{Évaluation globale et limites}
 \label{ch5:evaluation}
 
-Le système répond aux exigences fonctionnelles du cahier des charges. La détection automatique des conflits réduit drastiquement le temps de planification et élimine les erreurs humaines. L'intégration des tests dans le pipeline CI garantit la non-régression des fonctionnalités critiques lors de chaque modification du code. La pyramide de tests -- 647 tests Java (93 classes), 664 tests TypeScript (83 fichiers), 142 requêtes Postman -- offre une couverture à chaque niveau de l'application.
+Le système répond aux exigences fonctionnelles du cahier des charges. La détection automatique des conflits réduit drastiquement le temps de planification et élimine les erreurs humaines. L'intégration des tests dans le pipeline CI garantit la non-régression des fonctionnalités critiques lors de chaque modification du code. La pyramide de tests -- \metric{TestsBackend} tests Java (\metric{ClassesBackend} classes), \metric{TestsFrontend} tests TypeScript (\metric{FichiersFrontend} fichiers), \metric{RequetesPostman} requêtes Postman -- offre une couverture à chaque niveau de l'application.
 
 Cependant, certaines limites subsistent et méritent d'être documentées. La couverture \acrshort{e2e}, bien que fonctionnelle, ne couvre pas encore l'intégralité des cas limites et des parcours utilisateurs complexes, notamment les scénarios de rattrapage et les flux d'erreur (serveur indisponible, token expiré). La génération de \acrshort{pdf} côté serveur via OpenHTMLToPDF garantit un rendu identique quel que soit le navigateur, mais le support limité des fonctionnalités \acrshort{css} modernes (flexbox, grilles) dans le moteur Flying Saucer peut contraindre la complexité des mises en page possibles. Une évolution vers iText ou Puppeteer est envisagée pour des layouts plus sophistiqués.
 
-L'algorithme d'auto-génération du planning utilise une approche gloutone (greedy) qui assigne les jurys au premier créneau disponible, sans recherche d'optimum global. Pour un grand nombre de projets ($> 100$), cette approche peut produire une sous-optimalité dans l'occupation des salles. Des algorithmes d'optimisation plus sophistiqués (programmation par contraintes, recuit simulé) pourraient être envisagés dans une version future.
+L'algorithme d'auto-génération du planning utilise une approche gloutone (greedy) qui assigne les jurys au premier créneau disponible, sans recherche d'optimum global. Pour un grand nombre de projets (\metric{SeuilSousOptimal}), cette approche peut produire une sous-optimalité dans l'occupation des salles. Des algorithmes d'optimisation plus sophistiqués (programmation par contraintes, recuit simulé) pourraient être envisagés dans une version future.
 
-Le système ne supporte actuellement ni les mises à jour en temps réel (WebSocket) ni le mode hors ligne. Les notifications nécessitent un rechargement périodique (toutes les 30 secondes), et les données du planning ne sont accessibles qu'en ligne. Enfin, l'utilisation de H2 en base de données de développement, bien que pratique pour les tests et le seed data, ne reproduit pas fidèlement toutes les fonctionnalités de \acrshort{mysql} (notamment les requêtes géospatiales et les index composites), ce qui peut masquer des problèmes de performance en production.
+Le système ne supporte actuellement ni les mises à jour en temps réel (WebSocket) ni le mode hors ligne. Les notifications nécessitent un rechargement périodique (toutes les \metric{PollingSecondes} secondes), et les données du planning ne sont accessibles qu'en ligne. Enfin, l'utilisation de H2 en base de données de développement, bien que pratique pour les tests et le seed data, ne reproduit pas fidèlement toutes les fonctionnalités de \acrshort{mysql} (notamment les requêtes géospatiales et les index composites), ce qui peut masquer des problèmes de performance en production.
 
 \subsection{Conclusion}
 \label{ch5:conclusion}
 
-La stratégie de test multi-couche a permis d'aboutir à une application stable et fiable. Les \textbf{1 311 tests automatisés} (unitaires et d'intégration) complétés par \textbf{142 scénarios de validation \acrshort{api} via Postman} couvrent l'ensemble des fonctionnalités critiques. L'intégration des outils de qualité (JaCoCo, Checkstyle, PMD, SpotBugs, ESLint, Prettier) dans le pipeline Maven et les hooks Husky assure la pérennité de la qualité du code au fil des évolutions futures.
+La stratégie de test multi-couche a permis d'aboutir à une application stable et fiable. Les \textbf{\metric{TestsTotalAuto} tests automatisés} (unitaires et d'intégration) complétés par \textbf{\metric{RequetesPostman} scénarios de validation \acrshort{api} via Postman} couvrent l'ensemble des fonctionnalités critiques. L'intégration des outils de qualité (JaCoCo, Checkstyle, PMD, SpotBugs, ESLint, Prettier) dans le pipeline Maven et les hooks Husky assure la pérennité de la qualité du code au fil des évolutions futures.

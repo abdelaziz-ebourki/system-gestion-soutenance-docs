@@ -93,11 +93,11 @@ Les \textbf{sessions de soutenance} sont gérées via un cycle de vie complet : 
 
 Le \textit{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
 
-En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 6 règles de gestion lors de chaque modification du planning (cf. \cref{ch3:regles_gestion}). Dupliquée côté client pour un retour instantané et exécutée côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
+En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement \metric{ReglesGestion} règles de gestion lors de chaque modification du planning (cf. \cref{ch3:regles_gestion}). Dupliquée côté client pour un retour instantané et exécutée côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
 La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère les coefficients dynamiques par session et effectue le calcul automatique de la moyenne pondérée. Le membre du jury peut consulter le rapport du projet assigné pour préparer son évaluation, puis saisir les notes. Le coordinateur peut consulter les notes moyennes pondérées par projet, avec le détail des scores par membre du jury.
 
-L'\textbf{édition documentaire} produit 5 types de documents \gls{pdf} (fiches d'évaluation, procès-verbaux, listes de présence, convocations jury, planning complet) générés côté serveur et ouverts dans un nouvel onglet du navigateur. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
+L'\textbf{édition documentaire} produit \metric{TypesDocuments} types de documents \gls{pdf} (fiches d'évaluation, procès-verbaux, listes de présence, convocations jury, planning complet) générés côté serveur et ouverts dans un nouvel onglet du navigateur. Le module Notifications et Audit complète le dispositif avec des notifications internes (success, warning, error) et la journalisation des actions critiques pour la traçabilité.
 
 Enfin, la gestion des \textbf{groupes d'étudiants} permet aux étudiants de créer ou rejoindre un groupe pendant une fenêtre temporelle définie, et aux coordinateurs d'associer les groupes aux projets.
 
@@ -118,7 +118,7 @@ L'\textbf{ergonomie} s'appuie sur une interface moderne et responsive (\texttt{T
 
 La \textbf{maintenabilité} résulte d'une architecture en couches stricte (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) avec séparation claire des responsabilités. Les \texttt{DTOs} isolent les couches \acrshort{api} et \texttt{MapStruct} gère le mapping objet, protégeant le modèle interne des variations de l'interface exposée.
 
-Enfin, la \textbf{qualité} est mesurée par une couverture minimale de 85\% (lignes) et 70\% (branches) via \texttt{JaCoCo}, complétée par un linting automatisé avec \texttt{ESLint} (TypeScript), et \texttt{Spotless}, \texttt{Checkstyle}, \texttt{PMD} et \texttt{SpotBugs} (Java) intégré dans CI.
+Enfin, la \textbf{qualité} est mesurée par une couverture minimale de \metric{CouvertureLignesBackCible} (lignes) et \metric{CouvertureBranchesBackCible} (branches) via \texttt{JaCoCo}, complétée par un linting automatisé avec \texttt{ESLint} (TypeScript), et \texttt{Spotless}, \texttt{Checkstyle}, \texttt{PMD} et \texttt{SpotBugs} (Java) intégré dans CI.
 
 \subsection{Règles de gestion}
 \label{ch3:regles_gestion}
@@ -136,7 +136,7 @@ Le moteur de conflits implémente les règles de gestion (RG) suivantes, mainten
     \end{description}
 \end{projectbox}
 
-Ces 6 règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le \textit{Defense Designer}.
+Ces \metric{ReglesGestion} règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le \textit{Defense Designer}.
 
 \Cref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement.
 
@@ -301,12 +301,12 @@ L'algorithme d'auto-génération est détaillé dans la \Cref{fig:seq_auto_gener
 \subsubsection{Diagrammes d'activité}
 \label{ch3:activite}
 
-L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \cref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les six règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat à l'interface.
+L'algorithme de détection des conflits, moteur central du système, est modélisé par le diagramme d'activité de la \cref{fig:act_conflict}. Chaque vérification est une étape indépendante, permettant d'identifier l'ensemble des violations en un seul passage. L'algorithme exécute les \metric{ReglesGestion} règles de gestion en séquence et collecte toutes les violations détectées avant de retourner le résultat à l'interface.
 
 \begin{figure}[H]
     \centering
     \pumlsvg[\textwidth]{act_conflict_logic}
-    \caption{Logique de validation des 6 règles de gestion (RG1-RG6)}
+    \caption{Logique de validation des \metric{ReglesGestion} règles de gestion (RG1-RG6)}
     \label{fig:act_conflict}
 \end{figure}
 Le flux opérationnel global du coordinateur lors de la phase de planification est synthétisé dans le diagramme d'activité de la \Cref{fig:act_planning}, mettant en évidence les boucles de correction et les points de décision.
@@ -341,7 +341,7 @@ Le système adopte une architecture découplée pour maximiser la maintenabilit�
 \end{figure}
 
 \subsubsection{Backend (\acrshort{api} \acrshort{rest})}
-Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité}. Cette structure permet d'isoler la logique métier (notamment le \texttt{ConflictDetectionService}) de la couche d'accès aux données. Les DTOs assurent le découplage entre les \acrshort{api} exposées et le modèle interne. Le projet est organisé en dix packages fonctionnels :
+Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité}. Cette structure permet d'isoler la logique métier (notamment le \texttt{ConflictDetectionService}) de la couche d'accès aux données. Les DTOs assurent le découplage entre les \acrshort{api} exposées et le modèle interne. Le projet est organisé en \metric{PackagesBackend} packages fonctionnels :
 
 \begin{itemize}[label=\textcolor{primary}{\textbullet}]
     \item \texttt{auth/} -- authentification \acrshort{jwt}, mot de passe oublié, activation de compte

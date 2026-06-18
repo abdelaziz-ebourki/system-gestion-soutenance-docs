@@ -60,17 +60,17 @@ La stratégie de branching est simplifiée mais efficace : la branche \texttt{ma
 \subsection{Architecture technique du système}
 \label{ch4:architecture}
 
-L'application suit une architecture web moderne et découplée (\acrshort{api} \acrshort{rest} + SPA), assurant une séparation nette entre la logique métier et la présentation, à l'exception du moteur de détection de conflits. Celui-ci est déployé côté serveur (\texttt{ConflictDetectionService}) pour garantir l'intégrité des données lors de la persistance, et dupliqué côté client (\texttt{conflict-engine.ts}) pour offrir une réactivité immédiate lors de la planification interactive. Cette duplication contrôlée permet au coordinateur de visualiser les conflits en temps réel lors du glisser-déposer dans le \textit{Defense Designer}, sans attendre la réponse du serveur, tout en assurant que la validation finale applique les mêmes six règles de gestion (RG1--RG6).
+L'application suit une architecture web moderne et découplée (\acrshort{api} \acrshort{rest} + SPA), assurant une séparation nette entre la logique métier et la présentation, à l'exception du moteur de détection de conflits. Celui-ci est déployé côté serveur (\texttt{ConflictDetectionService}) pour garantir l'intégrité des données lors de la persistance, et dupliqué côté client (\texttt{conflict-engine.ts}) pour offrir une réactivité immédiate lors de la planification interactive. Cette duplication contrôlée permet au coordinateur de visualiser les conflits en temps réel lors du glisser-déposer dans le \textit{Defense Designer}, sans attendre la réponse du serveur, tout en assurant que la validation finale applique les mêmes \metric{ReglesGestion} règles de gestion (RG1--RG6).
 
 \subsubsection{Le Backend : \acrshort{api} \acrshort{rest} Spring Boot}
 \label{ch4:backend}
 
-Le backend suit le pattern en couches (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) décrit dans la conception (\cref{ch3:architecture_logicielle}), avec un \texttt{BaseCrudService<T, ID, R>} générique réduisant la duplication de code entre modules. Le projet est organisé en neuf modules fonctionnels (\texttt{auth/}, \texttt{admin/}, \texttt{coordinator/}, \texttt{teacher/}, \texttt{student/}, \texttt{notification/}, \texttt{common/}, \texttt{seed/}, \texttt{user/}), chacun contenant ses propres contrôleurs, services et repositories.
+Le backend suit le pattern en couches (Contrôleur $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entité) décrit dans la conception (\cref{ch3:architecture_logicielle}), avec un \texttt{BaseCrudService<T, ID, R>} générique réduisant la duplication de code entre modules. Le projet est organisé en \metric{ModulesBackend} modules fonctionnels (\texttt{auth/}, \texttt{admin/}, \texttt{coordinator/}, \texttt{teacher/}, \texttt{student/}, \texttt{notification/}, \texttt{common/}, \texttt{seed/}, \texttt{user/}), chacun contenant ses propres contrôleurs, services et repositories.
 
 \subsubsection{Le Frontend : SPA React}
 \label{ch4:frontend}
 
-L'interface utilisateur est une application monopage où la gestion d'état asynchrone est confiée à \texttt{TanStack Query v5} (\texttt{staleTime} de 30~s), le routage à React Router v7 avec des gardes \texttt{ProtectedRoute}, et le design system à Tailwind \acrshort{css}~4 et shadcn/ui. Le \textit{Defense Designer} utilise \texttt{@dnd-kit/core} pour le glisser-déposer et un moteur de conflits TypeScript local (\texttt{conflict-engine.ts}) pour une validation instantanée sans aller-retour serveur.
+L'interface utilisateur est une application monopage où la gestion d'état asynchrone est confiée à \texttt{TanStack Query v5} (\texttt{staleTime} de \metric{PollingSecondes}~s), le routage à React Router v7 avec des gardes \texttt{ProtectedRoute}, et le design system à Tailwind \acrshort{css}~4 et shadcn/ui. Le \textit{Defense Designer} utilise \texttt{@dnd-kit/core} pour le glisser-déposer et un moteur de conflits TypeScript local (\texttt{conflict-engine.ts}) pour une validation instantanée sans aller-retour serveur.
 
 \subsubsection{Structure des dépôts}
 \label{ch4:repo_structure}
@@ -187,7 +187,7 @@ Le coordinateur peut consulter l'avancement des évaluations via la page des not
 \subsubsection{Génération Documentaire et Stratégie d'Impression}
 \label{ch4:module_print}
 
-Le système supporte cinq types de documents administratifs, chacun implémenté comme un endpoint côté serveur utilisant des modèles Thymeleaf et la conversion \gls{html}-vers-\acrshort{pdf} via OpenHTMLToPDF.
+Le système supporte \metric{TypesDocuments} types de documents administratifs, chacun implémenté comme un endpoint côté serveur utilisant des modèles Thymeleaf et la conversion \gls{html}-vers-\acrshort{pdf} via OpenHTMLToPDF.
 
 La \textbf{fiche d'évaluation} (\texttt{PrintEvaluationSheet}) présente les informations du projet, du jury et de l'étudiant, avec des espaces dédiés à la saisie des notes et des observations par chaque membre du jury. La \textbf{liste de présence} (\texttt{PrintAttendanceList}) recense l'ensemble des soutenances d'une journée avec les noms des étudiants, des encadrants et des membres du jury, permettant au coordinateur de vérifier la présence physique de chaque acteur. La \textbf{convocation jury} (\texttt{PrintJuryConvocation}) est une lettre officielle adressée à chaque membre du jury, mentionnant la date, l'heure, la salle et le projet à évaluer. Le \textbf{planning imprimable} (\texttt{PrintDefenseSchedule}) présente le planning complet sous forme de tableau, organisé par salle et par créneau horaire. Enfin, le \textbf{procès-verbal} (\texttt{PrintProcesVerbal}) documente le déroulement de la soutenance avec les notes finales, la décision du jury (Admis ou Ajourné) et les signatures.
 
@@ -198,7 +198,7 @@ La génération de documents \acrshort{pdf} est entièrement traitée côté ser
 
 Le système de notifications internes permet au système de communiquer des informations importantes aux utilisateurs sans dépendre d'un canal externe (email). Chaque notification est une entité \texttt{AppNotification} stockée en base de données avec un type (\texttt{SUCCESS}, \texttt{WARNING}, \texttt{ERROR}, \texttt{INFO}), un titre, un message, un horodatage, un statut de lecture et un lien d'action optionnel.
 
-Les notifications sont créées automatiquement par les services métier lors d'événements significatifs : création d'une soutenance, changement de statut d'une session, détection de conflit, soumission d'une évaluation, etc. Le frontend interroge le serveur toutes les 30 secondes via le hook \texttt{useNotifications} (configurable via \texttt{NOTIFICATION\_POLL\_INTERVAL}) pour récupérer les nouvelles notifications. Le composant \texttt{NotificationBadge} dans la sidebar affiche le nombre de notifications non lues sous forme de badge rouge.
+Les notifications sont créées automatiquement par les services métier lors d'événements significatifs : création d'une soutenance, changement de statut d'une session, détection de conflit, soumission d'une évaluation, etc. Le frontend interroge le serveur toutes les \metric{PollingSecondes} secondes via le hook \texttt{useNotifications} (configurable via \texttt{NOTIFICATION\_POLL\_INTERVAL}) pour récupérer les nouvelles notifications. Le composant \texttt{NotificationBadge} dans la sidebar affiche le nombre de notifications non lues sous forme de badge rouge.
 
 L'endpoint \texttt{POST /api/notifications/\{id\}/send-email} permet aux administrateurs et coordinateurs de déclencher l'envoi d'un email associé à une notification. En mode développement, les emails sont dirigés vers Mailpit, qui offre une interface web (\texttt{http://localhost:8025}) permettant de visualiser les emails envoyés sans nécessiter de serveur SMTP réel.
 
@@ -362,7 +362,7 @@ Le développement du système a été guidé par des bonnes pratiques industriel
 \subsubsection{Tests automatisés}
 \label{ch4:tests}
 
-La stratégie de tests suit la pyramide des tests : un grand nombre de tests unitaires à la base, un nombre modéré de tests d'intégration au milieu, et un nombre réduit de tests de bout en bout au sommet. Côté backend, 93 classes de test JUnit 5 + Mockito (647 tests) couvrent les services, les contrôleurs et les utilitaires. Côté frontend, 83 fichiers de test Vitest + React Testing Library (664 tests) couvrent les pages, les hooks, les composants et les utilitaires, avec une stratégie de mocking basée sur MSW (Mock Service Worker) qui simule les réponses de l'API sans appel réseau.
+La stratégie de tests suit la pyramide des tests : un grand nombre de tests unitaires à la base, un nombre modéré de tests d'intégration au milieu, et un nombre réduit de tests de bout en bout au sommet. Côté backend, \metric{ClassesBackend} classes de test JUnit 5 + Mockito (\metric{TestsBackend} tests) couvrent les services, les contrôleurs et les utilitaires. Côté frontend, \metric{FichiersFrontend} fichiers de test Vitest + React Testing Library (\metric{TestsFrontend} tests) couvrent les pages, les hooks, les composants et les utilitaires, avec une stratégie de mocking basée sur MSW (Mock Service Worker) qui simule les réponses de l'API sans appel réseau.
 
 \subsubsection{Hooks de pré-commit}
 \label{ch4:hooks}

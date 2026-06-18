@@ -1,0 +1,60 @@
+% ═══════════════════════════════════════════════════════════════════════════════
+%  CONSTANTES DU RAPPORT — Centralisation des métriques chiffrées
+%  Utilisation : \metric{Nom} (ex. \metric{TestsBackend})
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\newcommand{\metric}[1]{\csname metric@#1\endcsname}
+
+% ── Tests ─────────────────────────────────────────────────────────────────────
+\expandafter\newcommand\csname metric@TestsBackend\endcsname{647}
+\expandafter\newcommand\csname metric@ClassesBackend\endcsname{93}
+\expandafter\newcommand\csname metric@TestsFrontend\endcsname{664}
+\expandafter\newcommand\csname metric@FichiersFrontend\endcsname{83}
+\expandafter\newcommand\csname metric@FichiersTestTSX\endcsname{78}
+\expandafter\newcommand\csname metric@FichiersTestTS\endcsname{5}
+\expandafter\newcommand\csname metric@ScenariosE2E\endcsname{11}
+\expandafter\newcommand\csname metric@FichiersE2E\endcsname{8}
+\expandafter\newcommand\csname metric@RequetesPostman\endcsname{142}
+\expandafter\newcommand\csname metric@AssertionsPostman\endcsname{250}
+\expandafter\newcommand\csname metric@TestsTotalAuto\endcsname{\number\numexpr\metric{TestsBackend}+\metric{TestsFrontend}\relax}
+
+% ── Couverture ────────────────────────────────────────────────────────────────
+\expandafter\newcommand\csname metric@CouvertureLignesBackCible\endcsname{85\,\%}
+\expandafter\newcommand\csname metric@CouvertureBranchesBackCible\endcsname{70\,\%}
+\expandafter\newcommand\csname metric@CouvertureLignesBackActuel\endcsname{82,8\,\%}
+\expandafter\newcommand\csname metric@CouvertureBranchesBackActuel\endcsname{65,7\,\%}
+\expandafter\newcommand\csname metric@CouvertureLignesFront\endcsname{86,68\,\%}
+\expandafter\newcommand\csname metric@CouvertureBranchesFront\endcsname{79,06\,\%}
+\expandafter\newcommand\csname metric@CouvertureFonctionsFront\endcsname{76,65\,\%}
+
+% ── Architecture ──────────────────────────────────────────────────────────────
+\expandafter\newcommand\csname metric@ControleursREST\endcsname{37}
+\expandafter\newcommand\csname metric@EndpointsAPI\endcsname{$\approx$~80}
+\expandafter\newcommand\csname metric@ComposantsReact\endcsname{39+}
+\expandafter\newcommand\csname metric@PagesApp\endcsname{33}
+\expandafter\newcommand\csname metric@HooksQuery\endcsname{25+}
+\expandafter\newcommand\csname metric@ModulesBackend\endcsname{9}
+\expandafter\newcommand\csname metric@PackagesBackend\endcsname{10}
+
+% ── Descriptifs ───────────────────────────────────────────────────────────────
+\expandafter\newcommand\csname metric@ReglesGestion\endcsname{6}
+\expandafter\newcommand\csname metric@RolesUtilisateurs\endcsname{4}
+\expandafter\newcommand\csname metric@TypesDocuments\endcsname{5}
+\expandafter\newcommand\csname metric@PhasesProjet\endcsname{4}
+\expandafter\newcommand\csname metric@CategoriesComposants\endcsname{5}
+\expandafter\newcommand\csname metric@ScenariosValidation\endcsname{10}
+
+% ── Infrastructure ────────────────────────────────────────────────────────────
+\expandafter\newcommand\csname metric@PollingSecondes\endcsname{30}
+\expandafter\newcommand\csname metric@SeuilSousOptimal\endcsname{$> 100$}
+
+% ── Seed Data ─────────────────────────────────────────────────────────────────
+\expandafter\newcommand\csname metric@SeedEtudiants\endcsname{100}
+\expandafter\newcommand\csname metric@SeedEnseignants\endcsname{12}
+\expandafter\newcommand\csname metric@SeedProjets\endcsname{25}
+\expandafter\newcommand\csname metric@SeedSoutenances\endcsname{15}
+
+% ── UH2C ──────────────────────────────────────────────────────────────────────
+\expandafter\newcommand\csname metric@EtudiantsUH2C\endcsname{120\,000}
+\expandafter\newcommand\csname metric@EtablissementsUH2C\endcsname{18}
+\expandafter\newcommand\csname metric@CampusesUH2C\endcsname{6}
