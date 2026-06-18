@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch5:intro}
 
-Ce chapitre présente la démarche de validation mise en œuvre pour préserver la fiabilité du système. Les données manipulées -- notes, jurys, plannings -- ont une incidence directe sur le parcours académique des étudiants. Une erreur de planification peut priver un étudiant de sa soutenance, une erreur de calcul de moyenne peut fausser une décision de jury, et un bug de sécurité peut exposer des données confidentielles. Nous avons donc adopté une stratégie de test pyramidale multi-couche, combinant tests unitaires, d'intégration et tests de bout en bout (\acrshort{e2e}), pour détecter les régressions à chaque niveau avec un rapport coût-efficacité optimal.
+Ce chapitre présente la démarche de validation mise en œuvre pour préserver la fiabilité du système. Les données manipulées -- notes, jurys, plannings -- ont une incidence directe sur le parcours académique des étudiants. Nous avons donc adopté une stratégie de test multi-couche, combinant tests unitaires, d'intégration et tests de bout en bout (\acrshort{e2e}), pour détecter les régressions à chaque niveau.
 
 \subsection{Stratégie de test}
 \label{ch5:strategie}
@@ -34,7 +34,7 @@ Les autres classes de test couvrent l'ensemble des modules : \texttt{AuthService
 
 La couverture de code est monitorée via \textbf{JaCoCo (v0.8.15)} avec les objectifs suivants : couverture minimale de \metric{CouvertureLignesBackCible} sur les lignes de code et \metric{CouvertureBranchesBackCible} sur les branches conditionnelles. La couverture actuelle mesurée s'établit à \metric{CouvertureLignesBackActuel} pour les lignes et \metric{CouvertureBranchesBackActuel} pour les branches, en dessous des seuils cibles en raison de l'évolution récente du code ; l'ajout de tests de rattrapage est en cours pour atteindre ces objectifs. Les exclusions portent sur les DTOs, les entités JPA (structures de données pures sans logique), les classes de configuration Spring et le code de seed (peuplement initial de la base de démonstration). Le rapport de couverture est généré en \acrshort{html} et en XML, ce dernier étant consommé par les outils de CI pour vérifier les seuils automatiquement.
 
-Les vérifications de qualité statique complètent les tests. \textbf{Checkstyle} vérifie la conformité du code aux conventions de codage Java (nommage, indentation, longueur des lignes, imports). \textbf{PMD} détecte les problèmes de qualité de code (code mort, duplication, complexité cyclomatique excessive, variables non utilisées). \textbf{SpotBugs} analyse le code bytecode pour identifier les bugs potentiels (pointeurs nuls, fuites de ressources, problèmes de thread safety). Ces trois outils sont intégrés au build Maven via les plugins \texttt{maven-checkstyle-plugin}, \texttt{maven-pmd-plugin} et \texttt{spotbugs-maven-plugin}, et s'exécutent automatiquement lors de chaque \texttt{mvn verify}.
+Les vérifications de qualité statique (Checkstyle, PMD, SpotBugs) — détaillées au \cref{ch2:qualite_code} — complètent ces tests et sont intégrées au build Maven.
 
 \subsubsection{Tests de l'interface utilisateur (Frontend)}
 \label{ch5:frontend_tests}

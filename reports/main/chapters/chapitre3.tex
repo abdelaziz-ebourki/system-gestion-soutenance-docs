@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch3:intro}
 
-Ce chapitre détaille la phase de conception du système de gestion des soutenances. Il définit les exigences fonctionnelles et non fonctionnelles, formalise les règles de gestion qui régissent la planification, et présente la modélisation \acrshort{uml} du système. Cette étape est cruciale pour s'assurer que la solution technique répond précisément aux besoins du département. Dans un projet de développement logiciel, la qualité de la phase de conception détermine directement la maintenabilité et l'évolutivité du système résultant. C'est pour cette raison que nous avons adopté une démarche rigoureuse combinant analyse des besoins, modélisation \acrshort{uml} et définition formelle des règles de gestion, afin de disposer d'un référentiel clair avant de passer à l'implémentation.
+Ce chapitre détaille la phase de conception du système de gestion des soutenances. Il définit les exigences fonctionnelles et non fonctionnelles, formalise les règles de gestion qui régissent la planification, et présente la modélisation \acrshort{uml} du système. Cette étape est cruciale pour s'assurer que la solution technique répond précisément aux besoins du département.
 
 \subsection{Présentation générale du projet}
 \label{ch3:presentation_generale}
@@ -91,7 +91,7 @@ La \textbf{constitution des jurys} est gérée par le module Gestion des Projets
 
 Les \textbf{sessions de soutenance} sont gérées via un cycle de vie complet : Brouillon $\rightarrow$ Active $\rightarrow$ Planifiée $\rightarrow$ Terminée $\rightarrow$ Archivée. Chaque session paramètre la durée des soutenances, les pauses, les dates bornes et les coefficients d'évaluation par rôle de jury.
 
-Le \textit{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
+Le \textit{Defense Designer} est l'élément central du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
 
 En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement \metric{ReglesGestion} règles de gestion lors de chaque modification du planning (cf. \cref{ch3:regles_gestion}). Dupliquée côté client pour un retour instantané et exécutée côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
@@ -138,7 +138,7 @@ Le moteur de conflits implémente les règles de gestion (RG) suivantes, mainten
 
 Ces \metric{ReglesGestion} règles sont implémentées dans deux moteurs distincts mais fonctionnellement identiques : un moteur Java côté serveur (\texttt{ConflictDetectionService}) qui valide lors de la sauvegarde, et un moteur TypeScript côté client (\texttt{conflict-engine.ts}) qui fournit un retour instantané lors des interactions dans le \textit{Defense Designer}.
 
-\Cref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement.
+\Cref{tab:rg_mapping} associe chaque règle à son ou ses implémentations et à la sévérité de la violation. Les règles classées « error » bloquent l'opération, tandis que les règles classées « warning » affichent une alerte mais autorisent l'enregistrement. RG4 est classée en « warning » plutôt qu'« error » car la surcharge d'un encadrant, bien qu'indésirable, ne compromet pas l'intégrité du planning : un encadrant peut superviser plusieurs projets dans la même journée. Le coordinateur conserve la liberté de déroger à cette règle selon le contexte.
 
 \begin{table}[H]
     \centering
@@ -359,7 +359,7 @@ Le backend suit un pattern en couches strict : \textbf{Contrôleur $\rightarrow$
 L'interface est conçue comme une application monopage (\textit{Single Page Application}) utilisant React 19 avec TypeScript 6 en mode strict. L'état asynchrone est géré par \texttt{TanStack Query v5}, qui assure la synchronisation avec l'\acrshort{api}, la mise en cache et le rechargement automatique. Le \textit{Defense Designer} implémente un état local optimiste pour une fluidité maximale lors du glisser-déposer, grâce à la bibliothèque \texttt{@dnd-kit/core}. Chaque page est chargée via \texttt{React.lazy()} pour optimiser le temps de chargement initial, et les routes sont protégées par des gardes \texttt{ProtectedRoute} qui vérifient le rôle de l'utilisateur avant d'autoriser l'accès.
 
 \subsubsection{Sécurité et contrôle d'accès}
-Le flux de sécurité repose sur trois mécanismes complémentaires. L'authentification utilise des tokens \acrshort{jwt} signés avec une clé HMAC-SHA, contenant l'identifiant utilisateur et son rôle. Le filtre \texttt{JwtAuthFilter} intercepte chaque requête, extrait le token du header \texttt{Authorization} ou du cookie \texttt{jwt\_token}, le valide, et configure le contexte de sécurité Spring. Le contrôle d'autorisation est implémenté via les annotations \texttt{@PreAuthorize} sur les contrôleurs, qui restreignent l'accès aux endpoints en fonction du rôle de l'utilisateur courant. Enfin, la configuration CORS autorise les origines du frontend en développement (\texttt{localhost:5173}) et en production.
+La sécurité repose sur une architecture \acrshort{jwt} \textit{stateless} avec contrôle d'accès par annotations \texttt{@PreAuthorize}. L'implémentation détaillée est présentée au \cref{ch4:module_auth}.
 
 \subsection{Modélisation de la base de données}
 \label{ch3:mld}
@@ -370,7 +370,7 @@ L'héritage des utilisateurs est implémenté via la stratégie \texttt{JOINED} 
 
 Les données flexibles sont gérées via les annotations \texttt{@ElementCollection} : les membres d'un jury (\texttt{defense\_members}), les créneaux d'indisponibilité (\texttt{unavailability\_slots}), les coefficients d'évaluation par session (\texttt{defense\_session\_coefficients}), et les rôles d'un template de jury (\texttt{template\_roles}). Cette approche, bien que moins performante que des tables séparées pour les données volumineuses, est adaptée au volume de données attendu dans un contexte universitaire.
 
-Les entités de configuration (\texttt{DefenseSettings}) utilisent un pattern singleton avec un identifiant fixe (\texttt{id=1L}), simplifiant la gestion des paramètres globaux par le système.
+Les entités de configuration (\texttt{DefenseSettings}) utilisent un pattern singleton garantissant l'unicité de la configuration globale.
 
 La structure relationnelle finale, incluant la gestion de l'héritage des utilisateurs et les collections d'éléments pour les données flexibles, est représentée dans le \Cref{fig:mld_schema}.
 \begin{figure}[H]

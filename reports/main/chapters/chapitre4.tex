@@ -8,47 +8,10 @@
 \subsection{Introduction}
 \label{ch4:intro}
 
-Ce chapitre détaille la mise en œuvre technique du système de gestion des soutenances. Nous présentons l'environnement de développement, l'architecture logicielle détaillée, ainsi que l'implémentation des modules fonctionnels avec des extraits de code représentatifs. Un accent particulier est mis sur le moteur de détection de conflits et l'interface interactive de planification, qui constituent le cœur technique du projet. Ce chapitre représente la partie la plus dense du rapport, car il traduit la conception présentée au chapitre précédent en implémentation concrète, en justifiant chaque choix technique par les contraintes métier identifiées lors de l'analyse des besoins.
+Ce chapitre traduit la conception en implémentation concrète. Nous présentons l'environnement de développement, l'architecture technique, ainsi que l'implémentation des modules fonctionnels avec des extraits de code représentatifs. Un accent particulier est mis sur le moteur de détection de conflits et l'interface interactive de planification, qui constituent le cœur technique du projet, en justifiant chaque choix par les contraintes métier identifiées lors de l'analyse des besoins.
 
 \subsection{Environnement de développement}
 \label{ch4:environnement}
-
-\subsubsection{Matériel et Logiciels}
-Le développement a été conduit dans un environnement hybride Windows et Linux, utilisant des outils favorisant la collaboration et la qualité du code. \Cref{tab:outils_dev} résume l'ensemble des outils et versions utilisés tout au long du projet.
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{xltabular}{\textwidth}{lXX}
-        \toprule
-
-        \textbf{Catégorie} & \textbf{Outil}                 & \textbf{Version} \\
-        \midrule
-        Langage backend    & Java                           & 17 (LTS)         \\
-        Framework backend  & Spring Boot                    & 3.4.6            \\
-        Build backend      & Maven                          & 3.9+             \\
-        Langage frontend   & TypeScript                     & 6 (strict)       \\
-        Framework frontend & React                          & 19               \\
-        Bundler frontend   & Vite                           & 8                \\
-        CSS framework      & Tailwind \acrshort{css}                   & 4                \\
-        Composants UI      & shadcn/ui                      & —                \\
-        State management   & TanStack Query                 & v5               \\
-        Routing            & React Router                   & v7               \\
-        Drag \& drop       & @dnd-kit/core                  & —                \\
-        Tests backend      & JUnit 5 + Mockito              & —                \\
-        Couverture backend & JaCoCo                         & —                \\
-        Tests frontend     & Vitest + React Testing Library & —                \\
-        Tests E2E          & Playwright                     & 1.52             \\
-        Mocking frontend   & MSW (Mock Service Worker)      & v3               \\
-        Conteneurisation   & Docker Compose                 & —                \\
-        Email (dev)        & Mailpit                        & —                \\
-        API testing        & Postman                        & —                \\
-        CI/CD              & GitHub Actions                 & —                \\
-        \bottomrule
-    \end{xltabular}
-    \caption{Outils et versions utilisés dans le projet}
-    \label{tab:outils_dev}
-\end{table}
 
 \subsubsection{Workflow de développement}
 \label{ch4:workflow}
@@ -60,7 +23,7 @@ La stratégie de branching est simplifiée mais efficace : la branche \texttt{ma
 \subsection{Architecture technique du système}
 \label{ch4:architecture}
 
-L'application suit une architecture web moderne et découplée (\acrshort{api} \acrshort{rest} + SPA), assurant une séparation nette entre la logique métier et la présentation, à l'exception du moteur de détection de conflits. Celui-ci est déployé côté serveur (\texttt{ConflictDetectionService}) pour garantir l'intégrité des données lors de la persistance, et dupliqué côté client (\texttt{conflict-engine.ts}) pour offrir une réactivité immédiate lors de la planification interactive. Cette duplication contrôlée permet au coordinateur de visualiser les conflits en temps réel lors du glisser-déposer dans le \textit{Defense Designer}, sans attendre la réponse du serveur, tout en assurant que la validation finale applique les mêmes \metric{ReglesGestion} règles de gestion (RG1--RG6).
+L'application suit une architecture web découplée (\acrshort{api} \acrshort{rest} + SPA), assurant une séparation nette entre la logique métier et la présentation.
 
 \subsubsection{Le Backend : \acrshort{api} \acrshort{rest} Spring Boot}
 \label{ch4:backend}
@@ -140,7 +103,7 @@ Le système gère les erreurs de manière personnalisée. Les routes inexistante
 
 Le token \acrshort{jwt} est transmis et stocké via un cookie \texttt{httpOnly} (\texttt{jwt\_token}, \texttt{SameSite=Lax}, durée 2 heures) défini par le serveur lors de la connexion via l'en-tête \texttt{Set-Cookie}. Cette approche renforce la sécurité en rendant le token inaccessible aux scripts JavaScript, protégeant ainsi le système contre les attaques XSS. Le contrôle d'accès est renforcé côté serveur par Spring Security avec des annotations \texttt{@PreAuthorize} basées sur les rôles (\texttt{ROLE\_ADMIN}, \texttt{ROLE\_COORDINATOR}, \texttt{ROLE\_TEACHER}, \texttt{ROLE\_STUDENT}).
 
-Le module gère également la réinitialisation du mot de passe : l'utilisateur demande un lien de réinitialisation via \texttt{/api/auth/forgot-password}, le système génère un token UUID avec une durée de validité de 1 heure, envoie un email contenant le lien (via Mailpit en développement ou un serveur SMTP en production), et l'utilisateur définit un nouveau mot de passe via \texttt{/api/auth/reset-password}. La validation de la force du mot de passe utilise la bibliothèque zxcvbn, qui évalue la résistance aux attaques par force brute en temps réel.
+Le module gère également la réinitialisation du mot de passe : l'utilisateur demande un lien de réinitialisation via \texttt{/api/auth/forgot-password}, le système génère un token UUID avec une durée de validité de 1 heure, envoie un email contenant le lien (via Mailpit en développement ou un serveur SMTP en production), et l'utilisateur définit un nouveau mot de passe via \texttt{/api/auth/reset-password}.
 
 Le \texttt{JwtAuthFilter} (qui étend \texttt{OncePerRequestFilter}) intercepte chaque requête, extrait le token du header \texttt{Authorization} ou du cookie \texttt{jwt\_token}, le valide via \texttt{JwtTokenProvider}, charge l'utilisateur correspondant depuis un cache (\texttt{UserCacheService}), et configure le \texttt{SecurityContextHolder} Spring avec les autorisations appropriées. Les utilisateurs désactivés (\texttt{isActive = false}) sont bloqués avec un code 403.
 
@@ -362,7 +325,7 @@ Le développement du système a été guidé par des bonnes pratiques industriel
 \subsubsection{Tests automatisés}
 \label{ch4:tests}
 
-La stratégie de tests suit la pyramide des tests : un grand nombre de tests unitaires à la base, un nombre modéré de tests d'intégration au milieu, et un nombre réduit de tests de bout en bout au sommet. Côté backend, \metric{ClassesBackend} classes de test JUnit 5 + Mockito (\metric{TestsBackend} tests) couvrent les services, les contrôleurs et les utilitaires. Côté frontend, \metric{FichiersFrontend} fichiers de test Vitest + React Testing Library (\metric{TestsFrontend} tests) couvrent les pages, les hooks, les composants et les utilitaires, avec une stratégie de mocking basée sur MSW (Mock Service Worker) qui simule les réponses de l'API sans appel réseau.
+Côté backend, \metric{ClassesBackend} classes de test JUnit 5 + Mockito (\metric{TestsBackend} tests) couvrent les services, les contrôleurs et les utilitaires. Côté frontend, \metric{FichiersFrontend} fichiers de test Vitest + React Testing Library (\metric{TestsFrontend} tests) couvrent les pages, les hooks, les composants et les utilitaires, avec une stratégie de mocking basée sur MSW (Mock Service Worker) qui simule les réponses de l'API sans appel réseau.
 
 \subsubsection{Hooks de pré-commit}
 \label{ch4:hooks}
@@ -384,9 +347,7 @@ Le pipeline GitHub Actions automatise la construction, les tests et la synchroni
 
 Plusieurs difficultés techniques ont été rencontrées au cours du développement, nécessitant des solutions adaptées.
 
-La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive (glisser-déposer) et la base de données. Le \textit{Defense Designer} manipule un état local complexe (associations jury $\rightarrow$ créneau) qui doit être validé contre six règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final. Cette approche réduit drastiquement le nombre d'appels \acrshort{api} (un seul appel de sauvegarde au lieu d'un appel par dépôt) et améliore la fluidité perçue.
-
-Une seconde difficulté a été la \textbf{duplication du moteur de conflits} entre Java et TypeScript. Pour assurer la cohérence, les deux implémentations suivent exactement la même séquence de vérifications et les mêmes structures de données (projet, salle, enseignant, indisponibilité). Les tests unitaires des deux moteurs valident les mêmes scénarios, et les messages d'erreur sont maintenus de manière cohérente entre les deux implémentations.
+La principale difficulté a été la \textbf{synchronisation de l'état du planning} entre l'interface interactive et la base de données. Le \textit{Defense Designer} manipule un état local complexe qui doit être validé contre six règles de gestion avant persistance. La solution a consisté à utiliser un \textbf{état local optimiste} dans le hook \texttt{useDefenseSchedule}, qui ne synchronise le serveur qu'au moment de l'enregistrement final, réduisant le nombre d'appels \acrshort{api} (un seul appel de sauvegarde au lieu d'un appel par dépôt).
 
 Une troisième difficulté a été la \textbf{conception du système de templates de jurys}. Les départements ont des besoins différents en termes de composition de jury (certains exigent un Président, un Rapporteur et un Examinateur, d'autres ajoutent un Co-encadrant). La solution a été d'implémenter des \texttt{JuryRoleTemplate} configurables par le coordinateur, chaque template définissant les rôles nécessaires, le nombre de membres par rôle et le coefficient associé. Cette flexibilité permet au système de s'adapter à différents contextes sans modification du code.
 

@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch2:intro}
 
-Ce chapitre présente une analyse approfondie du système actuel d'organisation des soutenances au sein de la faculté, identifie ses lacunes et compare les solutions existantes sur le marché. Il détaille ensuite les choix technologiques retenus pour le développement de notre application. Enfin, l'architecture générale du système est présentée ; la stratégie de déploiement et l'organisation du code source sont détaillées aux chapitres suivants (cf. \cref{ch3:architecture_logicielle,ch4:architecture}).
+Nous présentons dans ce chapitre une analyse approfondie du système actuel d'organisation des soutenances au sein de la faculté, identifions ses lacunes et comparons les solutions existantes sur le marché. Il détaille ensuite les choix technologiques retenus pour le développement de notre application. Enfin, l'architecture générale du système est présentée ; la stratégie de déploiement et l'organisation du code source sont détaillées aux chapitres suivants (cf. \cref{ch3:architecture_logicielle,ch4:architecture}).
 
 \subsection{Analyse de l'existant}
 \label{ch2:existant}
@@ -165,7 +165,7 @@ L'analyse croisée de ces trois catégories de solutions -- ERP académiques, ou
 \subsection{Choix technologiques}
 \label{ch2:choix_technologiques}
 
-Le choix des technologies est une étape cruciale qui, plus ou moins, conditionne la réussite du projet. Chaque décision a été prise en fonction des besoins spécifiques du système, des compétences de l'équipe et des contraintes du projet. Pour chaque choix, nous avons évalué les alternatives disponibles avant de justifier la sélection retenue.
+Le choix des technologies est une étape cruciale qui conditionne la réussite du projet. Chaque décision a été prise en fonction des besoins spécifiques du système, des compétences de l'équipe et des contraintes du projet. Pour chaque choix, nous avons évalué les alternatives disponibles avant de justifier la sélection retenue.
 
 \subsubsection{Frontend}
 \label{ch2:frontend}
@@ -220,10 +220,44 @@ Côté backend, \textbf{Checkstyle} vérifie la conformité du code aux conventi
 
 Des hooks de pré-commit (Husky, lint-staged) exécutent le linting et le formatage avant chaque commit, formant une barrière de qualité automatisée. Couplés à Vitest et JaCoCo, ces outils constituent un filet de sécurité complet.
 
+\begin{table}[H]
+    \centering
+    \small
+    \begin{xltabular}{\textwidth}{lXX}
+        \toprule
+
+        \textbf{Catégorie} & \textbf{Outil}                 & \textbf{Version} \\
+        \midrule
+        Langage backend    & Java                           & 17 (LTS)         \\
+        Framework backend  & Spring Boot                    & 3.4.6            \\
+        Build backend      & Maven                          & 3.9+             \\
+        Langage frontend   & TypeScript                     & 6 (strict)       \\
+        Framework frontend & React                          & 19               \\
+        Bundler frontend   & Vite                           & 8                \\
+        CSS framework      & Tailwind \acrshort{css}                   & 4                \\
+        Composants UI      & shadcn/ui                      & —                \\
+        State management   & TanStack Query                 & v5               \\
+        Routing            & React Router                   & v7               \\
+        Drag \& drop       & @dnd-kit/core                  & —                \\
+        Tests backend      & JUnit 5 + Mockito              & —                \\
+        Couverture backend & JaCoCo                         & —                \\
+        Tests frontend     & Vitest + React Testing Library & —                \\
+        Tests E2E          & Playwright                     & 1.52             \\
+        Mocking frontend   & MSW (Mock Service Worker)      & v3               \\
+        Conteneurisation   & Docker Compose                 & —                \\
+        Email (dev)        & Mailpit                        & —                \\
+        API testing        & Postman                        & —                \\
+        CI/CD              & GitHub Actions                 & —                \\
+        \bottomrule
+    \end{xltabular}
+    \caption{Outils et versions utilisés dans le projet}
+    \label{tab:outils_dev}
+\end{table}
+
 \subsection{Architecture générale retenue}
 \label{ch2:architecture}
 
-L'application adopte une architecture web moderne en trois couches (frontend React, backend Spring Boot, base de données), conçue selon une approche \textit{\acrshort{api}-first} où chaque couche communique via un contrat \acrshort{rest} formalisé et documenté via Swagger/OpenAPI. Les endpoints respectent les conventions \acrshort{rest} avec des verbes \gls{http} standards et des réponses \gls{json} structurées. L'architecture complète, l'organisation multi-dépôts et la stratégie de déploiement sont détaillées aux chapitres suivants (cf. \cref{ch3:architecture_logicielle,ch4:architecture}).
+L'application adopte une architecture \acrshort{api}-first en trois couches, détaillée dans la conception (\cref{ch3:architecture_logicielle}) et l'implémentation (\cref{ch4:architecture}).
 
 \subsection{Conclusion}
 \label{ch2:conclusion}
