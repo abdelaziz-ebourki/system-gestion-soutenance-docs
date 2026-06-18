@@ -8,7 +8,7 @@
 \subsection{Introduction}
 \label{ch2:intro}
 
-Ce chapitre présente une analyse approfondie du système actuel d'organisation des soutenances au sein de la faculté, identifie ses lacunes et compare les solutions existantes sur le marché. Il détaille ensuite les choix technologiques retenus pour le développement de notre application. Enfin, l'architecture générale du système est présentée, incluant la stratégie de déploiement et l'organisation du code source.
+Ce chapitre présente une analyse approfondie du système actuel d'organisation des soutenances au sein de la faculté, identifie ses lacunes et compare les solutions existantes sur le marché. Il détaille ensuite les choix technologiques retenus pour le développement de notre application. Enfin, l'architecture générale du système est présentée ; la stratégie de déploiement et l'organisation du code source sont détaillées aux chapitres suivants (cf. \cref{ch3:architecture_logicielle,ch4:architecture}).
 
 \subsection{Analyse de l'existant}
 \label{ch2:existant}
@@ -172,7 +172,7 @@ Le choix des technologies est une étape cruciale qui, plus ou moins, conditionn
 
 Trois frameworks JavaScript principaux ont été évalués pour le développement de l'interface utilisateur : React.js, Vue.js et Angular.
 
-\textbf{Vue.js} offre une courbe d'apprentissage plus douce que React et une documentation excellentement structurée. Son système de réactivité basé sur les proxies est intuitif et son magasin officiel (\texttt{Pinia}) est léger et efficace. Cependant, son écosystème de composants tiers est moins riche que celui de React, et la taille de sa communauté -- bien que croissante -- reste significativement plus petite, ce qui limite la disponibilité de solutions prêtes à l'emploi pour des cas d'usage spécifiques comme le glisser-déposer complexe (utiliser pour remplir les créneaux du planning).
+\textbf{Vue.js} offre une courbe d'apprentissage plus douce que React et une documentation très bien structurée. Son système de réactivité basé sur les proxies est intuitif et son magasin officiel (\texttt{Pinia}) est léger et efficace. Cependant, son écosystème de composants tiers est moins riche que celui de React, et la taille de sa communauté -- bien que croissante -- reste significativement plus petite, ce qui limite la disponibilité de solutions prêtes à l'emploi pour des cas d'usage spécifiques comme le glisser-déposer complexe (utiliser pour remplir les créneaux du planning).
 
 \textbf{Angular} propose une solution complète et opinionnée, avec un CLI puissant, un système de dépendances injection natif et une architecture en modules. Sa robustesse est éprouvée dans les grandes applications d'entreprise. Néanmoins, sa courbe d'apprentissage élevée, sa verbosité et la taille du bundle produit le rendent moins adapté à un projet de fin d'études où la vélocité de développement est un facteur déterminant.
 
@@ -196,14 +196,14 @@ L'évaluation du backend a porté sur trois alternatives majeures : Node.js avec
 
 La stratégie de base de données adopte une approche à double profil, adaptée aux différentes phases du cycle de développement.
 
-En phase de développement et de test, \textbf{H2 Database} est utilisé en mode mémoire. Cette base de données embarquée ne nécessite aucune installation, démarre instantanément et permet de réinitialiser l'état à chaque redémarrage. Le seed data peuple automatiquement la base avec des données de démonstration (100 étudiants, 12 enseignants, 25 projets, 15 soutenances, etc.), ce qui facilite les tests fonctionnels et le développement.
+En phase de développement et de test, \textbf{H2 Database} est utilisé en mode mémoire. Cette base de données embarquée ne nécessite aucune installation, démarre instantanément et permet de réinitialiser l'état à chaque redémarrage. Le seed data initialise automatiquement la base avec des données de démonstration (100 étudiants, 12 enseignants, 25 projets, 15 soutenances, etc.), ce qui facilite les tests fonctionnels et le développement.
 
 En phase de production, \textbf{\acrshort{mysql}} est le SGBD retenu. Son choix se justifie par sa maturité, ses performances éprouvées pour les charges de travail académiques, et sa compatibilité native avec Spring Data \acrshort{jpa} et Hibernate. Le schéma de la base est identique entre H2 et \acrshort{mysql} grâce à l'utilisation du sous-ensemble commun du langage \gls{sql} et des annotations \acrshort{jpa} standardisées. La configuration des profils Spring (\texttt{application.properties} pour le dev, \texttt{application-prod.properties} pour la production) permet de basculer d'un SGBD à l'autre sans modification du code application.
 
 \subsubsection{Outils de développement}
 \label{ch2:outils_dev}
 
-\textbf{Git et GitHub} constituent le socle de la gestion de version et de la collaboration. Le projet est organisé en dépôts multiples (\acrshort{api}, \acrshort{ui}, \gls{e2e}), chacun doté de son propre historique de commits et de sa configuration \gls{cicd}. La stratégie de branching suit un modèle simplifié : une branche \texttt{main} stable, des branches de fonctionnalité (\texttt{feature/*}) pour le développement, et des branches de correction (\texttt{fix/*}) pour les correctifs. Les messages de commit respectent les conventions (préfixes \texttt{feat:}, \texttt{fix:}, \texttt{chore:}, etc.) et les issues GitHub servent de support au suivi des tâches et des bugs.
+\textbf{Git et GitHub} constituent le socle de la gestion de version et de la collaboration. Le projet est organisé en dépôts multiples, chacun doté de son propre historique de commits et de sa configuration \gls{cicd}. La stratégie de branching suit un modèle simplifié (branche \texttt{main} stable, branches \texttt{feature/*} et \texttt{fix/*}). Les conventions sémantiques de commit et la gestion des issues sont détaillées au chapitre~4 (cf. \cref{ch4:git_conventions}).
 
 \textbf{Visual Studio Code} est l'éditeur utilisé pour l'ensemble du développement, avec des extensions dédiées au TypeScript, Tailwind \acrshort{css} et React pour le frontend, et au Java, Spring Boot et Maven pour le backend. \textbf{Postman} permet de tester et documenter les endpoints \gls{rest}, avec des environnements séparés pour le dev et les tests, et des collections partagées entre les membres de l'équipe. \textbf{Maven} gère les dépendances du projet backend, assure la cohérence des versions et intègre les plugins de qualité de code.
 
@@ -218,37 +218,14 @@ Côté frontend, \textbf{ESLint} analyse le code TypeScript en temps réel pour 
 
 Côté backend, \textbf{Checkstyle} vérifie la conformité du code aux conventions de codage Java (nommage, indentation, longueur des lignes). \textbf{PMD} détecte les problèmes de qualité de code (code mort, duplication, complexité cyclomatique excessive). \textbf{SpotBugs} analyse le code bytecode pour identifier les bugs potentiels (null pointer, resource leak, thread safety). Ces trois outils sont intégrés au build Maven et exécutés automatiquement à chaque compilation.
 
-\textbf{Husky} et \textbf{lint-staged} implémentent des hooks de pré-commit qui exécutent le linting et le formatage sur les fichiers indexés avant chaque commit. Cette barrière de qualité veille à ce qu'aucun code non formaté ou contenant des erreurs de linting n'atteigne le dépôt. Couplé à \textbf{Vitest} et \textbf{React Testing Library} pour les tests unitaires frontend, et à \textbf{JaCoCo} pour la couverture de code Java, cet ensemble d'outils constitue un filet de sécurité complet qui assure la maintenabilité du code à long terme.
+Des hooks de pré-commit (Husky, lint-staged) exécutent le linting et le formatage avant chaque commit, formant une barrière de qualité automatisée. Couplés à Vitest et JaCoCo, ces outils constituent un filet de sécurité complet.
 
 \subsection{Architecture générale retenue}
 \label{ch2:architecture}
 
-L'application adopte une architecture web moderne en trois couches, favorisant la modularité et la séparation des préoccupations. Cette architecture est détaillée dans le chapitre suivant, qui présente la vue composants du système et la logique de chaque couche.
-
-\subsubsection{Philosophie \acrshort{api}-first}
-\label{ch2:api_first}
-
-Le système est conçu selon une approche \textit{\acrshort{api}-first}, où l'interface utilisateur et le serveur sont développés de manière indépendante autour d'un contrat \acrshort{api} \acrshort{rest} formalisé. Cette séparation permet au frontend de consommer les endpoints sans connaître les détails d'implémentation du backend, et inversement. Les endpoints sont documentés via Swagger/OpenAPI (\texttt{/swagger-ui/index.html}), ce qui facilite les tests manuels via Postman et la consommation de l'\acrshort{api} par d'autres clients potentiels.
-
-Chaque endpoint suit les conventions \acrshort{rest} : utilisation des verbes \gls{http} appropriés (GET pour la lecture, POST pour la création, PUT pour la mise à jour, DELETE pour la suppression), réponses au format \gls{json} enveloppé dans un objet \texttt{ApiResponse<T>} contenant les champs \texttt{success}, \texttt{message}, \texttt{data} et \texttt{errors}, et codes de statut \acrshort{http} conformes au standard (200 pour le succès, 201 pour la création, 400 pour les erreurs de validation, 404 pour les ressources introuvables, 409 pour les conflits).
-
-\subsubsection{Organisation multi-dépôts}
-\label{ch2:multi_repo}
-
-Le projet est organisé en trois dépôts Git distincts, chacun responsable d'un périmètre technique spécifique. Cette séparation, bien que nécessitant une synchronisation via des workflows CI, offre des avantages significatifs en termes de clarté du code, d'indépendance des cycles de build et de responsabilité des contributions.
-
-Le dépôt \href{https://github.com/abdelaziz-ebourki/system-gestion-soutenance-api}{\texttt{system-gestion-soutenance-api}} contient le code Java/Spring Boot du serveur. Le dépôt \href{https://github.com/abdelaziz-ebourki/system-gestion-soutenance-ui}{\texttt{system-gestion-soutenance-ui}} contient l'application React/TypeScript. Le dépôt \href{https://github.com/abdelaziz-ebourki/system-gestion-soutenance-e2e}{\texttt{system-gestion-soutenance-e2e}} contient les tests Playwright et reçoit les sources synchronisées des deux premiers dépôts pour ses tests d'intégration.
-
-Des workflows GitHub Actions assurent la synchronisation automatique : lors d'un push sur la branche \texttt{main} de l'\acrshort{api} ou de l'\acrshort{ui}, un script rsync copie les sources dans le dépôt \acrshort{e2e} et pousse les modifications. Cette architecture assure que les tests d'intégration s'exécutent toujours sur la dernière version du code, tout en maintenant une séparation claire des responsabilités.
-
-\subsubsection{Stratégie de déploiement}
-\label{ch2:deploiement}
-
-En environnement de développement, \textbf{Docker Compose} orchestre l'ensemble des services nécessaires. Le fichier \texttt{docker-compose.yml} définit deux conteneurs : l'\acrshort{api} Spring Boot (exposée sur le port 8080) et Mailpit (serveur SMTP de test avec interface web sur le port 8025). L'application frontend est lancée séparément via \texttt{npm run dev} (Vite dev server sur le port 5173), avec un proxy configuré pour rediriger les appels \texttt{/api} vers le backend.
-
-Cette architecture de développement est conçue pour être lancée en une seule commande (\texttt{docker compose up --build} pour le backend, \texttt{npm run dev} pour le frontend), offrant ainsi un environnement de travail immédiat pour les développeurs. La base de données H2 en mémoire est automatiquement peuplée par le \texttt{DataInitializer} lors du premier démarrage, fournissant des données de démonstration.
+L'application adopte une architecture web moderne en trois couches (frontend React, backend Spring Boot, base de données), conçue selon une approche \textit{\acrshort{api}-first} où chaque couche communique via un contrat \acrshort{rest} formalisé et documenté via Swagger/OpenAPI. Les endpoints respectent les conventions \acrshort{rest} avec des verbes \gls{http} standards et des réponses \gls{json} structurées. L'architecture complète, l'organisation multi-dépôts et la stratégie de déploiement sont détaillées aux chapitres suivants (cf. \cref{ch3:architecture_logicielle,ch4:architecture}).
 
 \subsection{Conclusion}
 \label{ch2:conclusion}
 
-Ce chapitre a dressé un état des lieux complet du système actuel d'organisation des soutenances, mettant en évidence ses limites opérationnelles -- charge de planification concentrée sur le coordinateur, tâches répétitives de saisie, absence de détection automatique de conflits. L'analyse des solutions existantes -- systèmes ERP, outils génériques et projets open source -- a confirmé l'absence d'un outil répondant simultanément à tous les besoins du contexte universitaire marocain. Les choix technologiques -- React 19, Spring Boot 3.4.6, \acrshort{mysql}, Docker -- ont été justifiés par une évaluation approfondie des alternatives, et la chaîne de qualité de code a été présentée comme garantie de maintenabilité. L'architecture en composants, l'approche \acrshort{api}-first et l'organisation multi-dépôts constituent les fondations techniques sur lesquelles repose le système. Le chapitre suivant détaillera l'analyse des besoins fonctionnels et la conception complète du système.
+Ce chapitre a dressé un état des lieux complet du système actuel d'organisation des soutenances, mettant en évidence ses limites opérationnelles -- charge de planification concentrée sur le coordinateur, tâches répétitives de saisie, absence de détection automatique de conflits. L'analyse des solutions existantes -- systèmes ERP, outils génériques et projets open source -- a confirmé l'absence d'un outil répondant simultanément à tous les besoins du contexte universitaire marocain. Les choix technologiques -- React 19, Spring Boot 3.4.6, \acrshort{mysql}, Docker -- ont été justifiés par une évaluation approfondie des alternatives, et la chaîne de qualité de code a été présentée comme garantie de maintenabilité. L'architecture \acrshort{api}-first et l'organisation du code constituent les fondations techniques du système. Le chapitre suivant détaillera l'analyse des besoins fonctionnels et la conception complète du système.

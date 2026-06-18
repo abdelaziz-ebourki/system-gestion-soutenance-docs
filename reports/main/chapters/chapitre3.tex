@@ -39,7 +39,6 @@ L'\textbf{Étudiant} est l'utilisateur final du système. Il visualise les infor
 
 \begin{table}[H]
     \centering
-    \scriptsize
     \begin{xltabular}{\textwidth}{lXXXX}
         \toprule
 
@@ -94,7 +93,7 @@ Les \textbf{sessions de soutenance} sont gérées via un cycle de vie complet : 
 
 Le \textit{Defense Designer} constitue l'élément le plus innovant du système. Cette interface interactive de type canevas permet au coordinateur de planifier les soutenances par glisser-déposer : les jurys, listés dans une barre latérale, sont déposés sur un calendrier dynamique organisé par salles et créneaux horaires. L'état local est maintenu côté client et synchronisé avec le serveur uniquement lors de la sauvegarde explicite. Un algorithme d'auto-génération peuple automatiquement le planning en optimisant l'occupation des salles.
 
-En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 6 règles de gestion lors de chaque modification du planning (voir \cref{ch3:regles_gestion}). Dupliquée côté client pour un retour instantané et exécutée côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
+En matière de \textbf{détection de conflits}, le moteur dédié valide systématiquement 6 règles de gestion lors de chaque modification du planning (cf. \cref{ch3:regles_gestion}). Dupliquée côté client pour un retour instantané et exécutée côté serveur pour préserver l'intégrité lors de la sauvegarde, cette architecture double-validation combine réactivité et fiabilité.
 
 La \textbf{saisie des notes} est pilotée par le module Évaluation, qui gère les coefficients dynamiques par session et effectue le calcul automatique de la moyenne pondérée. Le membre du jury peut consulter le rapport du projet assigné pour préparer son évaluation, puis saisir les notes. Le coordinateur peut consulter les notes moyennes pondérées par projet, avec le détail des scores par membre du jury.
 
@@ -224,8 +223,6 @@ Les diagrammes de cas d'utilisation délimitent les responsabilités de chaque a
 
 \subsubsection{Diagramme de classes}
 \label{ch3:classes}
-
-Le diagramme de classes traduit la structure des données du système. On y observe une hiérarchie d'utilisateurs basée sur la spécialisation, permettant de distinguer les responsabilités de chaque rôle tout en centralisant les informations communes.
 
 Plusieurs choix de conception structurels ont été adoptés pour répondre aux besoins du métier. La composition du jury est modélisée comme une relation enrichie entre une soutenance et un enseignant, permettant d'associer un rôle spécifique (Président, Rapporteur, Examinateur) à chaque membre sans complexifier la structure des entités. Afin de garantir l'intégrité historique des données, les évaluations sont liées aux enseignants de manière à ce que les notes et observations soient préservées même en cas de modification ultérieure de la composition du jury. Enfin, la flexibilité de la notation est assurée par un système de pondération dynamique associé à chaque session, permettant d'ajuster les coefficients de calcul des notes selon le rôle du membre du jury.
 
@@ -392,7 +389,7 @@ Côté Java, le code respecte les conventions de nommage Java (camelCase pour le
 
 Côté TypeScript, le code suit les conventions Airbnb (formatage \texttt{Prettier}, règles \texttt{ESLint} strictes), le typage strict est activé (\texttt{strict: true} dans le \texttt{tsconfig.json}), et les noms de fichiers utilisent le kebab-case (\texttt{conflict-engine.ts}, \texttt{use-defense-schedule.ts}). Les composants React suivent le pattern fonctionnel avec hooks, sans classes.
 
-Les messages de commit suivent les conventions Git : préfixes sémantiques (\texttt{feat:}, \texttt{fix:}, \texttt{chore:}, \texttt{docs:}), description en mode impératif. Les issues GitHub documentent les fonctionnalités et les corrections, avec des labels de priorité et de catégorie.
+Les conventions de message de commit et l'organisation des issues GitHub sont détaillées au Chapitre~4 (cf. \cref{ch4:git_conventions}).
 
 \subsection{Conclusion}
 \label{ch3:conclusion}

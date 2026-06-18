@@ -10,7 +10,7 @@ Ce projet de fin d'études a permis la conception et le développement d'une sol
 
 Les objectifs initiaux ont été atteints avec succès. L'automatisation de la planification, via un designer de défenses interactif avec détection automatique de conflits basée sur six règles de gestion (RG1--RG6), a remplacé le processus manuel chronophage et sujet aux erreurs. L'intégration d'un moteur d'auto-génération de planning a permis de réduire significativement le temps de constitution des plannings de soutenance. La production documentaire automatisée -- convocations, fiches d'évaluation, procès-verbaux -- élimine la saisie manuelle répétitive et assure l'uniformité des formats. Le module d'évaluation, avec calcul automatique des moyennes pondérées, assure la fiabilité et la traçabilité des résultats académiques. Le contrôle granulaire des accès, basé sur quatre rôles (administrateur, coordinateur, enseignant, étudiant) avec \acrshort{jwt} et tokens d'activation, protège la sécurité des données sensibles.
 
-Le système a été validé via une stratégie de test multi-couche -- 647 tests backend (87 classes), 664 tests frontend (83 fichiers) et 134 requêtes Postman -- complétée par des outils de qualité statique (JaCoCo, Checkstyle, PMD, SpotBugs, ESLint, Prettier) intégrés au pipeline Maven et aux hooks Husky. Ce système constitue un levier d'amélioration opérationnelle significatif pour les établissements universitaires, permettant de réduire la charge administrative tout en augmentant la fiabilité et la traçabilité des processus organisationnels.
+Le système a été validé via une stratégie de test multi-couche -- 647 tests backend (93 classes), 664 tests frontend (83 fichiers) et 142 scénarios de validation \acrshort{api} Postman -- complétée par des outils de qualité statique (JaCoCo, Checkstyle, PMD, SpotBugs, ESLint, Prettier) intégrés au pipeline Maven et aux hooks Husky. Ce système constitue un levier d'amélioration opérationnelle significatif pour les établissements universitaires, permettant de réduire la charge administrative tout en augmentant la fiabilité et la traçabilité des processus organisationnels.
 
 Les perspectives d'évolution sont nombreuses et pertinentes. L'intégration d'un moteur de rendu \acrshort{pdf} côté serveur (via Puppeteer ou iText) permettrait d'automatiser la génération et l'envoi des convocations par email, éliminant ainsi le besoin d'impression manuelle. Le développement d'une application mobile dédiée offrirait des notifications en temps réel via les services push natifs, améliorant la réactivité des enseignants et des étudiants face aux changements de planning. L'optimisation des algorithmes d'auto-génération du planning, en remplaçant l'approche gloutone actuelle par des techniques de programmation par contraintes ou de recuit simulé, permettrait de prendre en compte des contraintes de préférence plus fines des enseignants et d'optimiser l'occupation des salles. Enfin, l'intégration de WebSocket pour les mises à jour en temps réel et le développement d'un mode hors ligne progressive (PWA) constitueraient des améliorations significatives de l'expérience utilisateur.
 
@@ -107,8 +107,8 @@ Manifesto for Agile Software Development,
 \url{https://agilemanifesto.org/}
 
 \bibitem{lmd}
-Organisation LMD -- Ministère de l'Enseignement Supérieur du Maroc,
-\url{https://www.gov.ma/}
+Ministère de l'Enseignement Supérieur, de la Recherche Scientifique et de l'Innovation du Maroc. \textit{Réforme LMD -- Organisation de la formation Licence-Master-Doctorat}, 2003.
+\url{https://www.enssup.gov.ma/}
 
 \bibitem{dndkit}
 @dnd-kit Documentation,
@@ -153,5 +153,30 @@ Husky Documentation,
 \bibitem{lint_staged}
 lint-staged Documentation,
 \url{https://github.com/lint-staged/lint-staged}
+
+% --- Ouvrages académiques ---
+\bibitem{pressman}
+Pressman, R. S. \textit{Software Engineering: A Practitioner's Approach}, 8th ed. McGraw-Hill, 2014. ISBN 978-0-07-802212-8.
+
+\bibitem{sommerville}
+Sommerville, I. \textit{Software Engineering}, 10th ed. Pearson, 2016. ISBN 978-0-13-394303-0.
+
+\bibitem{sandhu}
+Sandhu, R., Coyne, E., Feinstein, H., Youman, C. ``Role-Based Access Control Models.'' \textit{IEEE Computer}, vol.~29, no.~2, pp.~38--47, 1996. \url{https://doi.org/10.1109/2.485845}
+
+\bibitem{spring_in_action}
+Walls, C. \textit{Spring Boot in Action}. Manning Publications, 2016. ISBN 978-1-61729-254-5.
+
+\bibitem{learning_react}
+Banks, A. \& Porcello, E. \textit{Learning React: Modern Patterns for Developing React Apps}, 2nd ed. O'Reilly Media, 2020. ISBN 978-1-492-05172-5.
+
+\bibitem{eloquent_js}
+Haverbeke, M. \textit{Eloquent JavaScript: A Modern Introduction to Programming}, 4th ed. No Starch Press, 2024. ISBN 978-1-718-50411-1.
+
+\bibitem{javascript_nutshell}
+Flanagan, D. \textit{JavaScript: The Definitive Guide}, 7th ed. O'Reilly Media, 2020. ISBN 978-1-491-95202-3.
+
+\bibitem{schaerf}
+Schaerf, A. ``A Survey of Automated Timetabling.'' \textit{Artificial Intelligence Review}, vol.~13, no.~2, pp.~87--127, 1999. \url{https://doi.org/10.1023/A:1006576209967}
 
 \end{thebibliography}
